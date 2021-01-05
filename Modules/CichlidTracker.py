@@ -1,6 +1,6 @@
 import platform, sys, os, shutil, datetime, subprocess, gspread, time, socket
 from Modules.FileManager import FileManager as FM
-import Modules.DataObjects.LogParser as LP
+import Modules.LogParser as LP
 
 from picamera import PiCamera
 import numpy as np
