@@ -1,12 +1,9 @@
 import platform, sys, os, shutil, datetime, subprocess, gspread, time, socket
-from Modules.FileManagers.FileManager import FileManager as FM
-from picamera import PiCamera
-import numpy as np
-
-
-
+from Modules.FileManager import FileManager as FM
 import Modules.DataObjects.LogParser as LP
 
+from picamera import PiCamera
+import numpy as np
 from PIL import Image
 from oauth2client.service_account import ServiceAccountCredentials
 import matplotlib.image
