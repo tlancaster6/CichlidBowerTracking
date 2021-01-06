@@ -1,4 +1,4 @@
-from Modules.FileManagers.FileManager import FileManager as FM
+from Modules.FileManager import FileManager as FM
 import argparse, subprocess
 
 import argparse, subprocess, datetime, os
