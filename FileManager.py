@@ -142,7 +142,7 @@ class FileManager():
 			self.downloadData(self.localLogfile)
 			self.downloadData(self.localVideoDir)
 
-		elif dtype == 'MLClassification':
+		elif dtype == 'ClusterClassification':
 			self.createDirectory(self.localMasterDir)
 			self.createDirectory(self.local3DModelDir)
 			self.downloadData(self.localLogfile)
@@ -150,7 +150,10 @@ class FileManager():
 			self.downloadData(self.localAnalysisDir)
 			self.downloadData(self.local3DModelDir)
 
-		elif dtype == 'ObjectLabeler':
+		elif dtype == 'FishDetection':
+			pass
+
+		elif dtype == 'ManualAnnotation':
 			self.createDirectory(self.localMasterDir)
 			self.createDirectory(self.localAnalysisDir)
 			self.downloadData(self.manualLabelFramesDir, tarred = True)
