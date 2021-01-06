@@ -2,7 +2,7 @@ import os, subprocess, pdb, platform
 import pandas as pd
 
 class FileManager():
-	def __init__(self, projectID = None):
+	def __init__(self, projectID = None, rcloneRemote = 'cichlidVideo:', masterDir = 'McGrath/Apps/CichlidPiData/'):
 
 		# Identify directory for temporary local files
 		if platform.node() == 'raspberrypi' or 'Pi' in platform.node():
@@ -11,15 +11,15 @@ class FileManager():
 			self.localMasterDir = os.getenv('HOME') + '/' + 'Temp/CichlidAnalyzer/'
 
 		# Identify cloud directory for rclone
-		self.rcloneRemote = 'cichlidVideo:'
+		self.rcloneRemote = rcloneRemote
 		# On some computers, the first directory is McGrath, on others it's BioSci-McGrath. Use rclone to figure out which
-		output = subprocess.run(['rclone', 'lsf', self.rcloneRemote], capture_output = True, encoding = 'utf-8')
-		if 'McGrath/' in output.stdout.split():
-			self.cloudMasterDir = self.rcloneRemote + 'McGrath/Apps/CichlidPiData/'
-		elif 'BioSci-McGrath/' in output.stdout.split():
-			self.cloudMasterDir = self.rcloneRemote + 'BioSci-McGrath/Apps/CichlidPiData/'
+		output = subprocess.run(['rclone', 'lsf', self.rcloneRemote + masterDir], capture_output = True, encoding = 'utf-8')
 		else:
-			raise Exception('Cant find master McGrath directory in rclone remote')
+			output = subprocess.run(['rclone', 'lsf', self.rcloneRemote + 'BioSci-' + masterDir], capture_output = True, encoding = 'utf-8')
+			if output.stderr == '':
+				self.cloudMasterDir = self.rcloneRemote + 'BioSci-' + masterDir
+			else:
+				raise Exception('Cant find master directory (' + masterDir + ') in rclone remote (' + rcloneRemote + '')
 
 		if projectID is not None:
 			self.createProjectData(projectID)
@@ -224,7 +224,7 @@ class FileManager():
 			raise KeyError('Unknown key: ' + dtype)
 
 	def returnVideoObject(self, index):
-		from Modules.DataObjects.LogParser import LogParser as LP
+		from Modules.LogParser import LogParser as LP
 
 		self.downloadData(self.localLogfile)
 		self.lp = LP(self.localLogfile)
