@@ -32,7 +32,7 @@ class ProjectPreparer():
 		prp_obj = PrP(self.fileManager)
 		prp_obj.validateInputData()
 		prp_obj.prepData()
-		self.fileManager.uploadProjectData('Prep')
+		#self.fileManager.uploadProjectData('Prep')
 		#self.localDelete()
 
 	def runDepthAnalysis(self):
@@ -40,20 +40,20 @@ class ProjectPreparer():
 		dp_obj.validateInputData()
 		dp_obj.createSmoothedArray()
 		dp_obj.createRGBVideo()
-		self.fileManager.uploadProjectData('Depth')
+		#self.fileManager.uploadProjectData('Depth')
 		#self.localDelete()
 
 	def runClusterAnalysis(self, videoIndex):
-		cp_obj = CP(self.fileManager, self.workers, videoIndex)
+		cp_obj = CP(self.fileManager, videoIndex, self.workers)
 		cp_obj.validateInputData()
 		cp_obj.runClusterAnalysis()
-		self.fileManager.uploadProjectData('Cluster')
+		#self.fileManager.uploadProjectData('Cluster')
 
 	def run3DClassification(self):
 		cp_obj = TDCP(self.fileManager, self.workers, videoIndex)
 		cp_obj.validateInputData()
 		cp_obj.runClusterAnalysis()
-		self.fileManager.uploadProjectData('3DClassifier')
+		#self.fileManager.uploadProjectData('3DClassifier')
 
 	def runMLClusterClassifier(self):
 		mlc_obj = MLP(self.projFileManager, self.mlFileManager)
@@ -62,7 +62,16 @@ class ProjectPreparer():
 		self.createUploadFile(mlc_obj.uploads)
 		self.createAnalysisUpdate('MLClassifier', mlc_obj)
 
+	def manuallyLabelVideos(self, initials, number):
+		mlv_obj = MLVP(self.fileManager, initials, number)
+		mlv_obj.validateInputData()
+		mlc_obj.labelVideos()
 
+	def manuallyLabelFrames(self, initials, number):
+		mlv_obj = MLFP(self.fileManager, initials, number)
+		mlv_obj.validateInputData()
+		mlc_obj.labelFrames()
+	
 	def runMLFishDetection(self):
 		pass
 
@@ -73,13 +82,6 @@ class ProjectPreparer():
 
 		self.createUploadFile(fc_obj.uploads)
 		self.createAnalysisUpdate('Figures', fc_obj)
-
-	def runObjectLabeling(self):
-		self.projFileManager.downloadData('ObjectLabeler')
-		lc_obj =LC(self.projFileManager)
-		lc_obj.validateInputData()
-
-
 
 	def backupAnalysis(self):
 		uploadCommands = set()
