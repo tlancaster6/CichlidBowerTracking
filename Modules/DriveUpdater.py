@@ -1,5 +1,5 @@
 import argparse, datetime, gspread
-from MLogParser import LogParser as LP
+from LogParser import LogParser as LP
 from FileManager import FileManager as FM
 import matplotlib
 matplotlib.use('Pdf')  # Enables creation of pdf without needing to worry about X11 forwarding when ssh'ing into the Pi
