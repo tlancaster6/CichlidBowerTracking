@@ -1,8 +1,5 @@
-from Modules.FileManager import FileManager as FM
-import argparse, subprocess
-
-import argparse, subprocess, datetime, os
-import LogParser as LP
+from FileManager import FileManager as FM
+import argparse, subprocess, os
 
 parser = argparse.ArgumentParser()
 parser.add_argument('VideoFile', type = str, help = 'Name of h264 file to be processed')

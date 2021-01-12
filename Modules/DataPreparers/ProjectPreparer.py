@@ -1,11 +1,11 @@
-import datetime, os, subprocess
+import datetime, os, subprocess, pdb
 
-from Modules.FileManagers.FileManager import FileManager as FM
+from Modules.FileManager import FileManager as FM
 from Modules.DataPreparers.PrepPreparer import PrepPreparer as PrP
 from Modules.DataPreparers.DepthPreparer import DepthPreparer as DP
 from Modules.DataPreparers.ClusterPreparer import ClusterPreparer as CP
-from Modules.DataPreparers.MLClusterPreparer import MLClusterPreparer as MLP
-from Modules.DataPreparers.FigurePreparer import FigurePreparer as FP
+from Modules.DataPreparers.ThreeDClassifierPreparer import MLClusterPreparer as TDCP
+#from Modules.DataPreparers.FigurePreparer import FigurePreparer as FP
 
 class ProjectPreparer():
 	# This class takes in a projectID and runs all the appropriate analysis
@@ -13,52 +13,47 @@ class ProjectPreparer():
 	def __init__(self, projectID, workers = None):
 
 		self.projectID = projectID
+		self.fileManager = FM(projectID = projectID)
 		if not self._checkProjectID():
 			raise Exception(projectID + ' is not valid.')
 		self.workers = workers
-		self.fileManager = FM(projectID = projectID)
 
 	def _checkProjectID(self):
-		projectIDs = subprocess.run(['rclone', 'lsf', self.fileManager.cloudMasterDir], capture_output = True, decoding = 'utf-8')
+		projectIDs = subprocess.run(['rclone', 'lsf', self.fileManager.cloudMasterDir], capture_output = True, encoding = 'utf-8').stdout.split()
 		if self.projectID + '/' in projectIDs:
 			return True
 		else:
 			return False
 
 	def downloadData(self, dtype):
-		self.fileManager.downloadData(dtype)
+		self.fileManager.downloadProjectData(dtype)
 
 	def runPrepAnalysis(self):
-		self.projFileManager.downloadData('Prep')
 		prp_obj = PrP(self.fileManager)
 		prp_obj.validateInputData()
 		prp_obj.prepData()
-		self.createUploadFile(prp_obj.uploads)
-		self.createAnalysisUpdate('Prep', prp_obj)
-		self.backupAnalysis()
+		self.fileManager.uploadProjectData('Prep')
 		#self.localDelete()
 
 	def runDepthAnalysis(self):
-		dp_obj = DP(self.projFileManager, self.workers)
+		dp_obj = DP(self.fileManager)
 		dp_obj.validateInputData()
 		dp_obj.createSmoothedArray()
 		dp_obj.createRGBVideo()
-		self.createUploadFile(dp_obj.uploads)
-		self.createAnalysisUpdate('Depth', dp_obj)
+		self.fileManager.uploadProjectData('Depth')
+		#self.localDelete()
 
 	def runClusterAnalysis(self, videoIndex):
-		cp_obj = CP(self.projFileManager, self.workers, videoIndex)
+		cp_obj = CP(self.fileManager, self.workers, videoIndex)
 		cp_obj.validateInputData()
 		cp_obj.runClusterAnalysis()
-		self.createUploadFile(cp_obj.uploads)
-		self.createAnalysisUpdate('Cluster', cp_obj)
+		self.fileManager.uploadProjectData('Cluster')
 
-	def createAnnotationFrames(self):
-		cp_obj = CP(self.projFileManager, self.workers)
+	def run3DClassification(self):
+		cp_obj = TDCP(self.fileManager, self.workers, videoIndex)
 		cp_obj.validateInputData()
-		cp_obj.createAnnotationFrames()
-		self.createUploadFile(cp_obj.uploads)
-
+		cp_obj.runClusterAnalysis()
+		self.fileManager.uploadProjectData('3DClassifier')
 
 	def runMLClusterClassifier(self):
 		mlc_obj = MLP(self.projFileManager, self.mlFileManager)

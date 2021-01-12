@@ -3,7 +3,7 @@ from skimage import io
 import pandas as pd
 
 
-class MLClusterPreparer:
+class ThreeDClassifierPreparer:
 	# This class takes in directory information and a logfile containing depth information and performs the following:
 	# 1. Identifies tray using manual input
 	# 2. Interpolates and smooths depth data

@@ -22,8 +22,8 @@ class PrepPreparer:
 		assert os.path.exists(self.fileManager.localFiguresDir)
 		assert os.path.exists(self.fileManager.localAnalysisDir)
 
-		self.uploads = [(self.fileManager.localFiguresDir, self.fileManager.cloudFiguresDir, '0'), 
-						(self.fileManager.localAnalysisDir, self.fileManager.cloudAnalysisDir, '0')]
+		#self.uploads = [(self.fileManager.localFiguresDir, self.fileManager.cloudFiguresDir, '0'), 
+		#				(self.fileManager.localAnalysisDir, self.fileManager.cloudAnalysisDir, '0')]
 
 	def prepData(self):
 		self._identifyTray()
@@ -33,9 +33,9 @@ class PrepPreparer:
 
 	def _identifyTray(self, thresh = 10):
 
-		firstFrame = np.load(self.projFileManager.localFirstFrame)
-		lastFrame = np.load(self.projFileManager.localLastFrame)
-		depthRGB = cv2.imread(self.projFileManager.localDepthRGB)
+		firstFrame = np.load(self.fileManager.localFirstFrame)
+		lastFrame = np.load(self.fileManager.localLastFrame)
+		depthRGB = cv2.imread(self.fileManager.localDepthRGB)
 
 		# Create color image of depth change
 		cmap = plt.get_cmap('jet')
@@ -91,15 +91,15 @@ class PrepPreparer:
 				break
 
 		# Save and back up tray file
-		with open(self.projFileManager.localTrayFile, 'w') as f:
+		with open(self.fileManager.localTrayFile, 'w') as f:
 			print(','.join([str(x) for x in self.tray_r]), file = f)
 
 	def _cropVideo(self):
-		im1 =  cv2.imread(self.projFileManager.localPiRGB)
+		im1 =  cv2.imread(self.fileManager.localPiRGB)
 		im1_gray = cv2.cvtColor(im1,cv2.COLOR_BGR2GRAY)
 
 		while True:
-			im1 =  cv2.imread(self.projFileManager.localPiRGB)
+			im1 =  cv2.imread(self.fileManager.localPiRGB)
 			im1_gray = cv2.cvtColor(im1,cv2.COLOR_BGR2GRAY)
 
 			fig = plt.figure(figsize=(9, 12))
@@ -129,8 +129,8 @@ class PrepPreparer:
 				#self.videoCrop = ROI1.getMask(im1_gray)
 				break
 
-		np.save(self.projFileManager.localVideoCropFile, self.videoCrop)
-		np.save(self.projFileManager.localVideoPointsFile, self.videoPoints)
+		np.save(self.fileManager.localVideoCropFile, self.videoCrop)
+		np.save(self.fileManager.localVideoPointsFile, self.videoPoints)
 
 	def _registerDepthCamera(self):
 
@@ -138,8 +138,8 @@ class PrepPreparer:
 		print('Registering RGB and Depth data ')
 		# Find first videofile during the day
 
-		im1 = cv2.imread(self.projFileManager.localDepthRGB)
-		im2 = cv2.imread(self.projFileManager.localPiRGB)
+		im1 = cv2.imread(self.fileManager.localDepthRGB)
+		im2 = cv2.imread(self.fileManager.localPiRGB)
 		im1_gray = cv2.cvtColor(im1,cv2.COLOR_BGR2GRAY)
 		im2_gray = cv2.cvtColor(im2,cv2.COLOR_BGR2GRAY)
 
@@ -196,14 +196,14 @@ class PrepPreparer:
 			if userInput == 'q':
 				break
 
-		np.save(self.projFileManager.localTransMFile, self.transM)
+		np.save(self.fileManager.localTransMFile, self.transM)
 
 	def _summarizePrep(self):
-		firstFrame = np.load(self.projFileManager.localFirstFrame)
-		lastFrame = np.load(self.projFileManager.localLastFrame)
-		depthRGB = cv2.imread(self.projFileManager.localDepthRGB)
+		firstFrame = np.load(self.fileManager.localFirstFrame)
+		lastFrame = np.load(self.fileManager.localLastFrame)
+		depthRGB = cv2.imread(self.fileManager.localDepthRGB)
 		#depthRGB = cv2.cvtColor(depthRGB,cv2.COLOR_BGR2GRAY)
-		piRGB =  cv2.imread(self.projFileManager.localPiRGB)
+		piRGB =  cv2.imread(self.fileManager.localPiRGB)
 		piRGB = cv2.cvtColor(piRGB,cv2.COLOR_BGR2GRAY)
 
 		cmap = plt.get_cmap('jet')
@@ -232,7 +232,7 @@ class PrepPreparer:
 		ax4.add_patch(matplotlib.patches.Rectangle((self.tray_r[1],self.tray_r[0]), self.tray_r[3] - self.tray_r[1], self.tray_r[2] - self.tray_r[0], color="orange", fill = False, lw = 3.0))
 		ax4.set_title("Registered Pi RGB image with video and depth crop")
 
-		fig.savefig(self.projFileManager.localPrepSummaryFigure, dpi=300)
+		fig.savefig(self.fileManager.localPrepSummaryFigure, dpi=300)
 
 		#plt.show()
 

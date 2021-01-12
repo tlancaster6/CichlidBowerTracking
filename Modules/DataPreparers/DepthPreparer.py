@@ -3,7 +3,7 @@ import skvideo.io
 import numpy as np
 import pdb, os
 import matplotlib.pyplot as plt
-from Modules.DataObjects.LogParser import LogParser as LP
+from Modules.LogParser import LogParser as LP
 
 class DepthPreparer:
 	# This class takes in directory information and a logfile containing depth information and performs the following:
@@ -12,28 +12,27 @@ class DepthPreparer:
 	# 3. Automatically identifies bower location
 	# 4. Analyze building, shape, and other pertinent info of the bower
 
-	def __init__(self, projFileManager, workers):
+	def __init__(self, fileManager, workers = None):
 		
 		self.__version__ = '1.0.0'
-		self.projFileManager = projFileManager
+		self.fileManager = fileManager
 
 	def validateInputData(self):
-		assert os.path.exists(self.projFileManager.localLogfile)
-		self.lp = LP(self.projFileManager.localLogfile)
-
+		assert os.path.exists(self.fileManager.localLogfile)
+		self.lp = LP(self.fileManager.localLogfile)
+		pdb.set_trace()
 		bad_frames = 0
 		for frame in self.lp.frames:
 
-			if not os.path.exists(self.projFileManager.localMasterDir + frame.npy_file):
+			if not os.path.exists(self.fileManager.localProjectDir + frame.npy_file):
 				bad_frames += 1
-			if not os.path.exists(self.projFileManager.localMasterDir + frame.pic_file):
+			if not os.path.exists(self.fileManager.localProjectDir + frame.pic_file):
 				bad_frames += 1
 		print(bad_frames)
-		assert os.path.exists(self.projFileManager.localTroubleshootingDir)
-		assert os.path.exists(self.projFileManager.localAnalysisDir)
-
-		self.uploads = [(self.projFileManager.localTroubleshootingDir, self.projFileManager.cloudTroubleshootingDir, '0'), 
-						(self.projFileManager.localAnalysisDir, self.projFileManager.cloudAnalysisDir, '0')]
+		assert os.path.exists(self.fileManager.localTroubleshootingDir)
+		assert os.path.exists(self.fileManager.localAnalysisDir)
+		#self.uploads = [(self.fileManager.localTroubleshootingDir, self.fileManager.cloudTroubleshootingDir, '0'), 
+		#				(self.fileManager.localAnalysisDir, self.fileManager.cloudAnalysisDir, '0')]
 
 
 	def createSmoothedArray(self, totalGoodData = 0.3, minGoodData = 0.5, minUnits = 5, tunits = 71, order = 4):
@@ -41,7 +40,7 @@ class DepthPreparer:
 		rawDepthData = np.empty(shape = (len(self.lp.frames), self.lp.height, self.lp.width))
 		for i, frame in enumerate(self.lp.frames):                
 			try:
-				data = np.load(self.projFileManager.localMasterDir + frame.npy_file)
+				data = np.load(self.fileManager.localProjectDir + frame.npy_file)
 			except FileNotFoundError:
 				print('Bad frame: ' + str(i) + ', ' + frame.npy_file)
 				rawDepthData[i] = rawDepthData[i-1]
@@ -52,7 +51,7 @@ class DepthPreparer:
 		rawDepthData = 100/(-0.0037*rawDepthData + 3.33)
 		rawDepthData[(rawDepthData < 40) | (rawDepthData > 80)] = np.nan # Values that are too close or too far are set to np.nan
 
-		np.save(self.projFileManager.localRawDepthFile, rawDepthData)
+		np.save(self.fileManager.localRawDepthFile, rawDepthData)
 
 		# Make copy of raw data
 		interpDepthData = rawDepthData.copy()
@@ -85,23 +84,23 @@ class DepthPreparer:
 				else:
 					interpDepthData[:,i,j] = np.nan
 						
-		np.save(self.projFileManager.localInterpDepthFile, interpDepthData)
+		np.save(self.fileManager.localInterpDepthFile, interpDepthData)
 		smoothDepthData = scipy.signal.savgol_filter(interpDepthData, tunits, order, axis = 0, mode = 'mirror')
-		np.save(self.projFileManager.localSmoothDepthFile, smoothDepthData)
+		np.save(self.fileManager.localSmoothDepthFile, smoothDepthData)
 
 	def createRGBVideo(self):
 		pass
-		self.lp = LP(self.projFileManager.localLogfile)
+		self.lp = LP(self.fileManager.localLogfile)
 		for i, frame in enumerate(self.lp.frames): 
-			depthRGB = plt.imread(self.projFileManager.localMasterDir + frame.pic_file)
+			depthRGB = plt.imread(self.fileManager.localProjectDir + frame.pic_file)
 			if depthRGB is None:
-				print(self.projFileManager.localMasterDir + frame.pic_file)
+				print(self.fileManager.localProjectDir + frame.pic_file)
 				continue
 			if i==0:
 				#pdb.set_trace()
 
 				outMovie = skvideo.io.FFmpegWriter("outputvideo.mp4")
-				#outMovie = cv2.VideoWriter(self.projFileManager.localRGBDepthVideo, cv2.VideoWriter_fourcc(*"mp4v"), 30.0, (depthRGB.shape[1],depthRGB.shape[0]))
+				#outMovie = cv2.VideoWriter(self.fileManager.localRGBDepthVideo, cv2.VideoWriter_fourcc(*"mp4v"), 30.0, (depthRGB.shape[1],depthRGB.shape[0]))
 			outMovie.writeFrame(depthRGB)
 
 		outMovie.close()
