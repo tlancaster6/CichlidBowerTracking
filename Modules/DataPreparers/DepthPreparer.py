@@ -97,7 +97,7 @@ class DepthPreparer:
 			if i==0:
 				#pdb.set_trace()
 
-				outMovie = skvideo.io.FFmpegWriter(self.localRGBDepthVideo)
+				outMovie = skvideo.io.FFmpegWriter(self.fileManager.localRGBDepthVideo)
 				#outMovie = cv2.VideoWriter(self.fileManager.localRGBDepthVideo, cv2.VideoWriter_fourcc(*"mp4v"), 30.0, (depthRGB.shape[1],depthRGB.shape[0]))
 			outMovie.writeFrame(depthRGB)
 
