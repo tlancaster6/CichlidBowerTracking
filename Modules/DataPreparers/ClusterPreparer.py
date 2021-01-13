@@ -53,6 +53,8 @@ class ClusterPreparer():
 		args.extend(['--Video_start_time', str(self.videoObj.startTime)])
 		args.extend(['--VideoID', self.fileManager.lp.movies[0].baseName])
 
+		pdb.set_trace()
+
 		subprocess.run(args)
 
 
