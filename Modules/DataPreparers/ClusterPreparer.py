@@ -1,4 +1,4 @@
-import subprocess, os
+import subprocess, os, pdb
 
 
 class ClusterPreparer():
@@ -20,6 +20,7 @@ class ClusterPreparer():
 
 	def validateInputData(self):
 		
+		pdb.set_trace()
 		assert os.path.exists(self.videoObj.mp4_file)
 		assert os.path.exists(self.fileManager.localTroubleshootingDir)
 		assert os.path.exists(self.fileManager.localAnalysisDir)
