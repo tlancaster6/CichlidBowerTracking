@@ -253,6 +253,7 @@ class FileManager():
 
 	def returnVideoObject(self, index):
 		from Modules.LogParser import LogParser as LP
+		self._createParameters()
 
 		self.downloadData(self.localLogfile)
 		self.lp = LP(self.localLogfile)
