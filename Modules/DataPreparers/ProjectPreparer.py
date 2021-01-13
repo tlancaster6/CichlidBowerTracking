@@ -35,16 +35,12 @@ class ProjectPreparer():
 		prp_obj = PrP(self.fileManager)
 		prp_obj.validateInputData()
 		prp_obj.prepData()
-		#self.fileManager.uploadProjectData('Prep')
-		#self.localDelete()
 
 	def runDepthAnalysis(self):
 		dp_obj = DP(self.fileManager)
 		dp_obj.validateInputData()
 		dp_obj.createSmoothedArray()
 		dp_obj.createRGBVideo()
-		#self.fileManager.uploadProjectData('Depth')
-		#self.localDelete()
 
 	def runClusterAnalysis(self, videoIndex):
 		cp_obj = CP(self.fileManager, videoIndex, self.workers)

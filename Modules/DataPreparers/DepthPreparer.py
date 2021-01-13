@@ -88,7 +88,6 @@ class DepthPreparer:
 		np.save(self.fileManager.localSmoothDepthFile, smoothDepthData)
 
 	def createRGBVideo(self):
-		pass
 		self.lp = LP(self.fileManager.localLogfile)
 		for i, frame in enumerate(self.lp.frames): 
 			depthRGB = plt.imread(self.fileManager.localProjectDir + frame.pic_file)
@@ -98,7 +97,7 @@ class DepthPreparer:
 			if i==0:
 				#pdb.set_trace()
 
-				outMovie = skvideo.io.FFmpegWriter("outputvideo.mp4")
+				outMovie = skvideo.io.FFmpegWriter(self.localRGBDepthVideo)
 				#outMovie = cv2.VideoWriter(self.fileManager.localRGBDepthVideo, cv2.VideoWriter_fourcc(*"mp4v"), 30.0, (depthRGB.shape[1],depthRGB.shape[0]))
 			outMovie.writeFrame(depthRGB)
 
