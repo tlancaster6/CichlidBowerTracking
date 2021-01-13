@@ -40,7 +40,7 @@ class ClusterPreparer():
 	def runClusterAnalysis(self):
 		command = ['python3', 'CichlidActionDetection/VideoFocus.py']
 		command.extend(['--Movie_file', self.videoObj.localVideoFile])
-		command.extend(['--Num_workers', str(self.workers)]
+		command.extend(['--Num_workers', str(self.workers)])
 		command.extend(['--Log', self.videoObj.localHMMFile + '.log'])
 		command.extend(['--HMM_temp_directory', self.videoObj.localTempDir])
 		command.extend(['--HMM_filename', self.videoObj.localHMMFile])
