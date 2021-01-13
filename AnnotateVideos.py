@@ -1,6 +1,6 @@
 
 
-from Modules.FileManagers.FileManager import FileManager as FM
+from FileManagers.FileManager import FileManager as FM
 
 import pdb, datetime, os, subprocess, argparse, random, cv2
 import pandas as pd

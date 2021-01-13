@@ -13,4 +13,4 @@ if len(args.Initials) != 3:
 	sys.exit()
 
 pp_obj = PP(args.ProjectID)
-pp_obj.manuallyLabelVideos(args.Initials.upper(), args.Number)
+pp_obj.manuallyLabelFrames(args.Initials.upper(), args.Number)
