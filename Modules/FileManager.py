@@ -143,7 +143,7 @@ class FileManager():
 			self.createDirectory(self.localManualLabelFramesDir)
 			self.createDirectory(self.localManualLabelFramesDir[:-1] + '_pngs')
 			self.downloadData(self.localLogfile)
-			self.downloadData(self.localVideoFile)
+			self.downloadData(videoObj.localVideoFile)
 
 		elif dtype == '3DClassifier':
 			self.createMLData()
