@@ -51,7 +51,7 @@ class ClusterPreparer():
 		args.extend(['--ML_frames_directory', self.fileManager.localManualLabelFramesDir])
 		args.extend(['--ML_videos_directory', self.fileManager.localManualLabelClipsDir])
 		args.extend(['--Video_start_time', str(self.videoObj.startTime)])
-		args.extend(['--VideoID', self.lp.movies[0].baseName])
+		args.extend(['--VideoID', self.fileManager.lp.movies[0].baseName])
 
 		subprocess.run(args)
 
