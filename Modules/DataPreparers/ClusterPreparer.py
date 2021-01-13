@@ -20,8 +20,7 @@ class ClusterPreparer():
 
 	def validateInputData(self):
 		
-		pdb.set_trace()
-		assert os.path.exists(self.videoObj.mp4_file)
+		assert os.path.exists(self.videoObj.localVideoFile)
 		assert os.path.exists(self.fileManager.localTroubleshootingDir)
 		assert os.path.exists(self.fileManager.localAnalysisDir)
 		assert os.path.exists(self.fileManager.localTempDir)
@@ -40,7 +39,7 @@ class ClusterPreparer():
 
 	def runClusterAnalysis(self):
 		args = ['python3', 'CichlidActionDetection/VideoFocus.py']
-		args.extend(['--Movie_file', self.videoObj.mp4_file])
+		args.extend(['--Movie_file', self.videoObj.localVideoFile])
 		args.extend(['--Num_workers', self.workers])
 		args.extend(['--Log', self.videoObj.localHMMFile + '.log'])
 		args.extend(['--HMM_temp_directory', self.videoObj.localTempDir])
