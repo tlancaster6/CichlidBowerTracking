@@ -36,11 +36,10 @@ class DepthPreparer:
 
 	def createSmoothedArray(self, totalGoodData = 0.3, minGoodData = 0.5, minUnits = 5, tunits = 71, order = 4):
 		# Download raw data and create new array to store it
-		#rawDepthData = np.empty(shape = (len(self.lp.frames), self.lp.height, self.lp.width))
+		rawDepthData = np.empty(shape = (len(self.lp.frames), self.lp.height, self.lp.width))
 		for i, frame in enumerate(self.lp.frames):                
 			try:
 				data = np.load(self.fileManager.localProjectDir + frame.npy_file)
-				pdb.set_trace()
 			except FileNotFoundError:
 				print('Bad frame: ' + str(i) + ', ' + frame.npy_file)
 				rawDepthData[i] = rawDepthData[i-1]

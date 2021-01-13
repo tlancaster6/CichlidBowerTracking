@@ -16,6 +16,8 @@ class LogParser:
         self.logfile = logfile
         self.master_directory = logfile.replace(logfile.split('/')[-1], '') + '/'
         self.parse_log()
+        self.height = 480 # This is a temporary fix to hardcode in these values
+        self.width = 640
 
     def parse_log(self):
 
