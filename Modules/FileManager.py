@@ -116,7 +116,7 @@ class FileManager():
 		self.localBoxedFishFile = self.localObjectDetectionDir + 'BoxedFish.csv'
 		self.localBoxedFishDir = self.localObjectDetectionDir + 'BoxedImages/'
 
-	def downloadProjectData(self, dtype):
+	def downloadProjectData(self, dtype, videoIndex):
 
 		if dtype == 'Prep':
 			self.createDirectory(self.localMasterDir)
@@ -133,7 +133,7 @@ class FileManager():
 			self.downloadData(self.localFrameDir, tarred = True)
 
 		elif dtype == 'Cluster':
-			self.createMLData()
+			videoObj = self.returnVideoObject(videoIndex)
 			self.createDirectory(self.localMasterDir)
 			self.createDirectory(self.localAnalysisDir)
 			self.createDirectory(self.localTroubleshootingDir)
@@ -143,9 +143,10 @@ class FileManager():
 			self.createDirectory(self.localManualLabelFramesDir)
 			self.createDirectory(self.localManualLabelFramesDir[:-1] + '_pngs')
 			self.downloadData(self.localLogfile)
-			self.downloadData(self.localVideoDir)
+			self.downloadData(self.localVideoFile)
 
 		elif dtype == '3DClassifier':
+			self.createMLData()
 			self.createDirectory(self.localMasterDir)
 			self.createDirectory(self.local3DModelDir)
 			self.downloadData(self.localLogfile)

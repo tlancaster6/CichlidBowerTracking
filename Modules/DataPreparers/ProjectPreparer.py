@@ -25,11 +25,11 @@ class ProjectPreparer():
 		else:
 			return False
 
-	def downloadData(self, dtype):
-		self.fileManager.downloadProjectData(dtype)
+	def downloadData(self, dtype, videoIndex = None):
+		self.fileManager.downloadProjectData(dtype, videoIndex)
 
-	def uploadData(self, dtype):
-		self.fileManager.uploadProjectData(dtype)
+	def uploadData(self, dtype, videoIndex = None):
+		self.fileManager.uploadProjectData(dtype, videoIndex)
 
 	def runPrepAnalysis(self):
 		prp_obj = PrP(self.fileManager)
