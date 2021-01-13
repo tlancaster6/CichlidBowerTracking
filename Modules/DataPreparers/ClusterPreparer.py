@@ -38,7 +38,7 @@ class ClusterPreparer():
 						]"""
 
 	def runClusterAnalysis(self):
-		command = ['python3', 'CichlidActionDetection/VideoFocus.py']
+		command = ['python3', 'VideoFocus.py']
 		command.extend(['--Movie_file', self.videoObj.localVideoFile])
 		command.extend(['--Num_workers', str(self.workers)])
 		command.extend(['--Log', self.videoObj.localHMMFile + '.log'])
@@ -52,10 +52,10 @@ class ClusterPreparer():
 		command.extend(['--ML_videos_directory', self.fileManager.localManualLabelClipsDir])
 		command.extend(['--Video_start_time', str(self.videoObj.startTime)])
 		command.extend(['--VideoID', self.fileManager.lp.movies[0].baseName])
-
-		pdb.set_trace()
-
+		
+		os.chdir('CichlidActionDetection')
 		subprocess.run(command)
+		os.chdir('..')
 
 
 
