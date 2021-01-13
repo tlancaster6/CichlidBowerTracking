@@ -4,7 +4,7 @@ from Modules.FileManager import FileManager as FM
 from Modules.DataPreparers.PrepPreparer import PrepPreparer as PrP
 from Modules.DataPreparers.DepthPreparer import DepthPreparer as DP
 from Modules.DataPreparers.ClusterPreparer import ClusterPreparer as CP
-from Modules.DataPreparers.ThreeDClassifierPreparer import MLClusterPreparer as TDCP
+from Modules.DataPreparers.ThreeDClassifierPreparer import ThreeDClassifierPreparer as TDCP
 #from Modules.DataPreparers.FigurePreparer import FigurePreparer as FP
 
 class ProjectPreparer():
