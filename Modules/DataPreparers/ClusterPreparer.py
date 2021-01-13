@@ -13,7 +13,7 @@ class ClusterPreparer():
 		self.__version__ = '1.0.0'
 
 		self.fileManager = fileManager
-		self.videoObj = self.fileManger.returnVideoObject(videoIndex)
+		self.videoObj = self.fileManager.returnVideoObject(videoIndex)
 		self.workers = workers
 		self.videoIndex = videoIndex
 
