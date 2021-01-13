@@ -20,7 +20,7 @@ class ClusterPreparer():
 
 	def validateInputData(self):
 		
-		assert os.path.exists(self.fileManager.localMasterDir + self.videoObj.mp4_file)
+		assert os.path.exists(self.videoObj.mp4_file)
 		assert os.path.exists(self.fileManager.localTroubleshootingDir)
 		assert os.path.exists(self.fileManager.localAnalysisDir)
 		assert os.path.exists(self.fileManager.localTempDir)
