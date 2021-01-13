@@ -20,7 +20,6 @@ class DepthPreparer:
 	def validateInputData(self):
 		assert os.path.exists(self.fileManager.localLogfile)
 		self.lp = LP(self.fileManager.localLogfile)
-		pdb.set_trace()
 		bad_frames = 0
 		for frame in self.lp.frames:
 
