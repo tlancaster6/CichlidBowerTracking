@@ -1,6 +1,5 @@
 import subprocess, os
 
-from Modules.DataObjects.LogParser import LogParser as LP
 
 class ClusterPreparer():
 	# This class takes in directory information and a logfile containing depth information and performs the following:
