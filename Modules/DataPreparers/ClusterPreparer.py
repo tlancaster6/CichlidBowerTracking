@@ -38,24 +38,24 @@ class ClusterPreparer():
 						]"""
 
 	def runClusterAnalysis(self):
-		args = ['python3', 'CichlidActionDetection/VideoFocus.py']
-		args.extend(['--Movie_file', self.videoObj.localVideoFile])
-		args.extend(['--Num_workers', self.workers])
-		args.extend(['--Log', self.videoObj.localHMMFile + '.log'])
-		args.extend(['--HMM_temp_directory', self.videoObj.localTempDir])
-		args.extend(['--HMM_filename', self.videoObj.localHMMFile])
-		args.extend(['--HMM_transition_filename', self.videoObj.localRawCoordsFile])
-		args.extend(['--Cl_labeled_transition_filename', self.videoObj.localLabeledCoordsFile])
-		args.extend(['--Cl_labeled_cluster_filename', self.videoObj.localLabeledClustersFile])
-		args.extend(['--Cl_videos_directory', self.fileManager.localAllClipsDir])
-		args.extend(['--ML_frames_directory', self.fileManager.localManualLabelFramesDir])
-		args.extend(['--ML_videos_directory', self.fileManager.localManualLabelClipsDir])
-		args.extend(['--Video_start_time', str(self.videoObj.startTime)])
-		args.extend(['--VideoID', self.fileManager.lp.movies[0].baseName])
+		command = ['python3', 'CichlidActionDetection/VideoFocus.py']
+		command.extend(['--Movie_file', self.videoObj.localVideoFile])
+		command.extend(['--Num_workers', self.workers])
+		command.extend(['--Log', self.videoObj.localHMMFile + '.log'])
+		command.extend(['--HMM_temp_directory', self.videoObj.localTempDir])
+		command.extend(['--HMM_filename', self.videoObj.localHMMFile])
+		command.extend(['--HMM_transition_filename', self.videoObj.localRawCoordsFile])
+		command.extend(['--Cl_labeled_transition_filename', self.videoObj.localLabeledCoordsFile])
+		command.extend(['--Cl_labeled_cluster_filename', self.videoObj.localLabeledClustersFile])
+		command.extend(['--Cl_videos_directory', self.fileManager.localAllClipsDir])
+		command.extend(['--ML_frames_directory', self.fileManager.localManualLabelFramesDir])
+		command.extend(['--ML_videos_directory', self.fileManager.localManualLabelClipsDir])
+		command.extend(['--Video_start_time', str(self.videoObj.startTime)])
+		command.extend(['--VideoID', self.fileManager.lp.movies[0].baseName])
 
 		pdb.set_trace()
 
-		subprocess.run(args)
+		subprocess.run(command)
 
 
 
