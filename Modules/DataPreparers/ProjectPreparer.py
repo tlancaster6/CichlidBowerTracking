@@ -28,6 +28,9 @@ class ProjectPreparer():
 	def downloadData(self, dtype):
 		self.fileManager.downloadProjectData(dtype)
 
+	def uploadData(self, dtype):
+		self.fileManager.uploadProjectData(dtype)
+
 	def runPrepAnalysis(self):
 		prp_obj = PrP(self.fileManager)
 		prp_obj.validateInputData()

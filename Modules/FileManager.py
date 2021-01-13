@@ -21,7 +21,7 @@ class FileManager():
 			if output.stderr == '':
 				self.cloudMasterDir = self.rcloneRemote + 'BioSci-' + masterDir
 			else:
-				raise Exception('Cant find master directory (' + masterDir + ') in rclone remote (' + rcloneRemote + '')
+				raise Exception('Cant find master directory (' + masterDir + ') in rclone remote (' + rcloneRemote + ')')
 
 		if projectID is not None:
 			self.createProjectData(projectID)
@@ -81,6 +81,7 @@ class FileManager():
 
 		# Files created by manual labeler preparer
 		self.localLabeledFramesFile = self.localAnalysisDir + 'LabeledFrames.csv'
+		self.localNewLabeledVideosFile = self.localAnalysisDir + 'NewLabeledVideos.csv'
 
 		# Files created by manual labeler preparer
 
@@ -154,6 +155,12 @@ class FileManager():
 
 		elif dtype == 'FishDetection':
 			pass
+
+		elif dtype == 'ManualLabelVideos':
+			self.createDirectory(self.localMasterDir)
+			self.createDirectory(self.localAnalysisDir)
+			self.downloadData(self.localManualLabelClipsDir, tarred = True)
+			self.downloadData(self.localLabeledClipsFile)
 
 		elif dtype == 'ManualAnnotation':
 			self.createDirectory(self.localMasterDir)
