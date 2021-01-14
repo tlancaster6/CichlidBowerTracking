@@ -270,8 +270,8 @@ class FileManager():
 		videoObj.localLabeledCoordsFile = self.localTroubleshootingDir + videoObj.baseName + '_labeledCoords.npy'
 		videoObj.localLabeledClustersFile = self.localTroubleshootingDir + videoObj.baseName + '_labeledClusters.csv'
 		videoObj.localAllClipsDir = self.localAllClipsDir + videoObj.baseName + '/'
-		videoObj.localManualClipsDir = self.localManualLabelClipsDir + videoObj.baseName + '/'
-		videoObj.localManualFramesDir = self.localManualLabelFramesDir + videoObj.baseName + '/'
+		videoObj.localManualLabelClipsDir = self.localManualLabelClipsDir + videoObj.baseName + '/'
+		videoObj.localManualLabelFramesDir = self.localManualLabelFramesDir + videoObj.baseName + '/'
 		videoObj.localAllClipsPrefix = self.localAllClipsDir + self.lp.projectID + '_' + videoObj.baseName
 		videoObj.localManualLabelClipsPrefix = self.localManualLabelClipsDir + self.lp.projectID + '_' + videoObj.baseName
 		videoObj.localIntensityFile = self.localFiguresDir + videoObj.baseName + '_intensity.pdf'
