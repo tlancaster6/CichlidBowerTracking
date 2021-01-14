@@ -14,7 +14,7 @@ class FileManager():
 		self.rcloneRemote = rcloneRemote
 		# On some computers, the first directory is McGrath, on others it's BioSci-McGrath. Use rclone to figure out which
 		output = subprocess.run(['rclone', 'lsf', self.rcloneRemote + masterDir], capture_output = True, encoding = 'utf-8')
-		else:
+		if output.stderr != '':
 			output = subprocess.run(['rclone', 'lsf', self.rcloneRemote + 'BioSci-' + masterDir], capture_output = True, encoding = 'utf-8')
 			if output.stderr == '':
 				self.cloudMasterDir = self.rcloneRemote + 'BioSci-' + masterDir
@@ -48,7 +48,7 @@ class FileManager():
 
 		# Directories created by analysis
 		self.localAnalysisDir = self.localProjectDir + 'MasterAnalysisFiles/'
-		self.localFiguresDir = self.localProjectDir + 'Figures/'
+		self.localSummaryDir = self.localProjectDir + 'Summary/'
 		self.localAllClipsDir = self.localProjectDir + 'AllClips/'
 		self.localManualLabelClipsDir = self.localProjectDir + 'MLClips/'
 		self.localManualLabelFramesDir = self.localProjectDir + 'MLFrames/'
@@ -66,7 +66,7 @@ class FileManager():
 		self.localTransMFile = self.localAnalysisDir + 'TransMFile.npy'
 		self.localVideoCropFile = self.localAnalysisDir + 'VideoCrop.npy'
 		self.localVideoPointsFile = self.localAnalysisDir + 'VideoPoints.npy'
-		self.localPrepSummaryFigure = self.localFiguresDir + 'PrepSummary.pdf' 
+		self.localPrepSummaryFigure = self.localSummaryDir + 'PrepSummary.pdf'
 
 		# Files created by depth preparer
 		self.localSmoothDepthFile = self.localAnalysisDir + 'smoothedDepthData.npy'
@@ -118,7 +118,7 @@ class FileManager():
 		if dtype == 'Prep':
 			self.createDirectory(self.localMasterDir)
 			self.createDirectory(self.localAnalysisDir)
-			self.createDirectory(self.localFiguresDir)
+			self.createDirectory(self.localSummaryDir)
 			self.downloadData(self.localPrepDir)
 			self.downloadData(self.localLogfile)
 
@@ -162,11 +162,12 @@ class FileManager():
 			except FileNotFoundError:
 				pass
 
-		elif dtype == 'Figures':
+		elif dtype == 'Summary':
 			self.createDirectory(self.localMasterDir)
-			self.createDirectory(self.localFiguresDir)
+			self.createDirectory(self.localSummaryDir)
 			self.downloadData(self.localLogfile)
 			self.downloadData(self.localAnalysisDir)
+			self.downloadData(self.localTroubleshootingDir)
 
 		elif dtype == 'All':
 			self.createDirectory(self.localMasterDir)
@@ -239,7 +240,7 @@ class FileManager():
 		videoObj.localLabeledClustersFile = self.localTroubleshootingDir + videoObj.baseName + '_labeledClusters.csv'
 		videoObj.localAllClipsPrefix = self.localAllClipsDir + self.lp.projectID + '_' + videoObj.baseName
 		videoObj.localManualLabelClipsPrefix = self.localManualLabelClipsDir + self.lp.projectID + '_' + videoObj.baseName
-		videoObj.localIntensityFile = self.localFiguresDir + videoObj.baseName + '_intensity.pdf'
+		videoObj.localIntensityFile = self.localSummaryDir + videoObj.baseName + '_intensity.pdf'
 		videoObj.localTempDir = self.localTempDir + videoObj.baseName + '/'
 		videoObj.nManualLabelClips = int(self.nManualLabelClips/len(self.lp.movies))
 		videoObj.nManualLabelFrames = int(self.nManualLabelFrames/len(self.lp.movies))
@@ -251,9 +252,16 @@ class FileManager():
 	def _createParameters(self):
 
 		# Depth related parameters
-		self.hourlyThreshold = 0.2
-		self.dailyThreshold = 0.4
-		self.totalThreshold = 1.0
+		self.hourlyDepthThreshold = 0.2	 # cm
+		self.dailyDepthThreshold = 0.4   # cm
+		self.totalDepthThreshold = 1.0   # cm
+
+		# Cluster related parameters
+		self.hourlyClusterThreshold = 0.6  # events/cm^2
+		self.dailyClusterThreshold = 1.2   # events/cm^2
+		self.totalClusterThreshold = 3.0   # events/cm^2
+
+		# Parameters related to cluster and depth
 		self.hourlyMinPixels = 1000
 		self.dailyMinPixels = 1000
 		self.totalMinPixels = 1000
