@@ -72,7 +72,7 @@ class FileManager():
 
 		# Files created by depth preparer
 		self.localSmoothDepthFile = self.localAnalysisDir + 'smoothedDepthData.npy'
-		self.localRGBDepthVideo = self.localAnalysisDir + 'DepthRGBVideo.mp4'
+		self.localRGBDepthVideo = self.localFiguresDir + 'DepthRGBVideo.mp4'
 		self.localRawDepthFile = self.localTroubleshootingDir + 'rawDepthData.npy'
 		self.localInterpDepthFile = self.localTroubleshootingDir + 'interpDepthData.npy'
 
@@ -187,7 +187,6 @@ class FileManager():
 			self.createDirectory(self.localAllClipsDir)
 			self.createDirectory(self.localManualLabelClipsDir)
 			self.createDirectory(self.localManualLabelFramesDir)
-			self.createDirectory(self.localManualLabelFramesDir[:-1] + '_pngs')
 			self.downloadData(self.localLogfile)
 			self.downloadData(self.localVideoDir)
 			self.downloadData(self.localFrameDir, tarred = True)
@@ -196,7 +195,7 @@ class FileManager():
 		else:
 			raise KeyError('Unknown key: ' + dtype)
 			
-	def uploadProjectData(self, dtype):
+	def uploadProjectData(self, dtype, videoIndex):
 		if dtype == 'Prep':
 			self.uploadData(self.localTrayFile)
 			self.uploadData(self.localTransMFile)
@@ -208,10 +207,17 @@ class FileManager():
 			self.uploadData(self.localRGBDepthVideo)
 			self.uploadData(self.localRawDepthFile)
 			self.uploadData(self.localInterpDepthFile)
+		elif dtype == 'Cluster':
+			videoObj = self.returnVideoObject(videoIndex)
+			self.uploadData(self.localTroubleshootingDir)
+			self.uploadData(videoIndex.localAllClipsDir, tarred = True)
+			self.uploadData(videoIndex.localManualLabelClipsDir, tarred = True)
+			self.uploadData(videoIndex.localManualLabelFramesDir, tarred = True)
+
 		else:
 			raise KeyError('Unknown key: ' + dtype)
 
-	def downloadAnnotationData(self, dtype):
+	"""def downloadAnnotationData(self, dtype):
 		if dtype == 'LabeledVideos':
 			good_count, bad_count = 0,0
 
@@ -249,7 +255,7 @@ class FileManager():
 				if '.tar' in bp:
 					self.downloadData(self.localBoxedFishDir + bp.replace('.tar',''), tarred = True)
 		else:
-			raise KeyError('Unknown key: ' + dtype)
+			raise KeyError('Unknown key: ' + dtype)"""
 
 	def returnVideoObject(self, index):
 		from Modules.LogParser import LogParser as LP
@@ -263,6 +269,9 @@ class FileManager():
 		videoObj.localRawCoordsFile = self.localTroubleshootingDir + videoObj.baseName + '_rawCoords.npy'
 		videoObj.localLabeledCoordsFile = self.localTroubleshootingDir + videoObj.baseName + '_labeledCoords.npy'
 		videoObj.localLabeledClustersFile = self.localTroubleshootingDir + videoObj.baseName + '_labeledClusters.csv'
+		videoObj.localAllClipsDir = self.localAllClipsDir + videoObj.baseName + '/'
+		videoObj.localManualClipsDir = self.localManualLabelClipsDir + videoObj.baseName + '/'
+		videoObj.localManualFramesDir = self.localManualLabelFramesDir + videoObj.baseName + '/'
 		videoObj.localAllClipsPrefix = self.localAllClipsDir + self.lp.projectID + '_' + videoObj.baseName
 		videoObj.localManualLabelClipsPrefix = self.localManualLabelClipsDir + self.lp.projectID + '_' + videoObj.baseName
 		videoObj.localIntensityFile = self.localFiguresDir + videoObj.baseName + '_intensity.pdf'
