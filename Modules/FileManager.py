@@ -213,9 +213,9 @@ class FileManager():
 		elif dtype == 'Cluster':
 			videoObj = self.returnVideoObject(videoIndex)
 			self.uploadData(self.localTroubleshootingDir)
-			self.uploadData(videoIndex.localAllClipsDir, tarred = True)
-			self.uploadData(videoIndex.localManualLabelClipsDir, tarred = True)
-			self.uploadData(videoIndex.localManualLabelFramesDir, tarred = True)
+			self.uploadData(videoObj.localAllClipsDir, tarred = True)
+			self.uploadData(videoObj.localManualLabelClipsDir, tarred = True)
+			self.uploadData(videoObj.localManualLabelFramesDir, tarred = True)
 
 		else:
 			raise KeyError('Unknown key: ' + dtype)
