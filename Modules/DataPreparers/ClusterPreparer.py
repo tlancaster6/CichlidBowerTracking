@@ -47,9 +47,9 @@ class ClusterPreparer():
 		command.extend(['--HMM_transition_filename', self.videoObj.localRawCoordsFile])
 		command.extend(['--Cl_labeled_transition_filename', self.videoObj.localLabeledCoordsFile])
 		command.extend(['--Cl_labeled_cluster_filename', self.videoObj.localLabeledClustersFile])
-		command.extend(['--Cl_videos_directory', self.fileManager.localAllClipsDir])
-		command.extend(['--ML_frames_directory', self.fileManager.localManualLabelFramesDir])
-		command.extend(['--ML_videos_directory', self.fileManager.localManualLabelClipsDir])
+		command.extend(['--Cl_videos_directory', self.videoObj.localAllClipsDir])
+		command.extend(['--ML_frames_directory', self.videoObj.localManualLabelFramesDir])
+		command.extend(['--ML_videos_directory', self.videoObj.localManualLabelClipsDir])
 		command.extend(['--Video_start_time', str(self.videoObj.startTime)])
 		command.extend(['--VideoID', self.fileManager.lp.movies[0].baseName])
 		
