@@ -160,7 +160,10 @@ class FileManager():
 		elif dtype == 'ManualLabelVideos':
 			self.createDirectory(self.localMasterDir)
 			self.createDirectory(self.localAnalysisDir)
-			self.downloadData(self.localManualLabelClipsDir, tarred = True)
+			self.downloadData(self.localManualLabelClipsDir, tarred = False)
+			for d in [x for x in os.listdir(self.localManualLabelClipsDir) if '.tar' in x]:
+				output = subprocess.run(['tar', '-xvf', self.localManualClipsDir + d, '-C', self.localManualClipsDir, '--strip-components', '1'], capture_output = True, encoding = 'utf-8')
+				os.remove(self.localManualLabelClipsDir + d)
 			self.downloadData(self.localLabeledClipsFile)
 
 		elif dtype == 'ManualAnnotation':
@@ -391,7 +394,7 @@ class FileManager():
 
 		if os.path.isdir(local_path + relative_name):
 			output = subprocess.run(['rclone', 'copy', local_path + relative_name, cloud_path + relative_name], capture_output = True, encoding = 'utf-8')
-			subprocess.run(['rclone', 'check', local_path + relative_name, cloud_path + relative_name], check = True)
+			#subprocess.run(['rclone', 'check', local_path + relative_name, cloud_path + relative_name], check = True)
 
 		elif os.path.isfile(local_path + relative_name):
 			print(['rclone', 'copy', local_path + relative_name, cloud_path])
