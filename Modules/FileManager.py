@@ -1,14 +1,15 @@
 import os, subprocess, pdb, platform
 import pandas as pd
+from pathlib import Path
 
 class FileManager():
-	def __init__(self, projectID = None, rcloneRemote = 'cichlidVideo:', masterDir = 'McGrath/Apps/CichlidPiData/'):
+	def __init__(self, projectID = None, rcloneRemote = 'cichlidVideo:', masterDir = 'McGrath/Apps/CichlidPiData'):
 
 		# Identify directory for temporary local files
 		if platform.node() == 'raspberrypi' or 'Pi' in platform.node():
 			self._identifyPiDirectory()
 		else:
-			self.localMasterDir = os.getenv('HOME') + '/' + 'Temp/CichlidAnalyzer/'
+			self.localMasterDir = Path.home() / 'Temp' / 'CichlidAnalyzer'
 
 		# Identify cloud directory for rclone
 		self.rcloneRemote = rcloneRemote
@@ -32,96 +33,98 @@ class FileManager():
 		self.createAnnotationData()
 
 	def createPiData(self):
-		self.localCredentialSpreadsheet = self.localMasterDir + '__CredentialFiles/SAcredentials.json'
-		self.localCredentialDrive = self.localMasterDir + '__CredentialFiles/DriveCredentials.txt'
+		self.localCredentialSpreadsheet = self.localMasterDir / '__CredentialFiles/SAcredentials.json'
+		self.localCredentialDrive = self.localMasterDir / '__CredentialFiles/DriveCredentials.txt'
 
 	def createProjectData(self, projectID):
 		self.projectID = projectID
-		self.localProjectDir = self.localMasterDir + projectID + '/'
+		self.localProjectDir = self.localMasterDir / projectID
 
 		# Create logfile
-		self.localLogfile = self.localProjectDir + 'Logfile.txt'
+		self.localLogfile = self.localProjectDir / 'Logfile.txt'
 
 		# Data directories created by tracker
-		self.localPrepDir = self.localProjectDir + 'PrepFiles/'
-		self.localFrameDir = self.localProjectDir + 'Frames/'
-		self.localVideoDir = self.localProjectDir + 'Videos/'
-		self.localBackupDir = self.localProjectDir + 'Backups/'
+		self.localPrepDir = self.localProjectDir / 'PrepFiles'
+		self.localFrameDir = self.localProjectDir / 'Frames'
+		self.localVideoDir = self.localProjectDir / 'Videos'
+		self.localBackupDir = self.localProjectDir / 'Backups'
 
 		# Directories created by analysis
-		self.localAnalysisDir = self.localProjectDir + 'MasterAnalysisFiles/'
-		self.localFiguresDir = self.localProjectDir + 'Figures/'
-		self.localAllClipsDir = self.localProjectDir + 'AllClips/'
-		self.localManualLabelClipsDir = self.localProjectDir + 'MLClips/'
-		self.localManualLabelFramesDir = self.localProjectDir + 'MLFrames/'
-		self.localTroubleshootingDir = self.localProjectDir + 'Troubleshooting/'
-		self.localTempDir = self.localProjectDir + 'Temp/'
+		self.localAnalysisDir = self.localProjectDir / 'MasterAnalysisFiles'
+		self.localSummaryDir = self.localProjectDir / 'Summary'
+		self.localAllClipsDir = self.localProjectDir / 'AllClips'
+		self.localManualLabelClipsDir = self.localProjectDir / 'MLClips'
+		self.localManualLabelFramesDir = self.localProjectDir / 'MLFrames'
+		self.localTroubleshootingDir = self.localProjectDir / 'Troubleshooting'
+		self.localOutfileDir = self.localProjectDir / 'Outfiles'
+		self.localTempDir = self.localProjectDir / 'Temp'
 
 		# Files created by tracker
-		self.localFirstFrame = self.localPrepDir + 'FirstDepth.npy'
-		self.localLastFrame = self.localPrepDir + 'LastDepth.npy'
-		self.localPiRGB = self.localPrepDir + 'PiCameraRGB.jpg'
-		self.localDepthRGB = self.localPrepDir + 'DepthRGB.jpg'
+		self.localFirstFrame = self.localPrepDir / 'FirstDepth.npy'
+		self.localLastFrame = self.localPrepDir / 'LastDepth.npy'
+		self.localPiRGB = self.localPrepDir / 'PiCameraRGB.jpg'
+		self.localDepthRGB = self.localPrepDir / 'DepthRGB.jpg'
 
 		# Files created by prep preparer
-		self.localTrayFile = self.localAnalysisDir + 'DepthCrop.txt'
-		self.localTransMFile = self.localAnalysisDir + 'TransMFile.npy'
-		self.localVideoCropFile = self.localAnalysisDir + 'VideoCrop.npy'
-		self.localVideoPointsFile = self.localAnalysisDir + 'VideoPoints.npy'
-		self.localPrepSummaryFigure = self.localFiguresDir + 'PrepSummary.pdf' 
+		self.localTrayFile = self.localAnalysisDir / 'DepthCrop.txt'
+		self.localTransMFile = self.localAnalysisDir / 'TransMFile.npy'
+		self.localVideoCropFile = self.localAnalysisDir / 'VideoCrop.npy'
+		self.localVideoPointsFile = self.localAnalysisDir / 'VideoPoints.npy'
+		self.localPrepSummaryFigure = self.localSummaryDir / 'PrepSummary.pdf'
 
 		# Files created by depth preparer
-		self.localSmoothDepthFile = self.localAnalysisDir + 'smoothedDepthData.npy'
-		self.localRGBDepthVideo = self.localFiguresDir + 'DepthRGBVideo.mp4'
-		self.localRawDepthFile = self.localTroubleshootingDir + 'rawDepthData.npy'
-		self.localInterpDepthFile = self.localTroubleshootingDir + 'interpDepthData.npy'
+		self.localSmoothDepthFile = self.localAnalysisDir / 'smoothedDepthData.npy'
+		self.localRGBDepthVideo = self.localSummaryDir / 'DepthRGBVideo.mp4'
+		self.localRawDepthFile = self.localTroubleshootingDir / 'rawDepthData.npy'
+		self.localInterpDepthFile = self.localTroubleshootingDir / 'interpDepthData.npy'
 
 		# Files created by cluster preparer
-		self.localAllLabeledClustersFile = self.localAnalysisDir + 'AllLabeledClusters.csv'
+		self.localAllLabeledClustersFile = self.localAnalysisDir / 'AllLabeledClusters.csv'
 
 		# Files created by manual labeler preparer
-		self.localLabeledFramesFile = self.localAnalysisDir + 'LabeledFrames.csv'
-		self.localNewLabeledVideosFile = self.localAnalysisDir + 'NewLabeledVideos.csv'
+		self.localLabeledFramesFile = self.localAnalysisDir / 'LabeledFrames.csv'
+		self.localNewLabeledVideosFile = self.localAnalysisDir / 'NewLabeledVideos.csv'
 
 		# Files created by manual labeler preparer
 
 	def createMLData(self):
-		self.localMLDir = self.localMasterDir + '__MachineLearningModels/'
-		self.localVideoModelFile = self.localMLDir + 'MasterModels.txt'
+		self.localMLDir = self.localMasterDir / '__MachineLearningModels'
+		self.localVideoModelFile = self.localMLDir / 'MasterModels.txt'
 
+		self.createDirectory(self.localMLDir)
 		self.downloadData(self.localVideoModelFile)
 		with open(self.localVideoModelFile) as f:
 			line = next(f)
 			line = next(f)
 			self.vModelID = line.rstrip().split(',')[1]
 
-		self.local3DModelDir = self.localMLDir + 'VideoModels/' + self.vModelID + '/'
+		self.local3DModelDir = self.localMLDir / 'VideoModels' / self.vModelID
 
 		self.videoMLGithub = 'https://www.github.com/ptmcgrat/3D-Resnets'
 
-		self.localVideoModelFile = self.local3DModelDir + 'model.pth'
+		self.localVideoModelFile = self.local3DModelDir / 'model.pth'
 
-		self.localVideoClassesFile = self.local3DModelDir + 'classInd.txt'
-		self.localVideoCommandsFile = self.local3DModelDir + 'commands.pkl'
+		self.localVideoClassesFile = self.local3DModelDir / 'classInd.txt'
+		self.localVideoCommandsFile = self.local3DModelDir / 'commands.pkl'
 
 	def createAnnotationData(self):
-		self.localAnnotationDir = self.localMasterDir + '__AnnotatedData/'
-		self.localObjectDetectionDir = self.localAnnotationDir + 'BoxedFish/'
-		self.local3DVideosDir = self.localAnnotationDir + 'LabeledVideos/'
+		self.localAnnotationDir = self.localMasterDir / '__AnnotatedData'
+		self.localObjectDetectionDir = self.localAnnotationDir / 'BoxedFish'
+		self.local3DVideosDir = self.localAnnotationDir / 'LabeledVideos'
 
-		self.localLabeledClipsFile = self.local3DVideosDir + 'ManualLabels.csv'
-		self.localLabeledClipsDir = self.local3DVideosDir + 'Clips/'
-		self.localOrganizedLabeledClipsDir = self.local3DVideosDir + 'OrganizedClips/'
+		self.localLabeledClipsFile = self.local3DVideosDir / 'ManualLabels.csv'
+		self.localLabeledClipsDir = self.local3DVideosDir / 'Clips'
+		self.localOrganizedLabeledClipsDir = self.local3DVideosDir / 'OrganizedClips'
 
-		self.localBoxedFishFile = self.localObjectDetectionDir + 'BoxedFish.csv'
-		self.localBoxedFishDir = self.localObjectDetectionDir + 'BoxedImages/'
+		self.localBoxedFishFile = self.localObjectDetectionDir / 'BoxedFish.csv'
+		self.localBoxedFishDir = self.localObjectDetectionDir / 'BoxedImages'
 
 	def downloadProjectData(self, dtype, videoIndex):
 
 		if dtype == 'Prep':
 			self.createDirectory(self.localMasterDir)
 			self.createDirectory(self.localAnalysisDir)
-			self.createDirectory(self.localFiguresDir)
+			self.createDirectory(self.localSummaryDir)
 			self.downloadData(self.localPrepDir)
 			self.downloadData(self.localLogfile)
 
@@ -129,6 +132,7 @@ class FileManager():
 			self.createDirectory(self.localMasterDir)
 			self.createDirectory(self.localAnalysisDir)
 			self.createDirectory(self.localTroubleshootingDir)
+			self.createDirectory(self.localOutfileDir)
 			self.downloadData(self.localLogfile)
 			self.downloadData(self.localFrameDir, tarred = True)
 
@@ -137,6 +141,7 @@ class FileManager():
 			self.createDirectory(self.localMasterDir)
 			self.createDirectory(self.localAnalysisDir)
 			self.createDirectory(self.localTroubleshootingDir)
+			self.createDirectory(self.localOutfileDir)
 			self.createDirectory(self.localTempDir)
 			self.createDirectory(self.localAllClipsDir)
 			self.createDirectory(self.localManualLabelClipsDir)
@@ -175,11 +180,12 @@ class FileManager():
 			except FileNotFoundError:
 				pass
 
-		elif dtype == 'Figures':
+		elif dtype == 'Summary':
 			self.createDirectory(self.localMasterDir)
-			self.createDirectory(self.localFiguresDir)
+			self.createDirectory(self.localSummaryDir)
 			self.downloadData(self.localLogfile)
 			self.downloadData(self.localAnalysisDir)
+			self.downloadData(self.localOutfileDir)
 
 		elif dtype == 'All':
 			self.createDirectory(self.localMasterDir)
@@ -190,6 +196,8 @@ class FileManager():
 			self.createDirectory(self.localAllClipsDir)
 			self.createDirectory(self.localManualLabelClipsDir)
 			self.createDirectory(self.localManualLabelFramesDir)
+			self.createDirectory(self.localSummaryDir)
+			self.createDirectory(self.localOutfileDir)
 			self.downloadData(self.localLogfile)
 			self.downloadData(self.localVideoDir)
 			self.downloadData(self.localFrameDir, tarred = True)
@@ -210,12 +218,16 @@ class FileManager():
 			self.uploadData(self.localRGBDepthVideo)
 			self.uploadData(self.localRawDepthFile)
 			self.uploadData(self.localInterpDepthFile)
+			self.uploadData(self.localOutfileDir)
 		elif dtype == 'Cluster':
 			videoObj = self.returnVideoObject(videoIndex)
 			self.uploadData(self.localTroubleshootingDir)
+			self.uploadData(self.localOutfileDir)
 			self.uploadData(videoObj.localAllClipsDir, tarred = True)
 			self.uploadData(videoObj.localManualLabelClipsDir, tarred = True)
 			self.uploadData(videoObj.localManualLabelFramesDir, tarred = True)
+		elif dtype == 'Summary':
+			self.uploadData(self.localSummaryDir)
 
 		else:
 			raise KeyError('Unknown key: ' + dtype)
@@ -267,18 +279,18 @@ class FileManager():
 		self.downloadData(self.localLogfile)
 		self.lp = LP(self.localLogfile)
 		videoObj = self.lp.movies[index]
-		videoObj.localVideoFile = self.localProjectDir + videoObj.mp4_file
-		videoObj.localHMMFile = self.localTroubleshootingDir + videoObj.baseName + '.hmm'
-		videoObj.localRawCoordsFile = self.localTroubleshootingDir + videoObj.baseName + '_rawCoords.npy'
-		videoObj.localLabeledCoordsFile = self.localTroubleshootingDir + videoObj.baseName + '_labeledCoords.npy'
-		videoObj.localLabeledClustersFile = self.localTroubleshootingDir + videoObj.baseName + '_labeledClusters.csv'
-		videoObj.localAllClipsDir = self.localAllClipsDir + videoObj.baseName + '/'
-		videoObj.localManualLabelClipsDir = self.localManualLabelClipsDir + videoObj.baseName + '/'
-		videoObj.localManualLabelFramesDir = self.localManualLabelFramesDir + videoObj.baseName + '/'
-		videoObj.localAllClipsPrefix = self.localAllClipsDir + self.lp.projectID + '_' + videoObj.baseName
-		videoObj.localManualLabelClipsPrefix = self.localManualLabelClipsDir + self.lp.projectID + '_' + videoObj.baseName
-		videoObj.localIntensityFile = self.localFiguresDir + videoObj.baseName + '_intensity.pdf'
-		videoObj.localTempDir = self.localTempDir + videoObj.baseName + '/'
+		videoObj.localVideoFile = self.localProjectDir / videoObj.mp4_file
+		videoObj.localHMMFile = self.localTroubleshootingDir / videoObj.baseName + '.hmm'
+		videoObj.localRawCoordsFile = self.localTroubleshootingDir / videoObj.baseName + '_rawCoords.npy'
+		videoObj.localLabeledCoordsFile = self.localTroubleshootingDir / videoObj.baseName + '_labeledCoords.npy'
+		videoObj.localLabeledClustersFile = self.localTroubleshootingDir / videoObj.baseName + '_labeledClusters.csv'
+		videoObj.localAllClipsDir = self.localAllClipsDir / videoObj.baseName
+		videoObj.localManualLabelClipsDir = self.localManualLabelClipsDir / videoObj.baseName + '/'
+		videoObj.localManualLabelFramesDir = self.localManualLabelFramesDir / videoObj.baseName + '/'
+		videoObj.localAllClipsPrefix = self.localAllClipsDir / self.lp.projectID + '_' + videoObj.baseName
+		videoObj.localManualLabelClipsPrefix = self.localManualLabelClipsDir / self.lp.projectID + '_' + videoObj.baseName
+		videoObj.localIntensityFile = self.localSummaryDir / videoObj.baseName + '_intensity.pdf'
+		videoObj.localTempDir = self.localTempDir / videoObj.baseName
 		videoObj.nManualLabelClips = int(self.nManualLabelClips/len(self.lp.movies))
 		videoObj.nManualLabelFrames = int(self.nManualLabelFrames/len(self.lp.movies))
 		
@@ -357,10 +369,12 @@ class FileManager():
 			os.makedirs(directory)
 
 	def downloadData(self, local_data, tarred = False):
+		local_data = Path(local_data).as_posix()
 
 		relative_name = local_data.rstrip('/').split('/')[-1] + '.tar' if tarred else local_data.rstrip('/').split('/')[-1]
 		local_path = local_data.split(local_data.rstrip('/').split('/')[-1])[0]
-		cloud_path = local_path.replace(self.localMasterDir, self.cloudMasterDir)
+
+		cloud_path = local_path.replace(self.localMasterDir.as_posix(), self.cloudMasterDir)
 
 		cloud_objects = subprocess.run(['rclone', 'lsf', cloud_path], capture_output = True, encoding = 'utf-8').stdout.split()
 
@@ -380,10 +394,11 @@ class FileManager():
 			output = subprocess.run(['rm', '-f', local_path + relative_name], capture_output = True, encoding = 'utf-8')
 
 	def uploadData(self, local_data, tarred = False):
+		local_data = Path(local_data).as_posix()
 
 		relative_name = local_data.rstrip('/').split('/')[-1]
 		local_path = local_data.split(relative_name)[0]
-		cloud_path = local_path.replace(self.localMasterDir, self.cloudMasterDir)
+		cloud_path = local_path.replace(self.localMasterDir.as_posix(), self.cloudMasterDir)
 
 		if tarred:
 			output = subprocess.run(['tar', '-cvf', local_path + relative_name + '.tar', '-C', local_path, relative_name], capture_output = True, encoding = 'utf-8')
@@ -407,5 +422,4 @@ class FileManager():
 			pdb.set_trace()
 			raise Exception('Error in uploading file: ' + output.stderr)
 
-
-	
+fm = FileManager('MC_singlenuc23_8_Tk33_031720')

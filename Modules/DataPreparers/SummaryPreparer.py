@@ -147,7 +147,7 @@ class SummaryPreparer:
         dailyDT = pd.DataFrame(dailyChangeData)
         hourlyDT = pd.DataFrame(hourlyChangeData)
 
-        writer = pd.ExcelWriter(self.fm.localFiguresDir + 'DepthDataSummary.xlsx')
+        writer = pd.ExcelWriter(self.fm.localSummaryDir + 'DepthDataSummary.xlsx')
         totalDT.to_excel(writer, 'Total')
         dailyDT.to_excel(writer, 'Daily')
         hourlyDT.to_excel(writer, 'Hourly')
@@ -168,8 +168,8 @@ class SummaryPreparer:
         volAx.set_ylabel('Volume\nChange')
         plt.setp(volAx.get_xticklabels(), visible=False)
 
-        figDaily.savefig(self.fm.localFiguresDir + 'DailyDepthSummary.pdf')
-        figHourly.savefig(self.fm.localFiguresDir + 'HourlyDepthSummary.pdf')
+        figDaily.savefig(self.fm.localSummaryDir + 'DailyDepthSummary.pdf')
+        figHourly.savefig(self.fm.localSummaryDir + 'HourlyDepthSummary.pdf')
 
         plt.close('all')
 
@@ -197,7 +197,7 @@ class SummaryPreparer:
                 if i == 0:
                     axes[j, 0].set_ylabel(str(bid))
             t0 = t1
-        fig.savefig(self.fm.localFiguresDir + 'DailyClusterDistributions.pdf')
+        fig.savefig(self.fm.localSummaryDir + 'DailyClusterDistributions.pdf')
         plt.close(fig=fig)
 
         # heatmaps of the estimated daily scoop and spit areal densities
@@ -240,7 +240,7 @@ class SummaryPreparer:
             cbar.set_label('bower region')
             cbar.set_ticks([-1, 0, 1])
 
-        fig.savefig(self.fm.localFiguresDir + 'DailyScoopSpitDensities.pdf')
+        fig.savefig(self.fm.localSummaryDir + 'DailyScoopSpitDensities.pdf')
         plt.close(fig=fig)
 
         # heatmaps of the estimated hourly scoop and spit areal densities
@@ -293,7 +293,7 @@ class SummaryPreparer:
             if i == 0:
                 current_ax.set_title('Daily\nTotal')
 
-        fig.savefig(self.fm.localFiguresDir + 'HourlyScoopSpitDensities.pdf')
+        fig.savefig(self.fm.localSummaryDir + 'HourlyScoopSpitDensities.pdf')
         plt.close(fig=fig)
 
         totalChangeData = vars(self.ca_obj.returnClusterSummary(self.lp.frames[0].time, self.lp.frames[-1].time))
@@ -302,7 +302,7 @@ class SummaryPreparer:
         dailyDT = pd.DataFrame(dailyChangeData)
         hourlyDT = pd.DataFrame(hourlyChangeData)
 
-        writer = pd.ExcelWriter(self.fm.localFiguresDir + 'ClusterDataSummary.xlsx')
+        writer = pd.ExcelWriter(self.fm.localSummaryDir + 'ClusterDataSummary.xlsx')
         totalDT.to_excel(writer, 'Total')
         dailyDT.to_excel(writer, 'Daily')
         hourlyDT.to_excel(writer, 'Hourly')
@@ -319,7 +319,7 @@ class SummaryPreparer:
         cbar.set_label(r'$spits/cm^2$ - $scoops/cm^2$')
         ax.set(title='whole-trial spit-scoop KDE', xlabel=None, ylabel=None, aspect='equal')
         ax.tick_params(colors=[0, 0, 0, 0])
-        fig.savefig(self.fm.localFiguresDir + 'WholeTrialScoopSpitDensities.pdf')
+        fig.savefig(self.fm.localSummaryDir + 'WholeTrialScoopSpitDensities.pdf')
         plt.close(fig=fig)
 
     def createCombinedFigures(self):
@@ -381,7 +381,7 @@ class SummaryPreparer:
         cbar.set_ticks([-1, 1])
         cbar.set_ticklabels(['Y', 'N'])
 
-        fig.savefig(self.fm.localFiguresDir + 'DailyBowerIdentificationConsistency.pdf')
+        fig.savefig(self.fm.localSummaryDir + 'DailyBowerIdentificationConsistency.pdf')
         plt.close(fig=fig)
 
         # create figure of whole-trial bower identification overlap
@@ -438,7 +438,7 @@ class SummaryPreparer:
         cbar.set_ticks([-1, 1])
         cbar.set_ticklabels(['Y', 'N'])
 
-        fig.savefig(self.fm.localFiguresDir + 'WholeTrialBowerIdentificationConsistency.pdf')
+        fig.savefig(self.fm.localSummaryDir + 'WholeTrialBowerIdentificationConsistency.pdf')
         plt.close(fig=fig)
 
     def createOutfileSummary(self):

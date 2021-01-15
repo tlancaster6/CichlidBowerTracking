@@ -19,10 +19,10 @@ class PrepPreparer:
 		assert os.path.exists(self.fileManager.localPiRGB)
 		assert os.path.exists(self.fileManager.localDepthRGB)
 
-		assert os.path.exists(self.fileManager.localFiguresDir)
+		assert os.path.exists(self.fileManager.localSummaryDir)
 		assert os.path.exists(self.fileManager.localAnalysisDir)
 
-		#self.uploads = [(self.fileManager.localFiguresDir, self.fileManager.cloudFiguresDir, '0'), 
+		#self.uploads = [(self.fileManager.localSummaryDir, self.fileManager.cloudFiguresDir, '0'),
 		#				(self.fileManager.localAnalysisDir, self.fileManager.cloudAnalysisDir, '0')]
 
 	def prepData(self):
