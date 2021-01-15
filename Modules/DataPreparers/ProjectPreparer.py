@@ -79,8 +79,8 @@ class ProjectPreparer():
 		sc_obj.validateInputData()
 		sc_obj.createFullSummary()
 
-		self.createUploadFile(sc_obj.uploads)
-		self.createAnalysisUpdate('Summary', sc_obj)
+		# self.createUploadFile(sc_obj.uploads)
+		# self.createAnalysisUpdate('Summary', sc_obj)
 
 	def backupAnalysis(self):
 		uploadCommands = set()

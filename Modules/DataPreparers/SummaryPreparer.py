@@ -24,7 +24,7 @@ class SummaryPreparer:
         assert os.path.exists(self.fm.localLogfile)
         assert os.path.exists(self.fm.localSummaryDir)
         assert os.path.exists(self.fm.localAnalysisDir)
-        assert os.path.exists(self.fm.localTroubleshootingDir)
+        assert os.path.exists(self.fm.localOutfileDir)
         assert os.path.exists(self.fm.localSmoothDepthFile)
         assert os.path.exists(self.fm.localTrayFile)
         assert os.path.exists(self.fm.localTransMFile)
@@ -147,7 +147,7 @@ class SummaryPreparer:
         dailyDT = pd.DataFrame(dailyChangeData)
         hourlyDT = pd.DataFrame(hourlyChangeData)
 
-        writer = pd.ExcelWriter(self.fm.localSummaryDir + 'DepthDataSummary.xlsx')
+        writer = pd.ExcelWriter(self.fm.localSummaryDir / 'DepthDataSummary.xlsx')
         totalDT.to_excel(writer, 'Total')
         dailyDT.to_excel(writer, 'Daily')
         hourlyDT.to_excel(writer, 'Hourly')
@@ -168,8 +168,8 @@ class SummaryPreparer:
         volAx.set_ylabel('Volume\nChange')
         plt.setp(volAx.get_xticklabels(), visible=False)
 
-        figDaily.savefig(self.fm.localSummaryDir + 'DailyDepthSummary.pdf')
-        figHourly.savefig(self.fm.localSummaryDir + 'HourlyDepthSummary.pdf')
+        figDaily.savefig(self.fm.localSummaryDir / 'DailyDepthSummary.pdf')
+        figHourly.savefig(self.fm.localSummaryDir / 'HourlyDepthSummary.pdf')
 
         plt.close('all')
 
@@ -178,8 +178,10 @@ class SummaryPreparer:
 
         # semi-transparent scatterplots showing the spatial distrubtion of each cluster classification each day
         fig, axes = plt.subplots(10, self.lp.numDays, figsize=(8.5, 11))
+        if self.lp.numDays == 1:
+            axes = np.reshape(axes, (10, 1))
         fig.suptitle(self.lp.projectID + ' Daily Cluster Distributions')
-        t0 = self.lp.master_start.replace(hour=0, minute=0, second=0, microsecond=0)
+        t0 = self.lp.frames[0].time.replace(hour=0, minute=0, second=0, microsecond=0)
         df_cropped = self.ca_obj.sliceDataframe(cropped=True)
         x_limits = (self.ca_obj.cropped_dims[0], 0)
         y_limits = (0, self.ca_obj.cropped_dims[1])
@@ -197,12 +199,14 @@ class SummaryPreparer:
                 if i == 0:
                     axes[j, 0].set_ylabel(str(bid))
             t0 = t1
-        fig.savefig(self.fm.localSummaryDir + 'DailyClusterDistributions.pdf')
+        fig.savefig(self.fm.localSummaryDir / 'DailyClusterDistributions.pdf')
         plt.close(fig=fig)
 
         # heatmaps of the estimated daily scoop and spit areal densities
         start_day = self.lp.frames[0].time.replace(hour=0, minute=0, second=0, microsecond=0)
         fig, axes = plt.subplots(2, self.lp.numDays, figsize=(1.5 * self.lp.numDays, 4))
+        if self.lp.numDays == 1:
+            axes = np.reshape(axes, (2, 1))
         fig.suptitle(self.lp.projectID + ' Daily Scoop Spit Heatmaps')
         vmax = 0
         cbar_reference = None
@@ -240,7 +244,7 @@ class SummaryPreparer:
             cbar.set_label('bower region')
             cbar.set_ticks([-1, 0, 1])
 
-        fig.savefig(self.fm.localSummaryDir + 'DailyScoopSpitDensities.pdf')
+        fig.savefig(self.fm.localSummaryDir / 'DailyScoopSpitDensities.pdf')
         plt.close(fig=fig)
 
         # heatmaps of the estimated hourly scoop and spit areal densities
@@ -293,7 +297,7 @@ class SummaryPreparer:
             if i == 0:
                 current_ax.set_title('Daily\nTotal')
 
-        fig.savefig(self.fm.localSummaryDir + 'HourlyScoopSpitDensities.pdf')
+        fig.savefig(self.fm.localSummaryDir / 'HourlyScoopSpitDensities.pdf')
         plt.close(fig=fig)
 
         totalChangeData = vars(self.ca_obj.returnClusterSummary(self.lp.frames[0].time, self.lp.frames[-1].time))
@@ -302,7 +306,7 @@ class SummaryPreparer:
         dailyDT = pd.DataFrame(dailyChangeData)
         hourlyDT = pd.DataFrame(hourlyChangeData)
 
-        writer = pd.ExcelWriter(self.fm.localSummaryDir + 'ClusterDataSummary.xlsx')
+        writer = pd.ExcelWriter(self.fm.localSummaryDir / 'ClusterDataSummary.xlsx')
         totalDT.to_excel(writer, 'Total')
         dailyDT.to_excel(writer, 'Daily')
         hourlyDT.to_excel(writer, 'Hourly')
@@ -319,7 +323,7 @@ class SummaryPreparer:
         cbar.set_label(r'$spits/cm^2$ - $scoops/cm^2$')
         ax.set(title='whole-trial spit-scoop KDE', xlabel=None, ylabel=None, aspect='equal')
         ax.tick_params(colors=[0, 0, 0, 0])
-        fig.savefig(self.fm.localSummaryDir + 'WholeTrialScoopSpitDensities.pdf')
+        fig.savefig(self.fm.localSummaryDir / 'WholeTrialScoopSpitDensities.pdf')
         plt.close(fig=fig)
 
     def createCombinedFigures(self):
@@ -327,8 +331,10 @@ class SummaryPreparer:
 
         # plot overlap of daily bower regions identified from depth and cluster data
         fig, axes = plt.subplots(3, self.lp.numDays, figsize=(1.5 * self.lp.numDays, 6))
+        if self.lp.numDays == 1:
+            axes = np.reshape(axes, (3, 1))
         fig.suptitle(self.lp.projectID + ' Daily Bower Identification Consistency')
-        t0 = self.lp.master_start.replace(hour=0, minute=0, second=0, microsecond=0)
+        t0 = self.lp.frames[0].time.replace(hour=0, minute=0, second=0, microsecond=0)
         for i in range(self.lp.numDays):
             t1 = t0 + datetime.timedelta(hours=24)
 
@@ -381,7 +387,7 @@ class SummaryPreparer:
         cbar.set_ticks([-1, 1])
         cbar.set_ticklabels(['Y', 'N'])
 
-        fig.savefig(self.fm.localSummaryDir + 'DailyBowerIdentificationConsistency.pdf')
+        fig.savefig(self.fm.localSummaryDir / 'DailyBowerIdentificationConsistency.pdf')
         plt.close(fig=fig)
 
         # create figure of whole-trial bower identification overlap
@@ -438,12 +444,12 @@ class SummaryPreparer:
         cbar.set_ticks([-1, 1])
         cbar.set_ticklabels(['Y', 'N'])
 
-        fig.savefig(self.fm.localSummaryDir + 'WholeTrialBowerIdentificationConsistency.pdf')
+        fig.savefig(self.fm.localSummaryDir / 'WholeTrialBowerIdentificationConsistency.pdf')
         plt.close(fig=fig)
 
     def createOutfileSummary(self):
         # if the troubleshooting directory contains .out files, uses them to summarize the PACE analysis
-        if len(glob.glob(self.fm.localTroubleshootingDir + '*.out*')) > 0:
+        if len(glob.glob(str(self.fm.localOutfileDir) + '*.out*')) > 0:
             regexes = {'job_id': re.compile(r'Job id:(?P<job_id>.*)\n'),
                        'job_name': re.compile(r'Job name:(?P<job_name>.*)\n'),
                        'requested': re.compile(r'Resources:(?P<requested>.*)\n'),
@@ -453,7 +459,7 @@ class SummaryPreparer:
                        'outcome': re.compile(r'PBS: job killed: (?P<outcome>.*)\n')}
 
             rows = []
-            for f_name in glob.glob(self.fm.localTroubleshootingDir + '*.out*'):
+            for f_name in glob.glob(str(self.fm.localOutfileDir) + '*.out*'):
                 row = {}
                 with open(f_name) as f:
                     line = f.readline()
@@ -473,15 +479,15 @@ class SummaryPreparer:
                         line = f.readline()
                 rows.append(row)
             all_data = pd.DataFrame(rows).sort_values(by='job_name').reset_index(drop=True)
-            all_data.to_csv(self.fm.localSummaryDir + 'outfileSummary.csv')
+            all_data.to_csv(self.fm.localSummaryDir / 'outfileSummary.csv')
 
         else:
             print('no .out files in troubleshooting directory, skipping outfile summary')
 
     def createFullSummary(self, clusterHourlyDelta=1, depthHourlyDelta=2):
-        self.createCombinedFigures()
-        self.createClusterFigures(hourlyDelta=clusterHourlyDelta)
         self.createDepthFigures(hourlyDelta=depthHourlyDelta)
+        self.createClusterFigures(hourlyDelta=clusterHourlyDelta)
+        self.createCombinedFigures()
         self.createOutfileSummary()
 
 class DepthAnalyzer():

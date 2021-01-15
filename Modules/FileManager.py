@@ -32,6 +32,9 @@ class FileManager():
 		self.createMLData()
 		self.createAnnotationData()
 
+		# initiate parameters
+		self._createParameters()
+
 	def createPiData(self):
 		self.localCredentialSpreadsheet = self.localMasterDir / '__CredentialFiles/SAcredentials.json'
 		self.localCredentialDrive = self.localMasterDir / '__CredentialFiles/DriveCredentials.txt'
@@ -274,7 +277,6 @@ class FileManager():
 
 	def returnVideoObject(self, index):
 		from Modules.LogParser import LogParser as LP
-		self._createParameters()
 
 		self.downloadData(self.localLogfile)
 		self.lp = LP(self.localLogfile)
@@ -299,11 +301,17 @@ class FileManager():
 		return videoObj
 
 	def _createParameters(self):
-
 		# Depth related parameters
-		self.hourlyThreshold = 0.2
-		self.dailyThreshold = 0.4
-		self.totalThreshold = 1.0
+		self.hourlyDepthThreshold = 0.2  # cm
+		self.dailyDepthThreshold = 0.4  # cm
+		self.totalDepthThreshold = 1.0  # cm
+
+		# Cluster related parameters
+		self.hourlyClusterThreshold = 0.6  # events/cm^2
+		self.dailyClusterThreshold = 1.2  # events/cm^2
+		self.totalClusterThreshold = 3.0  # events/cm^2
+
+		# Parameters related to both depth and cluster analysis
 		self.hourlyMinPixels = 1000
 		self.dailyMinPixels = 1000
 		self.totalMinPixels = 1000
