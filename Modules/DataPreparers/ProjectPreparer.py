@@ -5,6 +5,7 @@ from Modules.DataPreparers.PrepPreparer import PrepPreparer as PrP
 from Modules.DataPreparers.DepthPreparer import DepthPreparer as DP
 from Modules.DataPreparers.ClusterPreparer import ClusterPreparer as CP
 from Modules.DataPreparers.ThreeDClassifierPreparer import ThreeDClassifierPreparer as TDCP
+from Modules.DataPreparers.ManualLabelVideoPreparer import ManualLabelVideoPreparer as MLVP
 #from Modules.DataPreparers.FigurePreparer import FigurePreparer as FP
 
 class ProjectPreparer():
@@ -46,30 +47,21 @@ class ProjectPreparer():
 		cp_obj = CP(self.fileManager, videoIndex, self.workers)
 		cp_obj.validateInputData()
 		cp_obj.runClusterAnalysis()
-		#self.fileManager.uploadProjectData('Cluster')
 
 	def run3DClassification(self):
-		cp_obj = TDCP(self.fileManager, self.workers, videoIndex)
-		cp_obj.validateInputData()
-		cp_obj.runClusterAnalysis()
-		#self.fileManager.uploadProjectData('3DClassifier')
-
-	def runMLClusterClassifier(self):
-		mlc_obj = MLP(self.projFileManager, self.mlFileManager)
-		mlc_obj.validateInputData()
-		mlc_obj.predictVideoLabels()
-		self.createUploadFile(mlc_obj.uploads)
-		self.createAnalysisUpdate('MLClassifier', mlc_obj)
+		tdcp_obj = TDCP(self.fileManager, self.workers, videoIndex)
+		tdcp_obj.validateInputData()
+		tdcp_obj.runClusterAnalysis()
 
 	def manuallyLabelVideos(self, initials, number):
 		mlv_obj = MLVP(self.fileManager, initials, number)
 		mlv_obj.validateInputData()
-		mlc_obj.labelVideos()
+		mlv_obj.labelVideos()
 
 	def manuallyLabelFrames(self, initials, number):
-		mlv_obj = MLFP(self.fileManager, initials, number)
-		mlv_obj.validateInputData()
-		mlc_obj.labelFrames()
+		mlf_obj = MLFP(self.fileManager, initials, number)
+		mlf_obj.validateInputData()
+		mlf_obj.labelFrames()
 	
 	def runMLFishDetection(self):
 		pass

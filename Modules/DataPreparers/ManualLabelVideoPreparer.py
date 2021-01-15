@@ -16,19 +16,18 @@ class ManualLabelVideoPreparer():
 
 		self.fileManager = fileManager
 		self.initials = initials
+		self.number = number
 
 		# 10 categories of annotation plus quit and skip commands
 		self.commands = ['c','f','p','t','b','m','s','x','o','d','q','k']
 		self.commands_help = "Type 'c': build scoop; 'f': feed scoop; 'p': build spit; 't': feed spit; 'b': build multiple; 'm': feed multiple; 'd': drop sand; s': spawn; 'o': fish other; 'x': nofish other; 'q': quit; 'k': skip"
 
 	def validateInputData(self):
-		fm_obj = FM(projectID = args.ProjectID)
 
 		assert os.path.exists(self.fileManager.localAnalysisDir)
 		assert os.path.exists(self.fileManager.localManualLabelClipsDir)
 		assert os.path.exists(self.fileManager.localLabeledClipsFile)
-		assert os.path.exists(self.fileManager.localNewLabeledVideosFile)
-
+		assert os.path.exists(self.fileManager.localNewLabeledClipsDir)
 		"""self.uploads = [(self.fileManager.localTroubleshootingDir, self.fileManager.cloudTroubleshootingDir, '0'), 
 						(self.fileManager.localAnalysisDir, self.fileManager.cloudAnalysisDir, '0'),
 						(self.fileManager.localAllClipsDir, self.fileManager.cloudMasterDir, '1'),
@@ -38,11 +37,11 @@ class ManualLabelVideoPreparer():
 						]"""
 
 	def labelVideos(self):
-		temp_csv = fm_obj.localAnalysisDir + 'NewAnnotations.csv'
 
 		# Read in annotations and create csv file for all annotations with the same user and projectID
 		previouslyLabeled_dt = pd.read_csv(self.fileManager.localLabeledClipsFile, index_col = 'LID')
 		newlyLabeled_dt = pd.DataFrame(columns =previouslyLabeled_dt.columns)
+		newlyLabeled_dt.index.name = 'LID'
 
 		# Identify clips that can be labeled
 		clips = [x for x in os.listdir(self.fileManager.localManualLabelClipsDir) if 'ManualLabel.mp4' in x]
@@ -84,6 +83,8 @@ class ManualLabelVideoPreparer():
 			newlyLabeled_dt.loc[len(newlyLabeled_dt)] = [f.replace('_ManualLabel.mp4',''), chr(info), self.initials, str(datetime.datetime.now())] # Create new annotation
 
 			newlyLabeled_dt.to_csv(self.fileManager.localNewLabeledVideosFile, sep = ',')
+
+			subprocess.run(['mv', self.fileManager.localManualLabelClipsDir + f.replace('_ManualLabel',''), self.fileManager.localNewLabeledClipsDir])
 
 			annotatedClips += 1
 
