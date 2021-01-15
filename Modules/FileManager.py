@@ -162,7 +162,7 @@ class FileManager():
 			self.createDirectory(self.localAnalysisDir)
 			self.downloadData(self.localManualLabelClipsDir, tarred = False)
 			for d in [x for x in os.listdir(self.localManualLabelClipsDir) if '.tar' in x]:
-				output = subprocess.run(['tar', '-xvf', self.localManualClipsDir + d, '-C', self.localManualClipsDir, '--strip-components', '1'], capture_output = True, encoding = 'utf-8')
+				output = subprocess.run(['tar', '-xvf', self.localManualLabelClipsDir + d, '-C', self.localManualLabelClipsDir, '--strip-components', '1'], capture_output = True, encoding = 'utf-8')
 				os.remove(self.localManualLabelClipsDir + d)
 			self.downloadData(self.localLabeledClipsFile)
 
