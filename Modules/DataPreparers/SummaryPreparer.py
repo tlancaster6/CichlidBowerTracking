@@ -24,7 +24,7 @@ class SummaryPreparer:
         assert os.path.exists(self.fm.localLogfile)
         assert os.path.exists(self.fm.localSummaryDir)
         assert os.path.exists(self.fm.localAnalysisDir)
-        assert os.path.exists(self.fm.localOutfileDir)
+        assert os.path.exists(self.fm.localPaceDir)
         assert os.path.exists(self.fm.localSmoothDepthFile)
         assert os.path.exists(self.fm.localTrayFile)
         assert os.path.exists(self.fm.localTransMFile)
@@ -447,9 +447,9 @@ class SummaryPreparer:
         fig.savefig(self.fm.localSummaryDir / 'WholeTrialBowerIdentificationConsistency.pdf')
         plt.close(fig=fig)
 
-    def createOutfileSummary(self):
+    def createPaceSummary(self):
         # if the troubleshooting directory contains .out files, uses them to summarize the PACE analysis
-        if len(glob.glob(str(self.fm.localOutfileDir) + '*.out*')) > 0:
+        if len(glob.glob(str(self.fm.localPaceDir) + '*.out*')) > 0:
             regexes = {'job_id': re.compile(r'Job id:(?P<job_id>.*)\n'),
                        'job_name': re.compile(r'Job name:(?P<job_name>.*)\n'),
                        'requested': re.compile(r'Resources:(?P<requested>.*)\n'),
@@ -459,7 +459,7 @@ class SummaryPreparer:
                        'outcome': re.compile(r'PBS: job killed: (?P<outcome>.*)\n')}
 
             rows = []
-            for f_name in glob.glob(str(self.fm.localOutfileDir) + '*.out*'):
+            for f_name in glob.glob(str(self.fm.localPaceDir) + '*.out*'):
                 row = {}
                 with open(f_name) as f:
                     line = f.readline()
@@ -479,16 +479,16 @@ class SummaryPreparer:
                         line = f.readline()
                 rows.append(row)
             all_data = pd.DataFrame(rows).sort_values(by='job_name').reset_index(drop=True)
-            all_data.to_csv(self.fm.localSummaryDir / 'outfileSummary.csv')
+            all_data.to_csv(self.fm.localSummaryDir / 'paceSummary.csv')
 
         else:
-            print('no .out files in troubleshooting directory, skipping outfile summary')
+            print('no .out files in troubleshooting directory, skipping pace summary')
 
     def createFullSummary(self, clusterHourlyDelta=1, depthHourlyDelta=2):
         self.createDepthFigures(hourlyDelta=depthHourlyDelta)
         self.createClusterFigures(hourlyDelta=clusterHourlyDelta)
         self.createCombinedFigures()
-        self.createOutfileSummary()
+        self.createPaceSummary()
 
 class DepthAnalyzer():
     def __init__(self, fileManager):

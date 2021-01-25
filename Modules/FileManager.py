@@ -60,7 +60,7 @@ class FileManager():
 		self.localManualLabelClipsDir = self.localProjectDir / 'MLClips'
 		self.localManualLabelFramesDir = self.localProjectDir / 'MLFrames'
 		self.localTroubleshootingDir = self.localProjectDir / 'Troubleshooting'
-		self.localOutfileDir = self.localProjectDir / 'Outfiles'
+		self.localPaceDir = self.localProjectDir / 'Pace'
 		self.localTempDir = self.localProjectDir / 'Temp'
 
 		# Files created by tracker
@@ -140,7 +140,7 @@ class FileManager():
 			self.createDirectory(self.localMasterDir)
 			self.createDirectory(self.localAnalysisDir)
 			self.createDirectory(self.localTroubleshootingDir)
-			self.createDirectory(self.localOutfileDir)
+			self.createDirectory(self.localPaceDir)
 			self.downloadData(self.localLogfile)
 			self.downloadData(self.localFrameDir, tarred = True)
 
@@ -149,7 +149,7 @@ class FileManager():
 			self.createDirectory(self.localMasterDir)
 			self.createDirectory(self.localAnalysisDir)
 			self.createDirectory(self.localTroubleshootingDir)
-			self.createDirectory(self.localOutfileDir)
+			self.createDirectory(self.localPaceDir)
 			self.createDirectory(self.localTempDir)
 			self.createDirectory(self.localAllClipsDir)
 			self.createDirectory(self.localManualLabelClipsDir)
@@ -191,7 +191,7 @@ class FileManager():
 			self.createDirectory(self.localSummaryDir)
 			self.downloadData(self.localLogfile)
 			self.downloadData(self.localAnalysisDir)
-			self.downloadData(self.localOutfileDir)
+			self.downloadData(self.localPaceDir)
 
 		elif dtype == 'All':
 			self.createDirectory(self.localMasterDir)
@@ -203,7 +203,7 @@ class FileManager():
 			self.createDirectory(self.localManualLabelClipsDir)
 			self.createDirectory(self.localManualLabelFramesDir)
 			self.createDirectory(self.localSummaryDir)
-			self.createDirectory(self.localOutfileDir)
+			self.createDirectory(self.localPaceDir)
 			self.downloadData(self.localLogfile)
 			self.downloadData(self.localVideoDir)
 			self.downloadData(self.localFrameDir, tarred = True)
@@ -224,11 +224,11 @@ class FileManager():
 			self.uploadData(self.localRGBDepthVideo)
 			self.uploadData(self.localRawDepthFile)
 			self.uploadData(self.localInterpDepthFile)
-			self.uploadData(self.localOutfileDir)
+			self.uploadData(self.localPaceDir)
 		elif dtype == 'Cluster':
 			videoObj = self.returnVideoObject(videoIndex)
 			self.uploadData(self.localTroubleshootingDir)
-			self.uploadData(self.localOutfileDir)
+			self.uploadData(self.localPaceDir)
 			self.uploadData(videoObj.localAllClipsDir, tarred = True)
 			self.uploadData(videoObj.localManualLabelClipsDir, tarred = True)
 			self.uploadData(videoObj.localManualLabelFramesDir, tarred = True)
