@@ -150,7 +150,7 @@ class FileManager():
 			self.downloadData(self.localLogfile)
 			self.downloadData(videoObj.localVideoFile)
 
-		elif dtype == '3DClassifier':
+		elif dtype == 'ClusterClassification':
 			self.createMLData()
 			self.createDirectory(self.localMasterDir)
 			self.downloadData(self.localLogfile)
