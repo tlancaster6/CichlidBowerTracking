@@ -387,7 +387,7 @@ class FileManager():
 
 		if tarred_subdirs:
 			for d in [x for x in os.listdir(local_data) if '.tar' in x]:
-				pass
+				continue
 				output = subprocess.run(['tar', '-xvf', local_data + d, '-C', local_data, '--strip-components', '1'], capture_output = True, encoding = 'utf-8')
 				os.remove(self.localManualLabelClipsDir + d)
 
