@@ -158,7 +158,7 @@ class FileManager():
 			self.downloadData(self.localLogfile)
 			self.downloadData(videoObj.localVideoFile)
 
-		elif dtype == '3DClassifier':
+		elif dtype == 'ClusterClassification':
 			self.createMLData()
 			self.createDirectory(self.localMasterDir)
 			self.downloadData(self.localLogfile)
@@ -412,7 +412,7 @@ class FileManager():
 		if tarred_subdirs:
 			for d in [x for x in os.listdir(local_data) if '.tar' in x]:
 				output = subprocess.run(['tar', '-xvf', local_data + d, '-C', local_data, '--strip-components', '1'], capture_output = True, encoding = 'utf-8')
-				os.remove(self.localManualLabelClipsDir + d)
+				os.remove(local_data + d)
 
 	def uploadData(self, local_data, tarred = False):
 		local_data = Path(local_data).as_posix()
