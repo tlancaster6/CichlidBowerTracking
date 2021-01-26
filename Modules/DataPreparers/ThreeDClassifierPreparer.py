@@ -31,7 +31,7 @@ class ThreeDClassifierPreparer:
 			print('Location,MeanID', file = f)
 
 			for videofile in [x.replace('.mp4','') for x in os.listdir(self.fileManager.localAllClipsDir) if '.mp4' in x]:
-				print(videofile, self.fileManager.projectID, file = f)
+				print(videofile + ',' + self.fileManager.projectID, file = f)
 
 		# Run command
 		command = ['python3', 'ClassifyVideos.py']
