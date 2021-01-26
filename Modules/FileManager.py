@@ -196,7 +196,7 @@ class FileManager():
 		else:
 			raise KeyError('Unknown key: ' + dtype)
 
-		def uploadProjectData(self, dtype, videoIndex):
+	def uploadProjectData(self, dtype, videoIndex):
 		if dtype == 'Prep':
 			self.uploadData(self.localTrayFile)
 			self.uploadData(self.localTransMFile)
