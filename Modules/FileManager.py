@@ -39,6 +39,7 @@ class FileManager():
 		self.localCredentialDrive = self.localMasterDir + '__CredentialFiles/DriveCredentials.txt'
 
 	def createProjectData(self, projectID):
+		self.createAnnotationData()
 		self.projectID = projectID
 		self.localProjectDir = self.localMasterDir + projectID + '/'
 
@@ -118,7 +119,7 @@ class FileManager():
 
 		self.localBoxedFishFile = self.localObjectDetectionDir + 'BoxedFish.csv'
 		self.localBoxedFishDir = self.localObjectDetectionDir + 'BoxedImages/'
-		
+
 	def downloadProjectData(self, dtype):
 
 		if dtype == 'Prep':
