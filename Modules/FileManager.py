@@ -84,6 +84,12 @@ class FileManager():
 
 		# Files created by manual labeler preparer
 		self.localLabeledFramesFile = self.localAnalysisDir + 'LabeledFrames.csv'
+		self.localNewLabeledVideosFile = self.localAnalysisDir + 'NewLabeledVideos.csv'
+		self.localNewLabeledClipsDir = self.localProjectDir + 'NewLabeledClips/'
+		self.localLabeledClipsProjectDir = self.localLabeledClipsDir + projectID + '/'
+
+		# Files created by manual labeler preparer
+		self.localLabeledFramesFile = self.localAnalysisDir + 'LabeledFrames.csv'
 
 		# Files created by manual labeler preparer
 
@@ -147,10 +153,15 @@ class FileManager():
 			self.downloadData(self.localLogfile)
 			self.downloadData(self.localAllClipsDir, tarred = True)
 			self.downloadData(self.localAnalysisDir)
+			self.downloadData(self.localTroubleshootingDir)
 			self.downloadData(self.local3DModelDir)
 
-		elif dtype == 'FishDetection':
-			pass
+		elif dtype == 'ManualLabelVideos':
+			self.createDirectory(self.localMasterDir)
+			self.createDirectory(self.localAnalysisDir)
+			self.createDirectory(self.localNewLabeledClipsDir)
+			self.downloadData(self.localManualLabelClipsDir, tarred_subdirs = True)
+			self.downloadData(self.localLabeledClipsFile)
 
 		elif dtype == 'ManualAnnotation':
 			self.createDirectory(self.localMasterDir)
@@ -185,7 +196,32 @@ class FileManager():
 		else:
 			raise KeyError('Unknown key: ' + dtype)
 
-	def downloadAnnotationData(self, dtype):
+		def uploadProjectData(self, dtype, videoIndex):
+		if dtype == 'Prep':
+			self.uploadData(self.localTrayFile)
+			self.uploadData(self.localTransMFile)
+			self.uploadData(self.localVideoCropFile)
+			self.uploadData(self.localVideoPointsFile)
+			self.uploadData(self.localPrepSummaryFigure)
+		elif dtype == 'Depth':
+			self.uploadData(self.localSmoothDepthFile)
+			self.uploadData(self.localRGBDepthVideo)
+			self.uploadData(self.localRawDepthFile)
+			self.uploadData(self.localInterpDepthFile)
+		elif dtype == 'Cluster':
+			videoObj = self.returnVideoObject(videoIndex)
+			self.uploadData(self.localTroubleshootingDir)
+			self.uploadData(videoObj.localAllClipsDir, tarred = True)
+			self.uploadData(videoObj.localManualLabelClipsDir, tarred = True)
+			self.uploadData(videoObj.localManualLabelFramesDir, tarred = True)
+		elif dtype == 'ManualAnnotation':
+			self.uploadAndMerge(self.localNewLabeledVideosFile, self.localLabeledClipsFile, ID = 'LID')
+			self.uploadAndMerge(self.localNewLabeledClipsDir, self.localLabeledClipsProjectDir, tarred = True)
+
+		else:
+			raise KeyError('Unknown key: ' + dtype)
+
+	"""def downloadAnnotationData(self, dtype):
 		if dtype == 'LabeledVideos':
 			good_count, bad_count = 0,0
 
@@ -223,19 +259,23 @@ class FileManager():
 				if '.tar' in bp:
 					self.downloadData(self.localBoxedFishDir + bp.replace('.tar',''), tarred = True)
 		else:
-			raise KeyError('Unknown key: ' + dtype)
+			raise KeyError('Unknown key: ' + dtype)"""
 
 	def returnVideoObject(self, index):
 		from Modules.LogParser import LogParser as LP
+		self._createParameters()
 
 		self.downloadData(self.localLogfile)
 		self.lp = LP(self.localLogfile)
 		videoObj = self.lp.movies[index]
-		videoObj.localVideoFile = self.localMasterDir + videoObj.mp4_file
+		videoObj.localVideoFile = self.localProjectDir + videoObj.mp4_file
 		videoObj.localHMMFile = self.localTroubleshootingDir + videoObj.baseName + '.hmm'
 		videoObj.localRawCoordsFile = self.localTroubleshootingDir + videoObj.baseName + '_rawCoords.npy'
 		videoObj.localLabeledCoordsFile = self.localTroubleshootingDir + videoObj.baseName + '_labeledCoords.npy'
 		videoObj.localLabeledClustersFile = self.localTroubleshootingDir + videoObj.baseName + '_labeledClusters.csv'
+		videoObj.localAllClipsDir = self.localAllClipsDir + videoObj.baseName + '/'
+		videoObj.localManualLabelClipsDir = self.localManualLabelClipsDir + videoObj.baseName + '/'
+		videoObj.localManualLabelFramesDir = self.localManualLabelFramesDir + videoObj.baseName + '/'
 		videoObj.localAllClipsPrefix = self.localAllClipsDir + self.lp.projectID + '_' + videoObj.baseName
 		videoObj.localManualLabelClipsPrefix = self.localManualLabelClipsDir + self.lp.projectID + '_' + videoObj.baseName
 		videoObj.localIntensityFile = self.localFiguresDir + videoObj.baseName + '_intensity.pdf'
@@ -317,7 +357,7 @@ class FileManager():
 		if not os.path.exists(directory):
 			os.makedirs(directory)
 
-	def downloadData(self, local_data, tarred = False):
+	def downloadData(self, local_data, tarred = False, tarred_subdirs = False):
 
 		relative_name = local_data.rstrip('/').split('/')[-1] + '.tar' if tarred else local_data.rstrip('/').split('/')[-1]
 		local_path = local_data.split(local_data.rstrip('/').split('/')[-1])[0]
@@ -340,6 +380,11 @@ class FileManager():
 			output = subprocess.run(['tar', '-xvf', local_path + relative_name, '-C', local_path], capture_output = True, encoding = 'utf-8')
 			output = subprocess.run(['rm', '-f', local_path + relative_name], capture_output = True, encoding = 'utf-8')
 
+		if tarred_subdirs:
+			for d in [x for x in os.listdir(local_data) if '.tar' in x]:
+				output = subprocess.run(['tar', '-xvf', local_data + d, '-C', local_data, '--strip-components', '1'], capture_output = True, encoding = 'utf-8')
+				os.remove(local_data + d)
+
 	def uploadData(self, local_data, tarred = False):
 
 		relative_name = local_data.rstrip('/').split('/')[-1]
@@ -355,7 +400,7 @@ class FileManager():
 
 		if os.path.isdir(local_path + relative_name):
 			output = subprocess.run(['rclone', 'copy', local_path + relative_name, cloud_path + relative_name], capture_output = True, encoding = 'utf-8')
-			subprocess.run(['rclone', 'check', local_path + relative_name, cloud_path + relative_name], check = True)
+			#subprocess.run(['rclone', 'check', local_path + relative_name, cloud_path + relative_name], check = True)
 
 		elif os.path.isfile(local_path + relative_name):
 			print(['rclone', 'copy', local_path + relative_name, cloud_path])
@@ -368,5 +413,30 @@ class FileManager():
 			pdb.set_trace()
 			raise Exception('Error in uploading file: ' + output.stderr)
 
+	def uploadAndMerge(self, local_data, master_file, tarred = False, ID = False):
+		if os.path.isfile(local_data):
+			#We are merging two crv files
+			self.downloadData(master_file)
 
-	
+			if ID:
+				old_dt = pd.read_csv(master_file, index_col = ID)
+				new_dt = pd.read_csv(local_data, index_col = ID)
+				old_dt = old_dt.append(new_dt)
+				old_dt.index.name = ID
+			else:
+				old_dt = pd.read_csv(master_file)
+				new_dt = pd.read_csv(local_data)
+				old_dt = old_dt.append(new_dt)
+			
+			old_dt.to_csv(master_file, sep = ',')
+			self.uploadData(master_file)
+		else:
+			#We are merging two tarred directories
+			try:		
+				self.downloadData(master_file, tarred = True)
+			except FileNotFoundError:
+				self.createDirectory(master_file)
+			for nfile in os.listdir(local_data):
+				subprocess.run(['mv', local_data + nfile, master_file])
+			self.uploadData(master_file, tarred = True)
+
