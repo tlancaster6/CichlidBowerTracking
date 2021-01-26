@@ -46,9 +46,9 @@ class ThreeDClassifierPreparer:
 
 		print(command)
 
-#		os.chdir('CichlidActionClassification')
-#		subprocess.run(command)
-#		os.chdir('..')
+		os.chdir('CichlidActionClassification')
+		subprocess.run(command)
+		os.chdir('..')
 
 
 
