@@ -47,37 +47,11 @@ class ThreeDClassifierPreparer:
 		command.extend(['--Temporary_clips_directory', self.localConvertedClipsDir])
 		command.extend(['--Temporary_output_directory', self.localVideoLabelsDir])
 
+		print(command)
 
-parser.add_argument('--Clips_temp_directory',
-                    default=os.path.join(os.getenv("HOME"),'clips_temp'),
-                    type = str, 
-                    required = False, 
-                    help = 'Location for temp clips to be stored')
-
-parser.add_argument('--intermediate_temp_directory',
-                    default=os.path.join(os.getenv("HOME"),'intermediate_temp'),
-                    type = str, 
-                    required = False, 
-                    help = 'Location for temp files to be stored')
-
-self.localVideoLabels
-
-		command.extend(['--Num_workers', str(self.workers)])
-		command.extend(['--Log', self.videoObj.localHMMFile + '.log'])
-		command.extend(['--HMM_temp_directory', self.videoObj.localTempDir])
-		command.extend(['--HMM_filename', self.videoObj.localHMMFile])
-		command.extend(['--HMM_transition_filename', self.videoObj.localRawCoordsFile])
-		command.extend(['--Cl_labeled_transition_filename', self.videoObj.localLabeledCoordsFile])
-		command.extend(['--Cl_labeled_cluster_filename', self.videoObj.localLabeledClustersFile])
-		command.extend(['--Cl_videos_directory', self.videoObj.localAllClipsDir])
-		command.extend(['--ML_frames_directory', self.videoObj.localManualLabelFramesDir])
-		command.extend(['--ML_videos_directory', self.videoObj.localManualLabelClipsDir])
-		command.extend(['--Video_start_time', str(self.videoObj.startTime)])
-		command.extend(['--VideoID', self.fileManager.lp.movies[0].baseName])
-		
-		os.chdir('CichlidActionDetection')
-		subprocess.run(command)
-		os.chdir('..')
+#		os.chdir('CichlidActionClassification')
+#		subprocess.run(command)
+#		os.chdir('..')
 
 
 
