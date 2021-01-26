@@ -82,24 +82,19 @@ class FileManager():
 
 		# Files created by manual labeler preparer
 
-	def createMLData(self):
+	def createMLData(self, modelID):
+		self.vModelID = modelID
 		self.localMLDir = self.localMasterDir + '__MachineLearningModels/'
-		self.localVideoModelFile = self.localMLDir + 'MasterModels.txt'
-
-		self.downloadData(self.localVideoModelFile)
-		with open(self.localVideoModelFile) as f:
-			line = next(f)
-			line = next(f)
-			self.vModelID = line.rstrip().split(',')[1]
 
 		self.local3DModelDir = self.localMLDir + 'VideoModels/' + self.vModelID + '/'
 
-		self.videoMLGithub = 'https://www.github.com/ptmcgrat/3D-Resnets'
-
 		self.localVideoModelFile = self.local3DModelDir + 'model.pth'
-
 		self.localVideoClassesFile = self.local3DModelDir + 'classInd.txt'
 		self.localVideoCommandsFile = self.local3DModelDir + 'commands.pkl'
+		self.localVideoProjectDictionary = self.local3DModelDir + 'videoToProject.csv'
+		self.localVideoLabels = self.local3DModelDir + 'tempVideoPredictions.csv'
+		self.localConvertedClipsDir = self.local3DModelDir + 'tempConvertedClips'
+		self.localVideoLabelsDIr = self.local3DModelDir + 'tempOutputLabels'
 
 	def createAnnotationData(self):
 		self.localAnnotationDir = self.localMasterDir + '__AnnotatedData/'
@@ -144,7 +139,6 @@ class FileManager():
 
 		elif dtype == 'ClusterClassification':
 			self.createDirectory(self.localMasterDir)
-			self.createDirectory(self.local3DModelDir)
 			self.downloadData(self.localLogfile)
 			self.downloadData(self.localAllClipsDir, tarred = True)
 			self.downloadData(self.localAnalysisDir)

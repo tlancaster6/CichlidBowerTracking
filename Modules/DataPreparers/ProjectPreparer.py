@@ -48,10 +48,10 @@ class ProjectPreparer():
 		cp_obj.validateInputData()
 		cp_obj.runClusterAnalysis()
 
-	def run3DClassification(self):
-		tdcp_obj = TDCP(self.fileManager, self.workers, videoIndex)
+	def run3DClassification(self, modelID):
+		tdcp_obj = TDCP(self.fileManager, modelID)
 		tdcp_obj.validateInputData()
-		tdcp_obj.runClusterAnalysis()
+		tdcp_obj.predictLabels()
 
 	def manuallyLabelVideos(self, initials, number):
 		mlv_obj = MLVP(self.fileManager, initials, number)
