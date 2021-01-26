@@ -44,11 +44,11 @@ class ThreeDClassifierPreparer:
 		command.extend(['--Temporary_clips_directory', self.fileManager.localConvertedClipsDir])
 		command.extend(['--Temporary_output_directory', self.fileManager.localVideoLabelsDir])
 
-		print(command)
+		print(' '. join(command)
 
-		os.chdir('CichlidActionClassification')
-		subprocess.run(command)
-		os.chdir('..')
+		#os.chdir('CichlidActionClassification')
+		#subprocess.run(command)
+		#os.chdir('..')
 
 
 
