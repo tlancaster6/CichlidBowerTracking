@@ -36,13 +36,13 @@ class ThreeDClassifierPreparer:
 		# Run command
 		command = ['python3', 'ClassifyVideos.py']
 		command.extend(['--Input_videos_directory', self.fileManager.localAllClipsDir])
-		command.extend(['--Videos_to_project_file', self.localVideoProjectDictionary])
+		command.extend(['--Videos_to_project_file', self.fileManager.localVideoProjectDictionary])
 		command.extend(['--Trained_model', self.fileManager.localVideoModelFile])
 		command.extend(['--Trained_categories', self.fileManager.localVideoClassesFile])
 		command.extend(['--Training_options', self.fileManager.localVideoCommandsFile])
-		command.extend(['--Output_file', self.localVideoLabels])
-		command.extend(['--Temporary_clips_directory', self.localConvertedClipsDir])
-		command.extend(['--Temporary_output_directory', self.localVideoLabelsDir])
+		command.extend(['--Output_file', self.fileManager.localVideoLabels])
+		command.extend(['--Temporary_clips_directory', self.fileManager.localConvertedClipsDir])
+		command.extend(['--Temporary_output_directory', self.fileManager.localVideoLabelsDir])
 
 		print(command)
 
