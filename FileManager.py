@@ -2,7 +2,7 @@ import os, subprocess, pdb, platform
 import pandas as pd
 
 class FileManager():
-	def __init__(self, projectID = None, rcloneRemote = 'cichlidVideo:', masterDir = 'McGrath/Apps/CichlidPiData/'):
+	def __init__(self, projectID = None, modelID = None, rcloneRemote = 'cichlidVideo:', masterDir = 'McGrath/Apps/CichlidPiData/'):
 
 		# Identify directory for temporary local files
 		if platform.node() == 'raspberrypi' or 'Pi' in platform.node():
@@ -23,6 +23,9 @@ class FileManager():
 
 		if projectID is not None:
 			self.createProjectData(projectID)
+
+		if modelID is not None:
+			self.createMLData(modelID)
 
 		# Create file names 
 		self.createPiData()

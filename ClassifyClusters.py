@@ -6,6 +6,6 @@ parser.add_argument('ProjectID', type = str, help = 'Which projectID you want to
 parser.add_argument('ModelID', type = str, help = 'Which previously trained ModelID you want to use to classify the videos')
 args = parser.parse_args()
 
-pp_obj = PP(args.ProjectID)
-pp_obj.run3DClassification(args.ModelID)
+pp_obj = PP(args.ProjectID, modelID = args.ModelID)
+pp_obj.run3DClassification()
 

@@ -21,10 +21,7 @@ class ThreeDClassifierPreparer:
 		assert os.path.exists(self.fileManager.localVideoModelFile)
 		assert os.path.exists(self.fileManager.localVideoClassesFile)
 		assert os.path.exists(self.fileManager.localVideoCommandsFile)
-		
-		self.localVideoProjectDictionary = self.local3DModelDir + 'videoToProject.csv'
-
-			
+					
 
 	def predictLabels(self):
 

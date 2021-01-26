@@ -11,10 +11,10 @@ from Modules.DataPreparers.ManualLabelVideoPreparer import ManualLabelVideoPrepa
 class ProjectPreparer():
 	# This class takes in a projectID and runs all the appropriate analysis
 
-	def __init__(self, projectID, workers = None):
+	def __init__(self, projectID, modelID = None, workers = None):
 
 		self.projectID = projectID
-		self.fileManager = FM(projectID = projectID)
+		self.fileManager = FM(projectID = projectID, modelID = modelID)
 		if not self._checkProjectID():
 			raise Exception(projectID + ' is not valid.')
 		self.workers = workers
@@ -49,7 +49,7 @@ class ProjectPreparer():
 		cp_obj.runClusterAnalysis()
 
 	def run3DClassification(self, modelID):
-		tdcp_obj = TDCP(self.fileManager, modelID)
+		tdcp_obj = TDCP(self.fileManager)
 		tdcp_obj.validateInputData()
 		tdcp_obj.predictLabels()
 
