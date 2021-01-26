@@ -28,6 +28,7 @@ class FileManager():
 
 		self.localMLDir = self.localMasterDir + '__MachineLearningModels/'
 		if modelID is not None:
+			print(modelID)
 			self.createMLData(modelID)
 		else:
 			print(modelID)
