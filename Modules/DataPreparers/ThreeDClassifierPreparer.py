@@ -27,7 +27,7 @@ class ThreeDClassifierPreparer:
 
 		# Create mapping from videos to projectID
 
-		with open(self.localVideoProjectDictionary, 'w') as f:
+		with open(self.fileManager.localVideoProjectDictionary, 'w') as f:
 			print('Location,MeanID', file = f)
 
 			for videofile in [x.replace('.mp4','') for x in os.listdir(self.localAllClipsDir) if '.mp4' in x]:

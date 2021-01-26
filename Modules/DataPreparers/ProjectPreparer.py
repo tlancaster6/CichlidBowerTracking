@@ -12,7 +12,6 @@ class ProjectPreparer():
 	# This class takes in a projectID and runs all the appropriate analysis
 
 	def __init__(self, projectID, modelID = None, workers = None):
-		print(modelID)
 		self.projectID = projectID
 		self.fileManager = FM(projectID = projectID, modelID = modelID)
 		if not self._checkProjectID():
