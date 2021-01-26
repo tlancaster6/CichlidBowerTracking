@@ -48,7 +48,7 @@ class ProjectPreparer():
 		cp_obj.validateInputData()
 		cp_obj.runClusterAnalysis()
 
-	def run3DClassification(self, modelID):
+	def run3DClassification(self):
 		tdcp_obj = TDCP(self.fileManager)
 		tdcp_obj.validateInputData()
 		tdcp_obj.predictLabels()
