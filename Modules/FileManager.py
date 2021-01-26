@@ -26,13 +26,12 @@ class FileManager():
 		if projectID is not None:
 			self.createProjectData(projectID)
 
+		self.localMLDir = self.localMasterDir + '__MachineLearningModels/'
 		if modelID is not None:
 			self.createMLData(modelID)
 
 		# Create file names 
 		self.createPiData()
-		self.createMLData()
-		self.createAnnotationData()
 
 	def createPiData(self):
 		self.localCredentialSpreadsheet = self.localMasterDir + '__CredentialFiles/SAcredentials.json'
@@ -96,7 +95,6 @@ class FileManager():
 
 	def createMLData(self, modelID):
 		self.vModelID = modelID
-		self.localMLDir = self.localMasterDir + '__MachineLearningModels/'
 
 		self.local3DModelDir = self.localMLDir + 'VideoModels/' + self.vModelID + '/'
 
