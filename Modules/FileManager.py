@@ -103,7 +103,7 @@ class FileManager():
 		self.localVideoProjectDictionary = self.local3DModelDir + 'videoToProject.csv'
 		self.localVideoLabels = self.local3DModelDir + 'tempVideoPredictions.csv'
 		self.localConvertedClipsDir = self.local3DModelDir + 'tempConvertedClips'
-		self.localVideoLabelsDIr = self.local3DModelDir + 'tempOutputLabels'
+		self.localVideoLabelsDir = self.local3DModelDir + 'tempOutputLabels'
 
 	def createAnnotationData(self):
 		self.localAnnotationDir = self.localMasterDir + '__AnnotatedData/'
