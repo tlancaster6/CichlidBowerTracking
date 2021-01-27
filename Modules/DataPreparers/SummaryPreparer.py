@@ -24,7 +24,6 @@ class SummaryPreparer:
         assert os.path.exists(self.fm.localLogfile)
         assert os.path.exists(self.fm.localSummaryDir)
         assert os.path.exists(self.fm.localAnalysisDir)
-        assert os.path.exists(self.fm.localPaceDir)
         assert os.path.exists(self.fm.localSmoothDepthFile)
         assert os.path.exists(self.fm.localTrayFile)
         assert os.path.exists(self.fm.localTransMFile)
@@ -449,7 +448,7 @@ class SummaryPreparer:
 
     def createPaceSummary(self):
         # if the troubleshooting directory contains .out files, uses them to summarize the PACE analysis
-        if len(glob.glob(str(self.fm.localPaceDir) + '*.out*')) > 0:
+        if os.path.exists(self.fm.localPaceDir) and len(glob.glob(str(self.fm.localPaceDir) + '*.out*')) > 0:
             regexes = {'job_id': re.compile(r'Job id:(?P<job_id>.*)\n'),
                        'job_name': re.compile(r'Job name:(?P<job_name>.*)\n'),
                        'requested': re.compile(r'Resources:(?P<requested>.*)\n'),
