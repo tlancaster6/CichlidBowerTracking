@@ -20,13 +20,36 @@ class ThreeDClassifierPreparer:
 
 		assert os.path.exists(self.fileManager.localVideoModelFile)
 		assert os.path.exists(self.fileManager.localVideoClassesFile)
-		
-		self.uploads = [(self.projFileManager.localAnalysisDir, self.projFileManager.cloudAnalysisDir, 0)]
-			
+		assert os.path.exists(self.fileManager.localVideoCommandsFile)
+					
 
-	def predictVideoLabels(self):
-		self._identifyVideoClasses()
-		self._prepareClips()
-		self._predictLabels()
-		# Add code to run other repository
+	def predictLabels(self):
+
+		# Create mapping from videos to projectID
+
+		with open(self.fileManager.localVideoProjectDictionary, 'w') as f:
+			print('Location,MeanID', file = f)
+
+			for videofile in [x.replace('.mp4','') for x in os.listdir(self.fileManager.localAllClipsDir) if '.mp4' in x]:
+				print(videofile + ',' + self.fileManager.projectID, file = f)
+
+		# Run command
+		command = ['python3', 'ClassifyVideos.py']
+		command.extend(['--Input_videos_directory', self.fileManager.localAllClipsDir])
+		command.extend(['--Videos_to_project_file', self.fileManager.localVideoProjectDictionary])
+		command.extend(['--Trained_model', self.fileManager.localVideoModelFile])
+		command.extend(['--Trained_categories', self.fileManager.localVideoClassesFile])
+		command.extend(['--Training_options', self.fileManager.localVideoCommandsFile])
+		command.extend(['--Output_file', self.fileManager.localVideoLabels])
+		command.extend(['--Temporary_clips_directory', self.fileManager.localConvertedClipsDir])
+		command.extend(['--Temporary_output_directory', self.fileManager.localVideoLabelsDir])
+
+		print(' '.join(command))
+
+		#os.chdir('CichlidActionClassification')
+		#subprocess.run(command)
+		#os.chdir('..')
+
+
+
 

@@ -3,7 +3,7 @@ import pandas as pd
 from pathlib import Path
 
 class FileManager():
-	def __init__(self, projectID = None, rcloneRemote = 'cichlidVideo:', masterDir = 'McGrath/Apps/CichlidPiData'):
+	def __init__(self, projectID = None, modelID = None, rcloneRemote = 'cichlidVideo:', masterDir = 'McGrath/Apps/CichlidPiData'):
 
 		# Identify directory for temporary local files
 		if platform.node() == 'raspberrypi' or 'Pi' in platform.node():
@@ -27,10 +27,11 @@ class FileManager():
 		if projectID is not None:
 			self.createProjectData(projectID)
 
-		# Create file names 
+		self.localMLDir = self.localMasterDir / '__MachineLearningModels/'
+		if modelID is not None:
+			self.createMLData(modelID)
+		# Create file names
 		self.createPiData()
-		self.createMLData()
-		self.createAnnotationData()
 
 		# initiate parameters
 		self._createParameters()
@@ -78,7 +79,7 @@ class FileManager():
 
 		# Files created by depth preparer
 		self.localSmoothDepthFile = self.localAnalysisDir / 'smoothedDepthData.npy'
-		self.localRGBDepthVideo = self.localSummaryDir / 'DepthRGBVideo.mp4'
+		self.localRGBDepthVideo = self.localAnalysisDir / 'DepthRGBVideo.mp4'
 		self.localRawDepthFile = self.localTroubleshootingDir / 'rawDepthData.npy'
 		self.localInterpDepthFile = self.localTroubleshootingDir / 'interpDepthData.npy'
 
@@ -89,31 +90,25 @@ class FileManager():
 		self.localLabeledFramesFile = self.localAnalysisDir / 'LabeledFrames.csv'
 		self.localNewLabeledVideosFile = self.localAnalysisDir / 'NewLabeledVideos.csv'
 		self.localNewLabeledClipsDir = self.localProjectDir / 'NewLabeledClips'
-
 		self.localLabeledClipsProjectDir = self.localLabeledClipsDir / projectID
 
 		# Files created by manual labeler preparer
+		self.localLabeledFramesFile = self.localAnalysisDir / 'LabeledFrames.csv'
 
-	def createMLData(self):
-		self.localMLDir = self.localMasterDir / '__MachineLearningModels'
-		self.localVideoModelFile = self.localMLDir / 'MasterModels.txt'
+		# Files created by manual labeler preparer
 
-		self.createDirectory(self.localMLDir)
-		self.downloadData(self.localVideoModelFile)
-		with open(self.localVideoModelFile) as f:
-			line = next(f)
-			line = next(f)
-			self.vModelID = line.rstrip().split(',')[1]
+	def createMLData(self, modelID):
+		self.vModelID = modelID
 
-		self.local3DModelsDir = self.localMLDir / 'VideoModels'
-		self.local3DModelDir = self.localMLDir / 'VideoModels' / self.vModelID
-
-		self.videoMLGithub = 'https://www.github.com/ptmcgrat/3D-Resnets'
+		self.local3DModelDir = self.localMLDir / 'VideoModels/' / self.vModelID
 
 		self.localVideoModelFile = self.local3DModelDir / 'model.pth'
-
 		self.localVideoClassesFile = self.local3DModelDir / 'classInd.txt'
 		self.localVideoCommandsFile = self.local3DModelDir / 'commands.pkl'
+		self.localVideoProjectDictionary = self.local3DModelDir / 'videoToProject.csv'
+		self.localVideoLabels = self.local3DModelDir / 'tempVideoPredictions.csv'
+		self.localConvertedClipsDir = self.local3DModelDir / 'tempConvertedClips'
+		self.localVideoLabelsDir = self.local3DModelDir / 'tempOutputLabels'
 
 	def createAnnotationData(self):
 		self.localAnnotationDir = self.localMasterDir / '__AnnotatedData'
@@ -127,7 +122,7 @@ class FileManager():
 		self.localBoxedFishFile = self.localObjectDetectionDir / 'BoxedFish.csv'
 		self.localBoxedFishDir = self.localObjectDetectionDir / 'BoxedImages'
 
-	def downloadProjectData(self, dtype, videoIndex):
+	def downloadProjectData(self, dtype):
 
 		if dtype == 'Prep':
 			self.createDirectory(self.localMasterDir)
@@ -145,7 +140,7 @@ class FileManager():
 			self.downloadData(self.localFrameDir, tarred = True)
 
 		elif dtype == 'Cluster':
-			videoObj = self.returnVideoObject(videoIndex)
+			self.createMLData()
 			self.createDirectory(self.localMasterDir)
 			self.createDirectory(self.localAnalysisDir)
 			self.createDirectory(self.localTroubleshootingDir)
@@ -156,19 +151,15 @@ class FileManager():
 			self.createDirectory(self.localManualLabelFramesDir)
 			self.createDirectory(self.localManualLabelFramesDir[:-1] + '_pngs')
 			self.downloadData(self.localLogfile)
-			self.downloadData(videoObj.localVideoFile)
+			self.downloadData(self.localVideoDir)
 
 		elif dtype == 'ClusterClassification':
-			self.createMLData()
 			self.createDirectory(self.localMasterDir)
 			self.downloadData(self.localLogfile)
-			self.downloadData(self.localAllClipsDir, tarred_subdirs = True)
+			self.downloadData(self.localAllClipsDir, tarred = True)
 			self.downloadData(self.localAnalysisDir)
 			self.downloadData(self.localTroubleshootingDir)
-			self.downloadData(self.local3DModelsDir)
-
-		elif dtype == 'FishDetection':
-			pass
+			self.downloadData(self.local3DModelDir)
 
 		elif dtype == 'ManualLabelVideos':
 			self.createDirectory(self.localMasterDir)
@@ -202,6 +193,7 @@ class FileManager():
 			self.createDirectory(self.localAllClipsDir)
 			self.createDirectory(self.localManualLabelClipsDir)
 			self.createDirectory(self.localManualLabelFramesDir)
+			self.createDirectory(self.localManualLabelFramesDir[:-1] + '_pngs')
 			self.createDirectory(self.localSummaryDir)
 			self.createDirectory(self.localPaceDir)
 			self.downloadData(self.localLogfile)
@@ -211,7 +203,7 @@ class FileManager():
 
 		else:
 			raise KeyError('Unknown key: ' + dtype)
-			
+
 	def uploadProjectData(self, dtype, videoIndex):
 		if dtype == 'Prep':
 			self.uploadData(self.localTrayFile)
@@ -237,7 +229,6 @@ class FileManager():
 		elif dtype == 'ManualAnnotation':
 			self.uploadAndMerge(self.localNewLabeledVideosFile, self.localLabeledClipsFile, ID='LID')
 			self.uploadAndMerge(self.localNewLabeledClipsDir, self.localLabeledClipsProjectDir, tarred=True)
-
 
 		else:
 			raise KeyError('Unknown key: ' + dtype)
@@ -470,11 +461,3 @@ class FileManager():
 				subprocess.run(['mv', local_data + nfile, master_file])
 			self.uploadData(master_file, tarred = True)
 
-
-
-
-
-
-
-
-	

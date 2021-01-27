@@ -11,10 +11,9 @@ from Modules.DataPreparers.SummaryPreparer import SummaryPreparer as SP
 class ProjectPreparer():
 	# This class takes in a projectID and runs all the appropriate analysis
 
-	def __init__(self, projectID, workers = None):
-
+	def __init__(self, projectID, modelID = None, workers = None):
 		self.projectID = projectID
-		self.fileManager = FM(projectID = projectID)
+		self.fileManager = FM(projectID = projectID, modelID = modelID)
 		if not self._checkProjectID():
 			raise Exception(projectID + ' is not valid.')
 		self.workers = workers
@@ -49,9 +48,9 @@ class ProjectPreparer():
 		cp_obj.runClusterAnalysis()
 
 	def run3DClassification(self):
-		tdcp_obj = TDCP(self.fileManager, self.workers, videoIndex)
+		tdcp_obj = TDCP(self.fileManager)
 		tdcp_obj.validateInputData()
-		tdcp_obj.runClusterAnalysis()
+		tdcp_obj.predictLabels()
 
 	def manuallyLabelVideos(self, initials, number):
 		mlv_obj = MLVP(self.fileManager, initials, number)
