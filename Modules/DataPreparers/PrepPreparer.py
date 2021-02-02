@@ -35,7 +35,7 @@ class PrepPreparer:
 
 		firstFrame = np.load(self.fileManager.localFirstFrame)
 		lastFrame = np.load(self.fileManager.localLastFrame)
-		depthRGB = cv2.imread(self.fileManager.localDepthRGB)
+		depthRGB = cv2.imread(str(self.fileManager.localDepthRGB))
 
 		# Create color image of depth change
 		cmap = plt.get_cmap('jet')
@@ -95,11 +95,11 @@ class PrepPreparer:
 			print(','.join([str(x) for x in self.tray_r]), file = f)
 
 	def _cropVideo(self):
-		im1 =  cv2.imread(self.fileManager.localPiRGB)
+		im1 =  cv2.imread(str(self.fileManager.localPiRGB))
 		im1_gray = cv2.cvtColor(im1,cv2.COLOR_BGR2GRAY)
 
 		while True:
-			im1 =  cv2.imread(self.fileManager.localPiRGB)
+			im1 =  cv2.imread(str(self.fileManager.localPiRGB))
 			im1_gray = cv2.cvtColor(im1,cv2.COLOR_BGR2GRAY)
 
 			fig = plt.figure(figsize=(9, 12))
@@ -138,8 +138,8 @@ class PrepPreparer:
 		print('Registering RGB and Depth data ')
 		# Find first videofile during the day
 
-		im1 = cv2.imread(self.fileManager.localDepthRGB)
-		im2 = cv2.imread(self.fileManager.localPiRGB)
+		im1 = cv2.imread(str(self.fileManager.localDepthRGB))
+		im2 = cv2.imread(str(self.fileManager.localPiRGB))
 		im1_gray = cv2.cvtColor(im1,cv2.COLOR_BGR2GRAY)
 		im2_gray = cv2.cvtColor(im2,cv2.COLOR_BGR2GRAY)
 
@@ -201,9 +201,9 @@ class PrepPreparer:
 	def _summarizePrep(self):
 		firstFrame = np.load(self.fileManager.localFirstFrame)
 		lastFrame = np.load(self.fileManager.localLastFrame)
-		depthRGB = cv2.imread(self.fileManager.localDepthRGB)
+		depthRGB = cv2.imread(str(self.fileManager.localDepthRGB))
 		#depthRGB = cv2.cvtColor(depthRGB,cv2.COLOR_BGR2GRAY)
-		piRGB =  cv2.imread(self.fileManager.localPiRGB)
+		piRGB =  cv2.imread(str(self.fileManager.localPiRGB))
 		piRGB = cv2.cvtColor(piRGB,cv2.COLOR_BGR2GRAY)
 
 		cmap = plt.get_cmap('jet')

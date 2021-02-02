@@ -23,9 +23,9 @@ class DepthPreparer:
 		bad_frames = 0
 		for frame in self.lp.frames:
 
-			if not os.path.exists(self.fileManager.localProjectDir + frame.npy_file):
+			if not os.path.exists(self.fileManager.localProjectDir / frame.npy_file):
 				bad_frames += 1
-			if not os.path.exists(self.fileManager.localProjectDir + frame.pic_file):
+			if not os.path.exists(self.fileManager.localProjectDir / frame.pic_file):
 				bad_frames += 1
 		print(bad_frames)
 		assert os.path.exists(self.fileManager.localTroubleshootingDir)
@@ -39,7 +39,7 @@ class DepthPreparer:
 		rawDepthData = np.empty(shape = (len(self.lp.frames), self.lp.height, self.lp.width))
 		for i, frame in enumerate(self.lp.frames):                
 			try:
-				data = np.load(self.fileManager.localProjectDir + frame.npy_file)
+				data = np.load(self.fileManager.localProjectDir / frame.npy_file)
 			except FileNotFoundError:
 				print('Bad frame: ' + str(i) + ', ' + frame.npy_file)
 				rawDepthData[i] = rawDepthData[i-1]
@@ -90,9 +90,9 @@ class DepthPreparer:
 	def createRGBVideo(self):
 		self.lp = LP(self.fileManager.localLogfile)
 		for i, frame in enumerate(self.lp.frames): 
-			depthRGB = plt.imread(self.fileManager.localProjectDir + frame.pic_file)
+			depthRGB = plt.imread(str(self.fileManager.localProjectDir / frame.pic_file))
 			if depthRGB is None:
-				print(self.fileManager.localProjectDir + frame.pic_file)
+				print(str(self.fileManager.localProjectDir / frame.pic_file))
 				continue
 			if i==0:
 				#pdb.set_trace()

@@ -199,6 +199,7 @@ class FileManager():
 			self.createDirectory(self.localSummaryDir)
 			self.createDirectory(self.localPaceDir)
 			self.downloadData(self.localLogfile)
+			self.downloadData(self.localPrepDir)
 			self.downloadData(self.localVideoDir)
 			self.downloadData(self.localFrameDir, tarred = True)
 			self.downloadData(self.local3DModelDir)
@@ -379,7 +380,7 @@ class FileManager():
 			os.makedirs(directory)
 
 	def downloadData(self, local_data, tarred = False, tarred_subdirs = False):
-		local_data = Path(local_data).as_posix()
+		local_data = Path(local_data).as_posix() + '/'
 
 		relative_name = local_data.rstrip('/').split('/')[-1] + '.tar' if tarred else local_data.rstrip('/').split('/')[-1]
 		local_path = local_data.split(local_data.rstrip('/').split('/')[-1])[0]
