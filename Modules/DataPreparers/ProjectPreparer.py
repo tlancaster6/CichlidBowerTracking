@@ -26,7 +26,7 @@ class ProjectPreparer():
 			return False
 
 	def downloadData(self, dtype, videoIndex = None):
-		self.fileManager.downloadProjectData(dtype, videoIndex)
+		self.fileManager.downloadProjectData(dtype)
 
 	def uploadData(self, dtype, videoIndex = None):
 		self.fileManager.uploadProjectData(dtype, videoIndex)

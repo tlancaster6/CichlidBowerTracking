@@ -8,6 +8,8 @@ class FileManager():
 		# Identify directory for temporary local files
 		if platform.node() == 'raspberrypi' or 'Pi' in platform.node():
 			self._identifyPiDirectory()
+		if Path('D:').exists():
+			self.localMasterDir = Path('D:') / 'Temp' / 'CichlidAnalyzer'
 		else:
 			self.localMasterDir = Path.home() / 'Temp' / 'CichlidAnalyzer'
 
@@ -60,6 +62,7 @@ class FileManager():
 		self.localAllClipsDir = self.localProjectDir / 'AllClips'
 		self.localManualLabelClipsDir = self.localProjectDir / 'MLClips'
 		self.localManualLabelFramesDir = self.localProjectDir / 'MLFrames'
+		self.localManualLabelFramesPngDir = self.localProjectDir / 'MLFrames_pngs'
 		self.localTroubleshootingDir = self.localProjectDir / 'Troubleshooting'
 		self.localPaceDir = self.localProjectDir / 'Pace'
 		self.localTempDir = self.localProjectDir / 'Temp'
@@ -140,7 +143,6 @@ class FileManager():
 			self.downloadData(self.localFrameDir, tarred = True)
 
 		elif dtype == 'Cluster':
-			self.createMLData()
 			self.createDirectory(self.localMasterDir)
 			self.createDirectory(self.localAnalysisDir)
 			self.createDirectory(self.localTroubleshootingDir)
@@ -149,7 +151,7 @@ class FileManager():
 			self.createDirectory(self.localAllClipsDir)
 			self.createDirectory(self.localManualLabelClipsDir)
 			self.createDirectory(self.localManualLabelFramesDir)
-			self.createDirectory(self.localManualLabelFramesDir[:-1] + '_pngs')
+			self.createDirectory(self.localManualLabelFramesPngDir)
 			self.downloadData(self.localLogfile)
 			self.downloadData(self.localVideoDir)
 
@@ -193,7 +195,7 @@ class FileManager():
 			self.createDirectory(self.localAllClipsDir)
 			self.createDirectory(self.localManualLabelClipsDir)
 			self.createDirectory(self.localManualLabelFramesDir)
-			self.createDirectory(self.localManualLabelFramesDir[:-1] + '_pngs')
+			self.createDirectory(self.localManualLabelFramesPngDir)
 			self.createDirectory(self.localSummaryDir)
 			self.createDirectory(self.localPaceDir)
 			self.downloadData(self.localLogfile)
