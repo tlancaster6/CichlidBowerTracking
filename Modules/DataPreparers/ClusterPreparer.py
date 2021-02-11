@@ -38,21 +38,23 @@ class ClusterPreparer():
 						]"""
 
 	def runClusterAnalysis(self):
-		command = ['python3', 'VideoFocus.py']
-		command.extend(['--Movie_file', self.videoObj.localVideoFile])
+		command = ['python', 'VideoFocus.py']
+		command.extend(['--Movie_file', str(self.videoObj.localVideoFile)])
 		command.extend(['--Num_workers', str(self.workers)])
-		command.extend(['--Log', self.videoObj.localHMMFile + '.log'])
-		command.extend(['--HMM_temp_directory', self.videoObj.localTempDir])
-		command.extend(['--HMM_filename', self.videoObj.localHMMFile])
-		command.extend(['--HMM_transition_filename', self.videoObj.localRawCoordsFile])
-		command.extend(['--Cl_labeled_transition_filename', self.videoObj.localLabeledCoordsFile])
-		command.extend(['--Cl_labeled_cluster_filename', self.videoObj.localLabeledClustersFile])
-		command.extend(['--Cl_videos_directory', self.videoObj.localAllClipsDir])
-		command.extend(['--ML_frames_directory', self.videoObj.localManualLabelFramesDir])
-		command.extend(['--ML_videos_directory', self.videoObj.localManualLabelClipsDir])
+		command.extend(['--Log', str(self.videoObj.localHMMFile) + '.log'])
+		command.extend(['--HMM_temp_directory', str(self.videoObj.localTempDir)])
+		command.extend(['--HMM_filename', str(self.videoObj.localHMMFile)])
+		command.extend(['--HMM_transition_filename', str(self.videoObj.localRawCoordsFile)])
+		command.extend(['--Cl_labeled_transition_filename', str(self.videoObj.localLabeledCoordsFile)])
+		command.extend(['--Cl_labeled_cluster_filename', str(self.videoObj.localLabeledClustersFile)])
+		command.extend(['--Cl_videos_directory', str(self.videoObj.localAllClipsDir)])
+		command.extend(['--ML_frames_directory', str(self.videoObj.localManualLabelFramesDir)])
+		command.extend(['--ML_videos_directory', str(self.videoObj.localManualLabelClipsDir)])
 		command.extend(['--Video_start_time', str(self.videoObj.startTime)])
-		command.extend(['--VideoID', self.fileManager.lp.movies[0].baseName])
-		
+		command.extend(['--VideoID', str(self.fileManager.lp.movies[0].baseName)])
+
+		if not os.path.exists('CichlidActionDetection'):
+			subprocess.run('git clone https://github.com/ptmcgrat/CichlidActionDetection')
 		os.chdir('CichlidActionDetection')
 		subprocess.run(command)
 		os.chdir('..')
