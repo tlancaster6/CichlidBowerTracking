@@ -138,9 +138,11 @@ for key, value in vars(args).items():
 
 # subprocess.run('conda activate CichlidBowerTracking && python -V', shell=True)
 
-HMM_command = ['bash', '-c', '&&', 'conda', 'activate', 'CichlidBowerTracking', '&&', 'python', str(Path('Utils', 'calculateHMM.py'))]
+command_stub = ['bash -c \"conda activate CichlidBowerTracking; python']
+HMM_command = command_stub + [str(Path('Utils', 'calculateHMM.py'))]
 for key, value in HMM_args.items():
-	HMM_command.extend(['--' + key, '\"'+str(value)+'\"' if ' ' in str(value) else str(value)])
+	arg = '\\ '.join(str(value).split())
+	HMM_command.extend(['--' + key, arg])
 HMM_command = ' '.join(HMM_command)
 
 print(HMM_command)
@@ -153,9 +155,9 @@ for key, value in vars(args).items():
 			if value is not None:
 				cluster_args[key] = value
 
-
-cluster_command = ['bash', '-c', '&&', 'conda', 'activate', 'CichlidBowerTracking', '&&', 'python', str(Path('Utils', 'calculateClusters.py'))]
+cluster_command = command_stub + [str(Path('Utils', 'calculateClusters.py'))]
 for key, value in cluster_args.items():
-	cluster_command.extend(['--' + key, '\"'+str(value)+'\"' if ' ' in str(value) else str(value)])
+	arg = '\\ '.join(str(value).split())
+	cluster_command.extend(['--' + key, arg])
 cluster_command = ' '.join(cluster_command)
 subprocess.run(cluster_command, shell=True)
