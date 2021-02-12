@@ -124,9 +124,11 @@ class Cluster_calculator:
 		for row in self.clusterData[self.clusterData.ClipCreated == 'Yes'].itertuples():
 			LID, N, t, x, y = [str(x) for x in [row.Index, row.N, row.t, row.X, row.Y]]
 			outName = self.args.Cl_videos_directory + row.ClipName + '.mp4'
-			command = ['python3', 'Utils/createClip.py', self.args.Movie_file, 
-						outName, str(delta_xy), str(delta_t), str(self.framerate)]
-			processes.append(subprocess.Popen(command))
+			command_stub = ['bash -c \"source activate CichlidBowerTracking; python']
+			command = command_stub + ['Utils/createClip.py', self.args.Movie_file, outName, str(delta_xy), str(delta_t),
+									  str(self.framerate)]
+			command = ' '.join(command) + '\"'
+			processes.append(subprocess.Popen(command, shell=True))
 			if len(processes) == self.workers:
 				for p in processes:
 					p.communicate()
