@@ -138,7 +138,7 @@ for key, value in vars(args).items():
 
 # subprocess.run('conda activate CichlidBowerTracking && python -V', shell=True)
 
-command_stub = ['conda activate CichlidBowerTracking && \"python']
+command_stub = ['bash -c \"source activate CichlidBowerTracking; python']
 HMM_command = command_stub + [str(Path('Utils', 'calculateHMM.py'))]
 for key, value in HMM_args.items():
 	arg = '\\ '.join(str(value).split())
