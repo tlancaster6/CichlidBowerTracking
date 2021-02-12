@@ -11,7 +11,7 @@ from Modules.DataPreparers.SummaryPreparer import SummaryPreparer as SP
 class ProjectPreparer():
 	# This class takes in a projectID and runs all the appropriate analysis
 
-	def __init__(self, projectID, modelID = None, workers = None):
+	def __init__(self, projectID, modelID = 'Model18_All', workers = None):
 		self.projectID = projectID
 		self.fileManager = FM(projectID = projectID, modelID = modelID)
 		if not self._checkProjectID():
