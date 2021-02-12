@@ -144,6 +144,7 @@ for key, value in HMM_args.items():
 	arg = '\\ '.join(str(value).split())
 	HMM_command.extend(['--' + key, arg])
 HMM_command = ' '.join(HMM_command)
+HMM_command += '\"'
 
 print(HMM_command)
 subprocess.run(HMM_command, shell=True)
@@ -160,4 +161,5 @@ for key, value in cluster_args.items():
 	arg = '\\ '.join(str(value).split())
 	cluster_command.extend(['--' + key, arg])
 cluster_command = ' '.join(cluster_command)
+cluster_command += '\"'
 subprocess.run(cluster_command, shell=True)
