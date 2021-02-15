@@ -8,6 +8,8 @@ class HMM_calculator:
         self.args = args
         self.workers = args.Num_workers  # Rename to make more readable
         self.output_directory = self.args.HMM_temp_directory  # Rename to make more readable
+        if self.output_directory[-1] != '/':
+            self.output_directory = self.output_directory + '/'
 
         self.row_command_arguments = []
         for key, value in vars(args).items():
