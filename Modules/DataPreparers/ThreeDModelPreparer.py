@@ -29,7 +29,7 @@ class ThreeDModelPreparer():
 		dt['ProjectID'] = dt.ClipName.str.split('__').str[0]
 		dt = dt[dt.ProjectID.isin(self.projects)]
 		dt = dt.rename(columns = {'ClipName':'VideoFile', 'ManualLabel':'Label'})
-		dt.to_csv(self.fileManager.localVideosProjectsFile)
+		dt.to_csv(self.fileManager.localVideoProjectsFile)
 
 		command = ['python3', 'TrainModel.py']
 		command.extend(['--Videos_directory', self.fileManager.localLabeledClipsDir])
