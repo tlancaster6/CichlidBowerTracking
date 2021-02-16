@@ -34,7 +34,7 @@ class ThreeDClassifierPreparer:
 				print(videofile + ',' + self.fileManager.projectID, file = f)
 
 		# Run command
-		command = ['python3', 'ClassifyVideos.py']
+		command = ['bash -c \"source activate torch12; python ClassifyVideos.py']
 		command.extend(['--Input_videos_directory', str(self.fileManager.localAllClipsDir)])
 		command.extend(['--Videos_to_project_file', str(self.fileManager.localVideoProjectDictionary)])
 		command.extend(['--Trained_model', str(self.fileManager.localVideoModelFile)])
@@ -43,11 +43,12 @@ class ThreeDClassifierPreparer:
 		command.extend(['--Output_file', str(self.fileManager.localVideoLabels)])
 		command.extend(['--Temporary_clips_directory', str(self.fileManager.localConvertedClipsDir)])
 		command.extend(['--Temporary_output_directory', str(self.fileManager.localVideoLabelsDir)])
+		command = ' '.join(command) + '\"'
 
-		print(' '.join(command))
+		print(command)
 
 		os.chdir('CichlidActionClassification')
-		subprocess.run(command)
+		subprocess.run(command, shell=True)
 		os.chdir('..')
 
 
