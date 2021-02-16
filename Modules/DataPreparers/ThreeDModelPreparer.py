@@ -42,7 +42,7 @@ class ThreeDModelPreparer():
 		
 		os.chdir('VideoClassifier')
 		#command = "source activate CichlidActionClassification; " + ' ' .join(command)
-		command = "source activate CichlidActionClassification; conda info"
+		command = "source activate CichlidActionClassification; conda info --envs"
 		subprocess.run('bash -c \"' + command + '\"', shell = True)
 		os.chdir('..')
 
