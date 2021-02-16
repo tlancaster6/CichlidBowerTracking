@@ -35,14 +35,14 @@ class ThreeDClassifierPreparer:
 
 		# Run command
 		command = ['python3', 'ClassifyVideos.py']
-		command.extend(['--Input_videos_directory', self.fileManager.localAllClipsDir])
-		command.extend(['--Videos_to_project_file', self.fileManager.localVideoProjectDictionary])
-		command.extend(['--Trained_model', self.fileManager.localVideoModelFile])
-		command.extend(['--Trained_categories', self.fileManager.localVideoClassesFile])
-		command.extend(['--Training_options', self.fileManager.localVideoCommandsFile])
-		command.extend(['--Output_file', self.fileManager.localVideoLabels])
-		command.extend(['--Temporary_clips_directory', self.fileManager.localConvertedClipsDir])
-		command.extend(['--Temporary_output_directory', self.fileManager.localVideoLabelsDir])
+		command.extend(['--Input_videos_directory', str(self.fileManager.localAllClipsDir)])
+		command.extend(['--Videos_to_project_file', str(self.fileManager.localVideoProjectDictionary)])
+		command.extend(['--Trained_model', str(self.fileManager.localVideoModelFile)])
+		command.extend(['--Trained_categories', str(self.fileManager.localVideoClassesFile)])
+		command.extend(['--Training_options', str(self.fileManager.localVideoCommandsFile)])
+		command.extend(['--Output_file', str(self.fileManager.localVideoLabels)])
+		command.extend(['--Temporary_clips_directory', str(self.fileManager.localConvertedClipsDir)])
+		command.extend(['--Temporary_output_directory', str(self.fileManager.localVideoLabelsDir)])
 
 		print(' '.join(command))
 
