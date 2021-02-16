@@ -41,7 +41,7 @@ class ThreeDModelPreparer():
 		command.extend(['--projectMeans'])
 		
 		#command = "source activate CichlidActionClassification; " + ' ' .join(command)
-		command = "source " + os.getenv('HOME') + "/anaconda3/etc/profile.d/conda.sh; conda activate CichlidActionClassification; conda info --envs"
+		command = "source " + os.getenv('HOME') + "/anaconda3/etc/profile.d/conda.sh; conda activate CichlidActionClassification; conda info"
 		subprocess.run('bash -c \"' + command + '\"', shell = True)
 		os.chdir('..')
 
