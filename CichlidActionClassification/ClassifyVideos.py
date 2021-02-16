@@ -1,4 +1,4 @@
-import argparse, subprocess, datetime, os, pdb, sys
+import argparse, subprocess, datetime, os, pdb, sys, pickle
 from Utils.CichlidActionRecognition import ML_model
 from Utils.DataPrepare import DP_worker
 
@@ -98,9 +98,9 @@ parser.add_argument('--n_classes',default=10,type=int)
 args = parser.parse_args()
 # Parameters to load from previous training_log
 
-with open(args.Training_options,'r') as input_f:
-    for line in input_f:
-        key,value = line.rstrip().split(': ')
+with open(args.Training_options,'rb') as input_f:
+    ops = pickle.load(input_f)
+    for key, value in ops.items():
         if key in ['sample_duration','sample_size','lr_patience','n_classes']:
             vars(args)[key]=int(value)
         elif key in ['optimizer','resnet_shortcut']:
