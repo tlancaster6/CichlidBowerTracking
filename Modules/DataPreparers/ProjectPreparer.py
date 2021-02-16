@@ -6,6 +6,7 @@ from Modules.DataPreparers.DepthPreparer import DepthPreparer as DP
 from Modules.DataPreparers.ClusterPreparer import ClusterPreparer as CP
 from Modules.DataPreparers.ThreeDClassifierPreparer import ThreeDClassifierPreparer as TDCP
 from Modules.DataPreparers.ManualLabelVideoPreparer import ManualLabelVideoPreparer as MLVP
+from Modules.DataPreparers.ThreeDModelPreparer import ThreeDModelPreparer as TDMP
 #from Modules.DataPreparers.FigurePreparer import FigurePreparer as FP
 
 class ProjectPreparer():
@@ -14,6 +15,7 @@ class ProjectPreparer():
 	def __init__(self, projectID, modelID = None, workers = None):
 		self.projectID = projectID
 		self.fileManager = FM(projectID = projectID, modelID = modelID)
+		self.modelID = modelID
 		if not self._checkProjectID():
 			raise Exception(projectID + ' is not valid.')
 		self.workers = workers
@@ -62,6 +64,11 @@ class ProjectPreparer():
 		mlf_obj.validateInputData()
 		mlf_obj.labelFrames()
 	
+	def createModel(self, purpose, projectIDs, oldModelID):
+		tdm_obj = TDMP(self.fileManager, purpose, projectIDs, self.modelID, oldModelID)
+		tdm_obj.validateInputData()
+		tdm_obj.create3DModel()
+
 	def runMLFishDetection(self):
 		pass
 

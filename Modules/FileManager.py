@@ -32,6 +32,8 @@ class FileManager():
 		# Create file names 
 		self.createPiData()
 
+		self.createAnnotationData
+
 	def createPiData(self):
 		self.localCredentialSpreadsheet = self.localMasterDir + '__CredentialFiles/SAcredentials.json'
 		self.localCredentialDrive = self.localMasterDir + '__CredentialFiles/DriveCredentials.txt'
@@ -96,14 +98,13 @@ class FileManager():
 		self.vModelID = modelID
 
 		self.local3DModelDir = self.localMLDir + 'VideoModels/' + self.vModelID + '/'
+		self.local3DModelTempDir = self.localMLDir + 'VideoModels/' + self.vModelID + 'Temp/'
 
 		self.localVideoModelFile = self.local3DModelDir + 'model.pth'
 		self.localVideoClassesFile = self.local3DModelDir + 'classInd.txt'
-		self.localVideoCommandsFile = self.local3DModelDir + 'commands.pkl'
-		self.localVideoProjectDictionary = self.local3DModelDir + 'videoToProject.csv'
-		self.localVideoLabels = self.local3DModelDir + 'tempVideoPredictions.csv'
-		self.localConvertedClipsDir = self.local3DModelDir + 'tempConvertedClips'
-		self.localVideoLabelsDir = self.local3DModelDir + 'tempOutputLabels'
+		self.localModelCommandsFile = self.local3DModelDir + 'commands.log'
+		self.localVideoProjectsFile = self.local3DModelDir + 'videoToProject.csv'
+		self.localVideoLabels = self.local3DModelDir + 'confusionMatrix.csv'
 
 	def createAnnotationData(self):
 		self.localAnnotationDir = self.localMasterDir + '__AnnotatedData/'
@@ -117,7 +118,7 @@ class FileManager():
 		self.localBoxedFishFile = self.localObjectDetectionDir + 'BoxedFish.csv'
 		self.localBoxedFishDir = self.localObjectDetectionDir + 'BoxedImages/'
 
-	def downloadProjectData(self, dtype, videoIndex):
+	def downloadProjectData(self, dtype, videoIndex = None):
 
 		if dtype == 'Prep':
 			self.createDirectory(self.localMasterDir)
@@ -156,10 +157,12 @@ class FileManager():
 			self.downloadData(self.local3DModelDir)
 
 		elif dtype == 'Train3DModel':
+			self.createDirectory(self.local3DModelDir)
+			self.createDirectory(self.local3DModelTempDir)
 			self.createDirectory(self.localMasterDir)
 			self.downloadData(self.localLabeledClipsFile)
 			self.downloadData(self.localLabeledClipsDir, tarred_subdirs = True)		
-
+			
 		elif dtype == 'ManualLabelVideos':
 			self.createDirectory(self.localMasterDir)
 			self.createDirectory(self.localAnalysisDir)
