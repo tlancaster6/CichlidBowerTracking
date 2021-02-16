@@ -125,7 +125,7 @@ class FileManager():
 		self.localBoxedFishFile = self.localObjectDetectionDir / 'BoxedFish.csv'
 		self.localBoxedFishDir = self.localObjectDetectionDir / 'BoxedImages'
 
-	def downloadProjectData(self, dtype):
+	def downloadProjectData(self, dtype, videoIndex=None):
 
 		if dtype == 'Prep':
 			self.createDirectory(self.localMasterDir)
@@ -143,6 +143,8 @@ class FileManager():
 			self.downloadData(self.localFrameDir, tarred = True)
 
 		elif dtype == 'Cluster':
+			assert videoIndex is not None, 'must specify video index for cluster download'
+			videoObj = self.returnVideoObject(videoIndex)
 			self.createDirectory(self.localMasterDir)
 			self.createDirectory(self.localAnalysisDir)
 			self.createDirectory(self.localTroubleshootingDir)
@@ -153,7 +155,7 @@ class FileManager():
 			self.createDirectory(self.localManualLabelFramesDir)
 			self.createDirectory(self.localManualLabelFramesPngDir)
 			self.downloadData(self.localLogfile)
-			self.downloadData(self.localVideoDir)
+			self.downloadData(videoObj.localVideoFile)
 
 		elif dtype == 'ClusterClassification':
 			self.createDirectory(self.localMasterDir)
@@ -162,6 +164,11 @@ class FileManager():
 			self.downloadData(self.localAnalysisDir)
 			self.downloadData(self.localTroubleshootingDir)
 			self.downloadData(self.local3DModelDir)
+
+		elif dtype == 'Train3DModel':
+			self.createDirectory(self.localMasterDir)
+			self.downloadData(self.localLabeledClipsFile)
+			self.downloadData(self.localLabeledClipsDir, tarred_subdirs = True)
 
 		elif dtype == 'ManualLabelVideos':
 			self.createDirectory(self.localMasterDir)
