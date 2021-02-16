@@ -42,6 +42,7 @@ class ThreeDModelPreparer():
 		
 		#command = "source activate CichlidActionClassification; " + ' ' .join(command)
 		command = "source " + os.getenv('HOME') + "/anaconda3/etc/profile.d/conda.sh; conda activate CichlidActionClassification; " + ' '.join(command)
+		os.chdir('VideoClassifier')
 		subprocess.run('bash -c \"' + command + '\"', shell = True)
 		os.chdir('..')
 
