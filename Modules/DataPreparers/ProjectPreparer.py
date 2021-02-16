@@ -21,6 +21,7 @@ class ProjectPreparer():
 		self.workers = workers
 
 	def _checkProjectID(self):
+		pass
 		projectIDs = subprocess.run(['rclone', 'lsf', self.fileManager.cloudMasterDir], capture_output = True, encoding = 'utf-8').stdout.split()
 		if self.projectID + '/' in projectIDs:
 			return True
