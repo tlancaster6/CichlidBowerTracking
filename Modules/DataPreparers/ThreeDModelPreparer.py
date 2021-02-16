@@ -35,6 +35,7 @@ class ThreeDModelPreparer():
 		command.extend(['--Videos_file', self.fileManager.localVideoProjectsFile])
 		command.extend(['--Results_directory', self.fileManager.local3DModelTempDir])
 		command.extend(['--Purpose', 'denovo'])
+		command.extend(['--gpu', '2'])
 		command.extend(['--projectMeans'])
 		
 		os.chdir('VideoClassifier')
