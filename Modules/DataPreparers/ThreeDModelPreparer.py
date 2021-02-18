@@ -8,13 +8,14 @@ class ThreeDModelPreparer():
 	# 3. Automatically identifies bower location
 	# 4. Analyze building, shape, and other pertinent info of the bower
 
-	def __init__(self, fileManager, purpose, projects, modelID, gpu):
+	def __init__(self, fileManager, purpose, projects, modelID, gpu, projectMeans):
 
 		self.__version__ = '1.0.0'
 
 		self.fileManager = fileManager
 		self.projects = projects
 		self.gpu = gpu
+		self.projectMeans
 
 	def validateInputData(self):
 		
@@ -40,7 +41,9 @@ class ThreeDModelPreparer():
 		command.extend(['--Results_directory', self.fileManager.local3DModelTempDir])
 		command.extend(['--Purpose', 'denovo'])
 		command.extend(['--gpu', str(self.gpu)])
-		command.extend(['--projectMeans'])
+		if self.projectMeans:
+			command.extend(['--projectMeans'])
+
 		
 		#command = "source activate CichlidActionClassification; " + ' ' .join(command)
 		command = "source " + os.getenv('HOME') + "/anaconda3/etc/profile.d/conda.sh; conda activate CichlidActionClassification; " + ' '.join(command)
