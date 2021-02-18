@@ -10,4 +10,4 @@ parser.add_argument('--GPU', type = str, help = 'Specify the GPU card to use')
 args = parser.parse_args()
 
 pp_obj = PP('PatrickControl2', args.NewModelID)
-pp_obj.createModel(args.Purpose, args.ProjectIDs, args.OldModelID, args.GPU)
+pp_obj.createModel(args.Purpose, args.ProjectIDs, args.GPU)

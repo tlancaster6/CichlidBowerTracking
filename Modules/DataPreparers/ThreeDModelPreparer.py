@@ -8,7 +8,7 @@ class ThreeDModelPreparer():
 	# 3. Automatically identifies bower location
 	# 4. Analyze building, shape, and other pertinent info of the bower
 
-	def __init__(self, fileManager, purpose, projects, modelID, oldModelID, gpu):
+	def __init__(self, fileManager, purpose, projects, modelID, gpu):
 
 		self.__version__ = '1.0.0'
 
