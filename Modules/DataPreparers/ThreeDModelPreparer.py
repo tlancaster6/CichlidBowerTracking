@@ -13,6 +13,9 @@ class ThreeDModelPreparer():
 		self.__version__ = '1.0.0'
 
 		self.fileManager = fileManager
+		self.fileManager.createDirectory(self.fileManager.local3DModelDir)
+		self.fileManager.createDirectory(self.fileManager.local3DModelTempDir)
+		
 		self.projects = projects
 		self.gpu = gpu
 		self.projectMeans = projectMeans
