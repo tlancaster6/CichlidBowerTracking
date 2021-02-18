@@ -29,6 +29,7 @@ class ThreeDModelPreparer():
 		dt['ProjectID'] = dt.ClipName.str.split('__').str[0]
 		if self.projects[0].lower() != 'all':
 			dt = dt[dt.ProjectID.isin(self.projects)]
+			pdb.set_trace()
 		dt['ClipName'] = dt.ClipName + '.mp4'
 		dt = dt.rename(columns = {'ClipName':'VideoFile', 'ManualLabel':'Label'})
 		dt.to_csv(self.fileManager.localVideoProjectsFile)

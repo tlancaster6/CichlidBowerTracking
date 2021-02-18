@@ -5,7 +5,6 @@ parser = argparse.ArgumentParser(usage = 'This script will create or finetune a 
 parser.add_argument('Purpose', type = str, choices = ['New', 'Finetune'], help = 'Create new model or finetune the master model')
 parser.add_argument('NewModelID', type = str, help = 'Name of the model created')
 parser.add_argument('ProjectIDs', nargs = '+', type = str, help = 'ProjectIDs to include. (Use all to include all)')
-parser.add_argument('--OldModelID', type = str, help = 'Use this option if you are finetuning an existing model')
 parser.add_argument('--GPU', type = str, help = 'Specify the GPU card to use')
 
 args = parser.parse_args()
