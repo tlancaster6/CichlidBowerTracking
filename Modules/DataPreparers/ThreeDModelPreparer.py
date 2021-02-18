@@ -15,7 +15,7 @@ class ThreeDModelPreparer():
 		self.fileManager = fileManager
 		self.projects = projects
 		self.gpu = gpu
-		self.projectMeans
+		self.projectMeans = projectMeans
 
 	def validateInputData(self):
 		
