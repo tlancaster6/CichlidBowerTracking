@@ -51,8 +51,11 @@ class ThreeDModelPreparer():
 		with open(os.path.join(self.fileManager.local3DModelTempDir,'val.log')) as f:
 			print('Epoch\tAccuracy')
 			for line in f:
-				if int(line.split()[0]) % 5 == 0:
-					print(line.split[0] + '\t' + line.rstrip().split()[-1])
+				try:
+					if int(line.split()[0]) % 5 == 0:
+						print(line.split[0] + '\t' + line.rstrip().split()[-1])
+				except ValueError:
+					continue
 			epoch = 1
 			while epoch % 5 != 0:
 				epoch = int(input('Choose epoch to use'))
