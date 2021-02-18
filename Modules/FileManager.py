@@ -32,7 +32,7 @@ class FileManager():
 		# Create file names 
 		self.createPiData()
 
-		self.createAnnotationData
+		self.createAnnotationData()
 
 	def createPiData(self):
 		self.localCredentialSpreadsheet = self.localMasterDir + '__CredentialFiles/SAcredentials.json'

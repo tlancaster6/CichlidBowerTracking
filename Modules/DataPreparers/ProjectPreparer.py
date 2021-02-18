@@ -65,8 +65,8 @@ class ProjectPreparer():
 		mlf_obj.validateInputData()
 		mlf_obj.labelFrames()
 	
-	def createModel(self, purpose, projectIDs, oldModelID):
-		tdm_obj = TDMP(self.fileManager, purpose, projectIDs, self.modelID, oldModelID)
+	def createModel(self, purpose, projectIDs, oldModelID, gpu):
+		tdm_obj = TDMP(self.fileManager, purpose, projectIDs, self.modelID, oldModelID, gpu)
 		tdm_obj.validateInputData()
 		tdm_obj.create3DModel()
 
