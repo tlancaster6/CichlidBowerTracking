@@ -25,11 +25,11 @@ class ThreeDModelPreparer():
 
 	def create3DModel(self):
 		# Filter out annotated videos so they only include projects requested
-		dt = pd.read_csv(self.fileManager.localLabeledClipsFile)
+		dt = pd.read_csv(self.fileManager.localLabeledClipsFile, index_col = 0)
 		dt['ProjectID'] = dt.ClipName.str.split('__').str[0]
+		dt['Dataset'] = ''
 		if self.projects[0].lower() != 'all':
-			dt = dt[dt.ProjectID.isin(self.projects)]
-			pdb.set_trace()
+			dt.loc[~dt.ProjectID.isin(self.projects),'Dataset'] = 'Validate'
 		dt['ClipName'] = dt.ClipName + '.mp4'
 		dt = dt.rename(columns = {'ClipName':'VideoFile', 'ManualLabel':'Label'})
 		dt.to_csv(self.fileManager.localVideoProjectsFile)
