@@ -67,7 +67,6 @@ class ProjectPreparer():
 
 	def runSummaryCreation(self):
 		sc_obj = SP(self.fileManager)
-		sc_obj.validateInputData()
 		sc_obj.createFullSummary()
 
 		# self.createUploadFile(sc_obj.uploads)

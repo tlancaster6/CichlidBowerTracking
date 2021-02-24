@@ -19,23 +19,36 @@ class SummaryPreparer:
     def __init__(self, FileManager):
         self.__version__ = '1.0.0'
         self.fm = FileManager
+        self.da_obj = None
+        self.ca_obj = None
+        self.validateDepthData()
+        self.validateClusterData()
 
-    def validateInputData(self):
-        assert os.path.exists(self.fm.localLogfile)
-        assert os.path.exists(self.fm.localSummaryDir)
-        assert os.path.exists(self.fm.localAnalysisDir)
-        assert os.path.exists(self.fm.localSmoothDepthFile)
-        assert os.path.exists(self.fm.localTrayFile)
-        assert os.path.exists(self.fm.localTransMFile)
-        assert os.path.exists(self.fm.localAllLabeledClustersFile)
-
-        self.uploads = [(self.fm.localSummaryDir, '0')]
+    def validateDepthData(self):
+        reqs = [self.fm.localLogfile,
+                self.fm.localSummaryDir,
+                self.fm.localSmoothDepthFile,
+                self.fm.localTrayFile]
+        for path in reqs:
+            if not os.path.exists(path):
+                return False
 
         self.lp = LP(self.fm.localLogfile)
-        self.ca_obj = ClusterAnalyzer(self.fm)
+        self.uploads = [(self.fm.localSummaryDir, '0')]
         self.da_obj = DepthAnalyzer(self.fm)
 
+    def validateClusterData(self):
+        reqs = [self.fm.localLogfile,
+                self.fm.localSummaryDir,
+                self.fm.localAllLabeledClustersFile,
+                self.fm.localTransMFile]
+        for path in reqs:
+            if not os.path.exists(path):
+                return False
+
     def createDepthFigures(self, hourlyDelta=2):
+        if self.da_obj is None:
+            return
         # figures based on the depth data
 
         # Create summary figure of daily values
@@ -173,6 +186,8 @@ class SummaryPreparer:
         plt.close('all')
 
     def createClusterFigures(self, hourlyDelta=1):
+        if self.ca_obj is None:
+            return
         # figures based on the cluster data
 
         # semi-transparent scatterplots showing the spatial distrubtion of each cluster classification each day
@@ -326,6 +341,8 @@ class SummaryPreparer:
         plt.close(fig=fig)
 
     def createCombinedFigures(self):
+        if (self.ca_obj is None) or (self.da_obj is None):
+            return
         # create figures based on a combination of cluster and depth data
 
         # plot overlap of daily bower regions identified from depth and cluster data
