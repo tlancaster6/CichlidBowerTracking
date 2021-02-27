@@ -447,7 +447,6 @@ class FileManager():
 		if tarred:
 			# Untar directory
 			output = subprocess.run(['tar', '-xvf', local_path + relative_name, '-C', local_path], capture_output = True, encoding = 'utf-8')
-			pdb.set_trace()
 			output = subprocess.run(['rm', '-f', local_path + relative_name], capture_output = True, encoding = 'utf-8')
 
 		if tarred_subdirs:
