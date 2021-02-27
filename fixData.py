@@ -61,4 +61,3 @@ else:
 		if fix_Frames:
 			fm_obj.uploadData(fm_obj.localFrameDir, tarred = True)
 
-		pdb.set_trace() 
