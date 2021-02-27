@@ -1,5 +1,6 @@
 import os, subprocess, pdb, platform
 import pandas as pd
+from Modules.LogParser import LogParser as LP
 
 class FileManager():
 	def __init__(self, projectID = None, modelID = None, rcloneRemote = 'cichlidVideo:', masterDir = 'McGrath/Apps/CichlidPiData/'):
@@ -38,6 +39,64 @@ class FileManager():
 		self.localCredentialSpreadsheet = self.localMasterDir + '__CredentialFiles/SAcredentials.json'
 		self.localCredentialDrive = self.localMasterDir + '__CredentialFiles/DriveCredentials.txt'
 
+	def getProjectStates(self):
+
+		
+		# Get the projectID
+		output = subprocess.run(['rclone', 'lsf', '--dirs-only', self.cloudMasterDir], capture_output = True, encoding = 'utf-8')
+		projectIDs = [x.rstrip('/') for x in output.stdout.split('\n') if x[0:2] != '__']
+	
+		# Set up output file
+		dt = pd.DataFrame(columns = ['projectID', 'tankID', 'StartingFiles', 'PrepFiles', 'DepthFiles', 'ClusterFiles', '3DClassifyFiles'])
+
+		for projectID in projectIDs:
+			# Dictionary to hold row of data
+			row_data = {'projectID':projectID, 'tankID':'', 'StartingFiles':False, 'PrepFiles':False, 'DepthFiles':False, 'ClusterFiles':False, '3DClassifyFiles':False}
+
+			#Create projectID files
+			self.createProjectData(projectID)
+
+			# List the files needed for each analysis
+			necessaryFiles = {}
+			necessaryFiles['StartingFiles'] = [self.localLogfile, self.localPrepDir, self.localFrameTarredDir, self.localVideoDir, self.localFirstFrame, self.localLastFrame, self.localPiRGB, self.localDepthRGB]
+			necessaryFiles['PrepFiles'] = [self.localTrayFile,self.localTransMFile,self.localVideoCropFile]
+			necessaryFiles['DepthFiles'] = [self.localSmoothDepthFile]
+			necessaryFiles['ClusterFiles'] = [self.localAllClipsDir, self.localManualLabelClipsDir, self.localManualLabelFramesDir]
+			necessaryFiles['3DClassifyFiles'] = [self.localAllLabeledClustersFile]
+
+			# Try to download and read logfile
+			try:
+				self.downloadData(self.localLogfile)
+			except FileNotFoundError:
+				row_data['StartingFiles'] = False
+				continue
+
+			self.lp = LP(self.localLogfile)
+			if self.lp.malformed_file:
+				row_data['StartingFiles'] = False
+				continue
+			row_data['tankID'] = self.lp.tankID
+			# Check if files exists
+			for analysis in necessaryFiles:
+				row_data[analysis] = all([self.checkFileExists(x) for x in necessaryFiles[analysis]])
+
+			dt = dt.append(row_data, ignore_index=True)
+			print(dt)
+		dt.to_csv('ProjectSummary.csv')
+
+	def checkFileExists(self, local_data):
+		relative_name = local_data.rstrip('/').split('/')[-1]
+		local_path = local_data.split(relative_name)[0]
+		cloud_path = local_path.replace(self.localMasterDir, self.cloudMasterDir)
+
+		output = subprocess.run(['rclone', 'lsf', cloud_path], capture_output = True, encoding = 'utf-8')
+		remotefiles = [x.rstrip('/') for x in output.stdout.split('\n')]
+
+		if relative_name in remotefiles:
+			return True
+		else:
+			return False
+
 	def createProjectData(self, projectID):
 		self.createAnnotationData()
 		self.projectID = projectID
@@ -49,6 +108,8 @@ class FileManager():
 		# Data directories created by tracker
 		self.localPrepDir = self.localProjectDir + 'PrepFiles/'
 		self.localFrameDir = self.localProjectDir + 'Frames/'
+		self.localFrameTarredDir = self.localProjectDir + 'Frames.tar'
+		
 		self.localVideoDir = self.localProjectDir + 'Videos/'
 		self.localBackupDir = self.localProjectDir + 'Backups/'
 
@@ -364,6 +425,7 @@ class FileManager():
 		if not os.path.exists(directory):
 			os.makedirs(directory)
 
+
 	def downloadData(self, local_data, tarred = False, tarred_subdirs = False):
 
 		relative_name = local_data.rstrip('/').split('/')[-1] + '.tar' if tarred else local_data.rstrip('/').split('/')[-1]
@@ -410,7 +472,7 @@ class FileManager():
 			#subprocess.run(['rclone', 'check', local_path + relative_name, cloud_path + relative_name], check = True)
 
 		elif os.path.isfile(local_path + relative_name):
-			print(['rclone', 'copy', local_path + relative_name, cloud_path])
+			#print(['rclone', 'copy', local_path + relative_name, cloud_path])
 			output = subprocess.run(['rclone', 'copy', local_path + relative_name, cloud_path], capture_output = True, encoding = 'utf-8')
 			output = subprocess.run(['rclone', 'check', local_path + relative_name, cloud_path], check = True, capture_output = True, encoding = 'utf-8')
 		else:

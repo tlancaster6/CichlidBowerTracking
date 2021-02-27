@@ -18,9 +18,9 @@ class LogParser:
         self.parse_log()
         self.height = 480 # This is a temporary fix to hardcode in these values
         self.width = 640
+        self.malformed_file = False
 
     def parse_log(self):
-
         self.speeds = []
         self.frames = []
         self.backgrounds = []
@@ -117,8 +117,11 @@ class LogParser:
             
             cur_day = frame.time.day
 
-        self.days[rel_day][1] = index + 1
-        self.numDays = len(self.days)
+        if len(self.frames) == 0:
+            self.malformed_file = True
+        else:
+            self.days[rel_day][1] = index + 1
+            self.numDays = len(self.days)
             
         self.backgrounds.sort(key = lambda x: x.time)
         self.lastBackgroundCounter = len(self.backgrounds)
