@@ -33,7 +33,7 @@ else:
 			fm_obj.downloadData(fm_obj.localFrameDir, tarred = True)
 			fix_Frames = False
 		elif 'Frames/' in data_dirs:
-			#fm_obj.downloadData(fm_obj.localFrameDir, tarred = False)
+			fm_obj.downloadData(fm_obj.localFrameDir, tarred = False)
 			fix_Frames = True
 		else:
 			pdb.set_trace()
