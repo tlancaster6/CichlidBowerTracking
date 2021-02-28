@@ -54,7 +54,7 @@ for projectID in projects:
 	while not os.path.exists(fm_obj.localProjectDir + lp.frames[i].npy_file):
 		i -= 1
 
-	shutil.copy2(fm_obj.localProjectDir + lp.frames[i].npy_file, fm_obj.localPrepDir + 'FirstDepth.npy')
+	shutil.copy2(fm_obj.localProjectDir + lp.frames[i].npy_file, fm_obj.localPrepDir + 'LastDepth.npy')
 
 	fm_obj.uploadData(fm_obj.localPrepDir)
 
