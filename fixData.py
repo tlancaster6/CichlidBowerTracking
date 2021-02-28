@@ -40,6 +40,7 @@ for projectID in projects:
 		pdb.set_trace()
 
 	for movie in lp.movies:
+		pdb.set_trace()
 		if movie.startTime.hour > 8 and movie.startTime.hour < 18:
 			depthObj = [x for x in lp.frames if x.time > movie.startTime][0]
 			break
