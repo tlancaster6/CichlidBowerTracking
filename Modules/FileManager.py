@@ -66,6 +66,7 @@ class FileManager():
 		self.lp = LP(self.localLogfile)
 		if self.lp.malformed_file:
 			row_data['StartingFiles'] = False
+			print('Malformed Log File')
 			return row_data
 		row_data['tankID'] = self.lp.tankID
 		# Check if files exists
