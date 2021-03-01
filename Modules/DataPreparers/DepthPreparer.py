@@ -1,7 +1,7 @@
 import scipy.signal
 import skvideo.io
 import numpy as np
-import pdb, os
+import pdb, os, sys, datetime
 import matplotlib.pyplot as plt
 from Modules.LogParser import LogParser as LP
 
@@ -16,6 +16,7 @@ class DepthPreparer:
 		
 		self.__version__ = '1.0.0'
 		self.fileManager = fileManager
+		self.createLogFile()
 
 	def validateInputData(self):
 		assert os.path.exists(self.fileManager.localLogfile)
@@ -33,6 +34,15 @@ class DepthPreparer:
 		#self.uploads = [(self.fileManager.localTroubleshootingDir, self.fileManager.cloudTroubleshootingDir, '0'), 
 		#				(self.fileManager.localAnalysisDir, self.fileManager.cloudAnalysisDir, '0')]
 
+	def createLogFile(self):
+		with open(self.localDepthLogfile,'w') as f:
+			print('PythonVersion: ' + sys.version.replace('\n', ' '), file = f)
+			print('NumpyVersion: ' + np.__version__, file = f)
+			print('Scikit-VideoVersion: ' + skvideo.__version__, file = f)
+			print('ScipyVersion: ' + scipy.__version__, file = f)
+			print('Username: ' + os.getenv('USER'), file = f)
+			print('Nodename: ' + os.uname().nodename, file = f)
+			print('DateAnalyzed: ' + str(datetime.datetime.now()), file = f)
 
 	def createSmoothedArray(self, totalGoodData = 0.3, minGoodData = 0.5, minUnits = 5, tunits = 71, order = 4):
 		# Download raw data and create new array to store it

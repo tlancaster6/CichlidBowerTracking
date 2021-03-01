@@ -95,6 +95,14 @@ class FileManager():
 
 		# Create logfile
 		self.localLogfile = self.localProjectDir + 'Logfile.txt'
+		self.localLogfileDir = self.localProjectDir + 'Logfiles/'
+
+		# Create logfiles
+		self.localPrepLogfile = self.localLogfileDir + 'PrepLog.txt'
+		self.localDepthLogfile = self.localLogfileDir + 'DepthLog.txt'
+		self.localClusterLogfile = self.localLogfileDir + 'ClusterLog.txt'
+		self.localClassifyLogfile = self.localLogfileDir + 'ClassifyLog.txt'
+		
 
 		# Data directories created by tracker
 		self.localPrepDir = self.localProjectDir + 'PrepFiles/'
@@ -176,6 +184,7 @@ class FileManager():
 			self.createDirectory(self.localMasterDir)
 			self.createDirectory(self.localAnalysisDir)
 			self.createDirectory(self.localFiguresDir)
+			self.createDirectory(self.localLogfileDir)
 			self.downloadData(self.localPrepDir)
 			self.downloadData(self.localLogfile)
 
@@ -183,12 +192,15 @@ class FileManager():
 			self.createDirectory(self.localMasterDir)
 			self.createDirectory(self.localAnalysisDir)
 			self.createDirectory(self.localTroubleshootingDir)
+			self.createDirectory(self.localLogfileDir)
+
 			self.downloadData(self.localLogfile)
 			self.downloadData(self.localFrameDir, tarred = True)
 
 		elif dtype == 'Cluster':
 			#self.createMLData()
 			videoObj = self.returnVideoObject(videoIndex)
+			self.createDirectory(self.localLogfileDir)
 			self.createDirectory(self.localMasterDir)
 			self.createDirectory(self.localAnalysisDir)
 			self.createDirectory(self.localTroubleshootingDir)
@@ -202,6 +214,8 @@ class FileManager():
 
 		elif dtype == 'ClusterClassification':
 			self.createDirectory(self.localMasterDir)
+			self.createDirectory(self.localLogfileDir)
+
 			self.downloadData(self.localLogfile)
 			self.downloadData(self.localAllClipsDir, tarred = True)
 			self.downloadData(self.localAnalysisDir)
@@ -262,11 +276,14 @@ class FileManager():
 			self.uploadData(self.localVideoCropFile)
 			self.uploadData(self.localVideoPointsFile)
 			self.uploadData(self.localPrepSummaryFigure)
+			self.uploadData(self.localPrepLogfile)
 		elif dtype == 'Depth':
 			self.uploadData(self.localSmoothDepthFile)
 			self.uploadData(self.localRGBDepthVideo)
 			self.uploadData(self.localRawDepthFile)
 			self.uploadData(self.localInterpDepthFile)
+			self.uploadData(self.localDepthLogfile)
+
 		elif dtype == 'Cluster':
 			videoObj = self.returnVideoObject(videoIndex)
 			self.uploadData(self.localTroubleshootingDir)
