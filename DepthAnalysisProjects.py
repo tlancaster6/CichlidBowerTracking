@@ -24,7 +24,6 @@ elif args.SummaryFile is not None:
 
 		dt.loc[dt.projectID == projectID,'DepthFiles'] = True
 		dt.to_csv(args.SummaryFile)
-		pdb.set_trace()
 
 else:
 	print('Must use one of two options')
