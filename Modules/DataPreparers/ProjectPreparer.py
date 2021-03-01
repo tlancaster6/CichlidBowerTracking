@@ -104,7 +104,7 @@ class ProjectPreparer():
 		subprocess.run(['rm', '-rf', self.projFileManager.localMasterDir])
 
 	def localDelete(self):
-		subprocess.run(['rm', '-rf', self.projFileManager.localMasterDir])
+		subprocess.run(['rm', '-rf', self.fileManager.localMasterDir])
 
 	def createUploadFile(self, uploads):
 		with open(self.fileManager.localUploadDir + 'UploadData_' + str(datetime.datetime.now().timestamp()) + '.csv', 'w') as f:
