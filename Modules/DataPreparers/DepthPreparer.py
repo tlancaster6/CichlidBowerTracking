@@ -35,7 +35,7 @@ class DepthPreparer:
 		#				(self.fileManager.localAnalysisDir, self.fileManager.cloudAnalysisDir, '0')]
 
 	def createLogFile(self):
-		with open(self.localDepthLogfile,'w') as f:
+		with open(self.fileManager.localDepthLogfile,'w') as f:
 			print('PythonVersion: ' + sys.version.replace('\n', ' '), file = f)
 			print('NumpyVersion: ' + np.__version__, file = f)
 			print('Scikit-VideoVersion: ' + skvideo.__version__, file = f)
