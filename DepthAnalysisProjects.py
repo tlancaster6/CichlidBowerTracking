@@ -16,7 +16,7 @@ else:
 	print('Must use one of two options')
 	sys.exit()
 
-uploadProcess = []
+uploadProcesses = []
 subprocess.run(['python3', '-m', 'Modules.UnitScripts.DownloadData','Depth', '--ProjectID', projectIDs[0]])
 for i, projectID in enumerate(projectIDs):
 	p1 = subprocess.Popen(['python3', '-m', 'Modules.UnitScripts.AnalyzeDepth', projectID])
