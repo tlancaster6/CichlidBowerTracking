@@ -29,14 +29,6 @@ class ClusterPreparer():
 		assert os.path.exists(self.fileManager.localManualLabelFramesDir)
 
 
-		"""self.uploads = [(self.fileManager.localTroubleshootingDir, self.fileManager.cloudTroubleshootingDir, '0'), 
-						(self.fileManager.localAnalysisDir, self.fileManager.cloudAnalysisDir, '0'),
-						(self.fileManager.localAllClipsDir, self.fileManager.cloudMasterDir, '1'),
-						(self.fileManager.localManualLabelClipsDir, self.fileManager.cloudMasterDir, '1'),
-						(self.fileManager.localManualLabelFramesDir, self.fileManager.cloudMasterDir, '1'),
-						(self.fileManager.localManualLabelFramesDir[:-1] + '_pngs', self.fileManager.cloudMasterDir[:-1] + '_pngs', '1')
-						]"""
-
 	def runClusterAnalysis(self):
 		command = ['python3', 'VideoFocus.py']
 		command.extend(['--Movie_file', self.videoObj.localVideoFile])

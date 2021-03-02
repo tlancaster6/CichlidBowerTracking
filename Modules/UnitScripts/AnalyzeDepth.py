@@ -1,4 +1,4 @@
-import argparse, pdb
+import argparse, pdb, sys
 from Modules.DataPreparers.ProjectPreparer import ProjectPreparer as PP
 
 parser = argparse.ArgumentParser(usage = 'This script will use a previously trained 3D Resnet model to classify videos')
