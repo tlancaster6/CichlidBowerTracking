@@ -33,5 +33,3 @@ for i, projectID in enumerate(projectIDs):
 
 for p in uploadProcesses():
 	p.communicate()
-
-else:
