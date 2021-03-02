@@ -6,7 +6,7 @@ parser.add_argument('ProjectID', type = str, help = 'Manually identify the proje
 
 args = parser.parse_args()
 
-print('Uploading data for ' + args.ProjectID, file = sys.stderr)
+print('Deleting data for ' + args.ProjectID, file = sys.stderr)
 
 pp_obj = PP(args.ProjectID)
 pp_obj.localDelete()

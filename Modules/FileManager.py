@@ -26,6 +26,8 @@ class FileManager():
 
 		if projectID is not None:
 			self.createProjectData(projectID)
+			self.downloadData(self.localLogfile)
+			self.lp = LP(self.localLogfile)
 
 		self.localMLDir = self.localMasterDir + '__MachineLearningModels/'
 		if modelID is not None:
@@ -199,7 +201,6 @@ class FileManager():
 
 		elif dtype == 'Cluster':
 			#self.createMLData()
-			videoObj = self.returnVideoObject(videoIndex)
 			self.createDirectory(self.localLogfileDir)
 			self.createDirectory(self.localMasterDir)
 			self.createDirectory(self.localAnalysisDir)
@@ -208,9 +209,15 @@ class FileManager():
 			self.createDirectory(self.localAllClipsDir)
 			self.createDirectory(self.localManualLabelClipsDir)
 			self.createDirectory(self.localManualLabelFramesDir)
-			self.createDirectory(self.localManualLabelFramesDir[:-1] + '_pngs')
+			self.createDirectory(self.localLogfileDir)
+
 			self.downloadData(self.localLogfile)
-			self.downloadData(videoObj.localVideoFile)
+			if videoIndex is not None:
+				videoObj = self.returnVideoObject(videoIndex)
+				self.downloadData(videoObj.localVideoFile)
+			else:
+				self.downloadData(videoObj.localVideoDir)
+
 
 		elif dtype == 'ClusterClassification':
 			self.createDirectory(self.localMasterDir)
@@ -341,8 +348,6 @@ class FileManager():
 		from Modules.LogParser import LogParser as LP
 		self._createParameters()
 
-		self.downloadData(self.localLogfile)
-		self.lp = LP(self.localLogfile)
 		videoObj = self.lp.movies[index]
 		videoObj.localVideoFile = self.localProjectDir + videoObj.mp4_file
 		videoObj.localHMMFile = self.localTroubleshootingDir + videoObj.baseName + '.hmm'

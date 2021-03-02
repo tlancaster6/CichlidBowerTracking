@@ -5,6 +5,8 @@ parser = argparse.ArgumentParser(usage = 'This script will use a previously trai
 parser.add_argument('ProjectID', type = str, help = 'Which projectID you want to identify')
 args = parser.parse_args()
 
+print('Analyzing depth data for ' + args.ProjectID, file = sys.stderr)
+
 pp_obj = PP(args.ProjectID)
 pp_obj.runDepthAnalysis()
 

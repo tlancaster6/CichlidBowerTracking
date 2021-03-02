@@ -46,9 +46,14 @@ class ProjectPreparer():
 		dp_obj.createRGBVideo()
 
 	def runClusterAnalysis(self, videoIndex):
-		cp_obj = CP(self.fileManager, videoIndex, self.workers)
-		cp_obj.validateInputData()
-		cp_obj.runClusterAnalysis()
+		if videoIndex is None:
+			videos = list(range(len(self.fileManager.lp.movies)))
+		else:
+			videos = [videoIndex]
+		for videoIndex in videos:
+			cp_obj = CP(self.fileManager, videoIndex, self.workers)
+			cp_obj.validateInputData()
+			cp_obj.runClusterAnalysis()
 
 	def run3DClassification(self):
 		tdcp_obj = TDCP(self.fileManager)

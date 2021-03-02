@@ -1,4 +1,4 @@
-import argparse, subprocess, pdb
+import argparse, subprocess, pdb, sys
 import pandas as pd
 
 parser = argparse.ArgumentParser(description='This script is used to manually prepared projects for downstream analysis')
@@ -8,22 +8,30 @@ parser.add_argument('--SummaryFile', type = str, help = 'Name of summary file to
 args = parser.parse_args()
 
 if args.ProjectIDs is not None:
-	for projectID in args.ProjectIDs:
-		subprocess.run(['python3', '-m', 'Modules.UnitScripts.DownloadData','Depth', '--ProjectID', projectID])
-		subprocess.run(['python3', '-m', 'Modules.UnitScripts.AnalyzeDepth', projectID])
-		subprocess.run(['python3', '-m', 'Modules.UnitScripts.UploadData','Depth', projectID])
-		subprocess.run(['python3', '-m', 'Modules.UnitScripts.DeleteData', projectID])
-
-elif args.SummaryFile is not None:
+	projectIDs = args.ProjectIDs
+elif:
 	dt = pd.read_csv(args.SummaryFile, index_col = 0)
-	for projectID in dt[dt.DepthFiles == False].projectID:
-		subprocess.run(['python3', '-m', 'Modules.UnitScripts.DownloadData','Depth', '--ProjectID', projectID])
-		subprocess.run(['python3', '-m', 'Modules.UnitScripts.AnalyzeDepth', projectID])
-		subprocess.run(['python3', '-m', 'Modules.UnitScripts.UploadData','Depth', projectID])
-		subprocess.run(['python3', '-m', 'Modules.UnitScripts.DeleteData', projectID])
-
+	projectIDs = dt[dt.DepthFiles == False].projectID
+else:
+	print('Must use one of two options')
+	sys.exit()
+	
+uploadProcess = []
+subprocess.run(['python3', '-m', 'Modules.UnitScripts.DownloadData','Depth', '--ProjectID', projectID])
+for i, projectID in enumerate(projectIDs):
+	p1 = subprocess.Pcall(['python3', '-m', 'Modules.UnitScripts.AnalyzeDepth', projectID])
+	if i+1 < len(projectIDs):
+		# Download next project 
+		p2 = subprocess.Pcall(['python3', '-m', 'Modules.UnitScripts.AnalyzeDepth', projectIDs[i+1]])
+	p1.communicate()
+	p2.communicate()
+	if args.SummaryFile:
 		dt.loc[dt.projectID == projectID,'DepthFiles'] = True
 		dt.to_csv(args.SummaryFile)
 
+	uploadProcesses.append(subprocess.Popen(['python3', '-m', 'Modules.UnitScripts.UploadData','Depth', '--Delete', projectID]))
+
+for p in uploadProcesses():
+	p.communicate()
+
 else:
-	print('Must use one of two options')

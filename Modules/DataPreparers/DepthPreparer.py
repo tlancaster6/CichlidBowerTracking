@@ -1,9 +1,13 @@
 import scipy.signal
 import skvideo.io
 import numpy as np
-import pdb, os, sys, datetime
+import pdb, os, sys, datetime, warnings
 import matplotlib.pyplot as plt
 from Modules.LogParser import LogParser as LP
+
+
+with warnings.catch_warnings():
+    warnings.filterwarnings('ignore', r'divide by zero encountered in true_divide')
 
 class DepthPreparer:
 	# This class takes in directory information and a logfile containing depth information and performs the following:
@@ -28,7 +32,7 @@ class DepthPreparer:
 				bad_frames += 1
 			if not os.path.exists(self.fileManager.localProjectDir + frame.pic_file):
 				bad_frames += 1
-		print(bad_frames)
+		#print(bad_frames)
 		assert os.path.exists(self.fileManager.localTroubleshootingDir)
 		assert os.path.exists(self.fileManager.localAnalysisDir)
 		#self.uploads = [(self.fileManager.localTroubleshootingDir, self.fileManager.cloudTroubleshootingDir, '0'), 
