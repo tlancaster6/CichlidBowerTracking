@@ -17,7 +17,7 @@ else:
 	sys.exit()
 
 uploadProcess = []
-subprocess.run(['python3', '-m', 'Modules.UnitScripts.DownloadData','Depth', '--ProjectID', projectID])
+subprocess.run(['python3', '-m', 'Modules.UnitScripts.DownloadData','Depth', '--ProjectID', projectIDs[0]])
 for i, projectID in enumerate(projectIDs):
 	p1 = subprocess.Pcall(['python3', '-m', 'Modules.UnitScripts.AnalyzeDepth', projectID])
 	if i+1 < len(projectIDs):
