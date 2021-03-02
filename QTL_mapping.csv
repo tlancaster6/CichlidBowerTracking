@@ -1,5 +1,5 @@
 ,projectID,tankID,StartingFiles,PrepFiles,DepthFiles,ClusterFiles,3DClassifyFiles,Notes
-1,_newtray_CV1,t063,TRUE,TRUE,FALSE,FALSE,TRUE,
+1,_newtray_CV1,t063,TRUE,TRUE,TRUE,FALSE,TRUE,
 2,_newtray_CV1_2,t003,TRUE,TRUE,FALSE,FALSE,FALSE,No build
 3,_newtray_CV2_1_Tk47_122019,t047,TRUE,TRUE,FALSE,FALSE,FALSE,Good pit
 4,_newtray_CV3_1_Tk51_122019,t051,TRUE,TRUE,FALSE,FALSE,FALSE,
