@@ -9,13 +9,13 @@ args = parser.parse_args()
 
 if args.ProjectIDs is not None:
 	projectIDs = args.ProjectIDs
-elif:
+elif args.SummaryFile is not None:
 	dt = pd.read_csv(args.SummaryFile, index_col = 0)
 	projectIDs = dt[dt.DepthFiles == False].projectID
 else:
 	print('Must use one of two options')
 	sys.exit()
-	
+
 uploadProcess = []
 subprocess.run(['python3', '-m', 'Modules.UnitScripts.DownloadData','Depth', '--ProjectID', projectID])
 for i, projectID in enumerate(projectIDs):
