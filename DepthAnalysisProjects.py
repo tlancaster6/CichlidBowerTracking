@@ -19,10 +19,10 @@ else:
 uploadProcess = []
 subprocess.run(['python3', '-m', 'Modules.UnitScripts.DownloadData','Depth', '--ProjectID', projectIDs[0]])
 for i, projectID in enumerate(projectIDs):
-	p1 = subprocess.Pcall(['python3', '-m', 'Modules.UnitScripts.AnalyzeDepth', projectID])
+	p1 = subprocess.Popen(['python3', '-m', 'Modules.UnitScripts.AnalyzeDepth', projectID])
 	if i+1 < len(projectIDs):
 		# Download next project 
-		p2 = subprocess.Pcall(['python3', '-m', 'Modules.UnitScripts.AnalyzeDepth', projectIDs[i+1]])
+		p2 = subprocess.Popen(['python3', '-m', 'Modules.UnitScripts.AnalyzeDepth', projectIDs[i+1]])
 	p1.communicate()
 	p2.communicate()
 	if args.SummaryFile:
