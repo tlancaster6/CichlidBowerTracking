@@ -11,7 +11,7 @@ if args.ProjectIDs is not None:
 	projectIDs = args.ProjectIDs
 elif args.SummaryFile is not None:
 	dt = pd.read_csv(args.SummaryFile, index_col = 0)
-	projectIDs = dt[dt.DepthFiles == False].projectID
+	projectIDs = list(dt[dt.DepthFiles == False].projectID)
 else:
 	print('Must use one of two options')
 	sys.exit()
