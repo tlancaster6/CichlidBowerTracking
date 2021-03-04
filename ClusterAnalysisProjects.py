@@ -19,7 +19,7 @@ if args.ProjectIDs is not None:
 		subprocess.run(['python3', '-m', 'Modules.UnitScripts.DownloadData','Cluster', '--ProjectID', projectID])
 		subprocess.run(['python3', '-m', 'Modules.UnitScripts.AnalyzeClusters', projectID, '--Workers', workers])
 		subprocess.run(['python3', '-m', 'Modules.UnitScripts.UploadData','Cluster', projectID])
-		subprocess.run(['python3', '-m', 'Modules.UnitScripts.DeleteData', projectID])
+		#subprocess.run(['python3', '-m', 'Modules.UnitScripts.DeleteData', projectID])
 
 elif args.SummaryFile is not None:
 	dt = pd.read_csv(args.SummaryFile, index_col = 0)
@@ -27,7 +27,7 @@ elif args.SummaryFile is not None:
 		subprocess.run(['python3', '-m', 'Modules.UnitScripts.DownloadData','Cluster', '--ProjectID', projectID])
 		subprocess.run(['python3', '-m', 'Modules.UnitScripts.AnalyzeCluster', projectID, '--Workers', workers])
 		subprocess.run(['python3', '-m', 'Modules.UnitScripts.UploadData','Cluster', projectID])
-		subprocess.run(['python3', '-m', 'Modules.UnitScripts.DeleteData', projectID])
+		#subprocess.run(['python3', '-m', 'Modules.UnitScripts.DeleteData', projectID])
 
 		dt.loc[dt.projectID == projectID,'ClusterFiles'] = True
 		dt.to_csv(args.SummaryFile)
