@@ -285,6 +285,7 @@ class FileManager():
 			self.uploadData(self.localVideoPointsFile)
 			self.uploadData(self.localPrepSummaryFigure)
 			self.uploadData(self.localPrepLogfile)
+		
 		elif dtype == 'Depth':
 			self.uploadData(self.localSmoothDepthFile)
 			self.uploadData(self.localRGBDepthVideo)
@@ -292,8 +293,11 @@ class FileManager():
 			self.uploadData(self.localInterpDepthFile)
 			self.uploadData(self.localDepthLogfile)
 
+		elif dtype == 'Video':
+			videoObj = self.returnVideoObject(videoIndex)
+			self.uploadData(videoObj.localVideoFile)
+			
 		elif dtype == 'Cluster':
-
 			self.uploadData(self.localTroubleshootingDir)
 
 			if videoIndex is None:
@@ -359,6 +363,7 @@ class FileManager():
 
 		videoObj = self.lp.movies[index]
 		videoObj.localVideoFile = self.localProjectDir + videoObj.mp4_file
+		videoObj.localh264File = self.localProjectDir + videoObj.h264_file
 		videoObj.localHMMFile = self.localTroubleshootingDir + videoObj.baseName + '.hmm'
 		videoObj.localRawCoordsFile = self.localTroubleshootingDir + videoObj.baseName + '_rawCoords.npy'
 		videoObj.localLabeledCoordsFile = self.localTroubleshootingDir + videoObj.baseName + '_labeledCoords.npy'

@@ -20,7 +20,19 @@ class ClusterPreparer():
 
 	def validateInputData(self):
 		
-		assert os.path.exists(self.videoObj.localVideoFile)
+		try:
+			assert os.path.exists(self.videoObj.localVideoFile)
+		except AssertionError:
+			assert os.path.exists(self.videoObj.localh264File)
+			print('Converting ' + self.videoObj.localh264File + ' to mp4')
+			ffmpeg_output = subprocess.run(['ffmpeg', '-r', str(self.videoObj.Framerate), '-i', self.videoObj.localh264File, '-threads', str(workers), '-c:v', 'copy', '-r', str(videoObj.Framerate), self.videoObj.localVideoFile])
+			print('Syncing and moving on')
+		assert os.path.isfile(self.videoObj.localVideoFile)
+		assert os.path.getsize(self.videoObj.localVideoFile) > os.path.getsize(self.videoObj.localh264File)
+		os.remove(self.videoObj.localh264File)
+
+		process = subprocess.Popen(['python3', '-m', 'Modules.UnitScripts.UploadData','Cluster', projectID, '--VideoIndex', str(self.videoIndex)])
+
 		assert os.path.exists(self.fileManager.localTroubleshootingDir)
 		assert os.path.exists(self.fileManager.localAnalysisDir)
 		assert os.path.exists(self.fileManager.localTempDir)
