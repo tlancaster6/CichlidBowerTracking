@@ -213,9 +213,11 @@ class FileManager():
 			self.downloadData(self.localLogfile)
 			if videoIndex is not None:
 				videoObj = self.returnVideoObject(videoIndex)
+				print('Downloading video ' + str(videoIndex))
 				self.downloadData(videoObj.localVideoFile)
 			else:
 				self.downloadData(videoObj.localVideoDir)
+				print('Downloading video ' + videoObj.localVideoDir)
 
 
 		elif dtype == 'ClusterClassification':
