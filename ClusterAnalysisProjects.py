@@ -19,6 +19,7 @@ if args.ProjectIDs is not None:
 		subprocess.run(['python3', '-m', 'Modules.UnitScripts.DownloadData','Cluster', '--ProjectID', projectID])
 		subprocess.run(['python3', '-m', 'Modules.UnitScripts.AnalyzeClusters', projectID, '--Workers', str(workers)])
 		subprocess.run(['python3', '-m', 'Modules.UnitScripts.UploadData','Cluster', projectID])
+		pdb.set_trace()
 		#subprocess.run(['python3', '-m', 'Modules.UnitScripts.DeleteData', projectID])
 
 elif args.SummaryFile is not None:
