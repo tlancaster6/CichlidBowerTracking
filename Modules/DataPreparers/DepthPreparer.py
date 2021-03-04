@@ -5,9 +5,8 @@ import pdb, os, sys, datetime, warnings
 import matplotlib.pyplot as plt
 from Modules.LogParser import LogParser as LP
 
+warnings.filterwarnings('ignore')
 
-with warnings.catch_warnings():
-    warnings.filterwarnings('ignore', r'divide by zero encountered in true_divide')
 
 class DepthPreparer:
 	# This class takes in directory information and a logfile containing depth information and performs the following:

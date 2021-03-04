@@ -11,10 +11,7 @@ args = parser.parse_args()
 
 print('Downloading data for ' + args.ProjectID, file = sys.stderr)
 
-if args.DataType == 'Cluster':
-	if args.VideoIndex is None:
-		print('Must specify a video index if downloading data for Cluster Analysis')
-elif args.DataType == 'Train3DModel':
+if args.DataType == 'Train3DModel':
 	if args.NewModelID is None:
 		print('Must specify a video index if downloading data for Cluster Analysis')
 pp_obj = PP(args.ProjectID, args.NewModelID)

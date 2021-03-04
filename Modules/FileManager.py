@@ -102,7 +102,6 @@ class FileManager():
 		# Create logfiles
 		self.localPrepLogfile = self.localLogfileDir + 'PrepLog.txt'
 		self.localDepthLogfile = self.localLogfileDir + 'DepthLog.txt'
-		self.localClusterLogfile = self.localLogfileDir + 'ClusterLog.txt'
 		self.localClassifyLogfile = self.localLogfileDir + 'ClassifyLog.txt'
 		
 
@@ -292,11 +291,19 @@ class FileManager():
 			self.uploadData(self.localDepthLogfile)
 
 		elif dtype == 'Cluster':
-			videoObj = self.returnVideoObject(videoIndex)
+
 			self.uploadData(self.localTroubleshootingDir)
-			self.uploadData(videoObj.localAllClipsDir, tarred = True)
-			self.uploadData(videoObj.localManualLabelClipsDir, tarred = True)
-			self.uploadData(videoObj.localManualLabelFramesDir, tarred = True)
+
+			if videoIndex is None:
+				videos = list(range(len(self.lp.videos)))
+			else:
+				videos = [videoIndex]
+			for videoIndex in videos:
+				videoObj = self.returnVideoObject(videoIndex)
+				self.uploadData(videoObj.localAllClipsDir, tarred = True)
+				self.uploadData(videoObj.localManualLabelClipsDir, tarred = True)
+				self.uploadData(videoObj.localManualLabelFramesDir, tarred = True)
+
 		elif dtype == 'ManualAnnotation':
 			self.uploadAndMerge(self.localNewLabeledVideosFile, self.localLabeledClipsFile, ID = 'LID')
 			self.uploadAndMerge(self.localNewLabeledClipsDir, self.localLabeledClipsProjectDir, tarred = True)
@@ -363,7 +370,8 @@ class FileManager():
 		videoObj.localTempDir = self.localTempDir + videoObj.baseName + '/'
 		videoObj.nManualLabelClips = int(self.nManualLabelClips/len(self.lp.movies))
 		videoObj.nManualLabelFrames = int(self.nManualLabelFrames/len(self.lp.movies))
-		
+		videoObj.localLogfile = self.localLogfileDir + 'ClusterLog_' + str(index) + '.txt'
+
 		self.createDirectory(videoObj.localTempDir)
 
 		return videoObj

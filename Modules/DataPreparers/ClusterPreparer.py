@@ -27,13 +27,13 @@ class ClusterPreparer():
 		assert os.path.exists(self.fileManager.localAllClipsDir)
 		assert os.path.exists(self.fileManager.localManualLabelClipsDir)
 		assert os.path.exists(self.fileManager.localManualLabelFramesDir)
-
+		assert os.path.exists(self.fileManager.localLogfileDir)
 
 	def runClusterAnalysis(self):
 		command = ['python3', 'VideoFocus.py']
 		command.extend(['--Movie_file', self.videoObj.localVideoFile])
 		command.extend(['--Num_workers', str(self.workers)])
-		command.extend(['--Log', self.videoObj.localHMMFile + '.log'])
+		command.extend(['--Log', self.videoObj.localLogfile])
 		command.extend(['--HMM_temp_directory', self.videoObj.localTempDir])
 		command.extend(['--HMM_filename', self.videoObj.localHMMFile])
 		command.extend(['--HMM_transition_filename', self.videoObj.localRawCoordsFile])

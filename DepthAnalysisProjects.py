@@ -31,5 +31,5 @@ for i, projectID in enumerate(projectIDs):
 
 	uploadProcesses.append(subprocess.Popen(['python3', '-m', 'Modules.UnitScripts.UploadData','Depth', '--Delete', projectID]))
 
-for p in uploadProcesses():
+for p in uploadProcesses:
 	p.communicate()
