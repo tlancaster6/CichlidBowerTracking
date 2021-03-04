@@ -296,12 +296,12 @@ class FileManager():
 		elif dtype == 'Video':
 			videoObj = self.returnVideoObject(videoIndex)
 			self.uploadData(videoObj.localVideoFile)
-			
+
 		elif dtype == 'Cluster':
 			self.uploadData(self.localTroubleshootingDir)
 
 			if videoIndex is None:
-				videos = list(range(len(self.lp.videos)))
+				videos = list(range(len(self.lp.movies)))
 			else:
 				videos = [videoIndex]
 			for videoIndex in videos:

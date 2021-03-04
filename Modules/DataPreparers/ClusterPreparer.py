@@ -25,7 +25,7 @@ class ClusterPreparer():
 		except AssertionError:
 			assert os.path.exists(self.videoObj.localh264File)
 			print('Converting ' + self.videoObj.localh264File + ' to mp4')
-			ffmpeg_output = subprocess.run(['ffmpeg', '-r', str(self.videoObj.Framerate), '-i', self.videoObj.localh264File, '-threads', str(workers), '-c:v', 'copy', '-r', str(videoObj.Framerate), self.videoObj.localVideoFile])
+			ffmpeg_output = subprocess.run(['ffmpeg', '-r', str(self.videoObj.framerate), '-i', self.videoObj.localh264File, '-threads', str(workers), '-c:v', 'copy', '-r', str(self.videoObj.framerate), self.videoObj.localVideoFile])
 			print('Syncing and moving on')
 		assert os.path.isfile(self.videoObj.localVideoFile)
 		assert os.path.getsize(self.videoObj.localVideoFile) > os.path.getsize(self.videoObj.localh264File)
