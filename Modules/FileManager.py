@@ -216,8 +216,8 @@ class FileManager():
 				print('Downloading video ' + str(videoIndex))
 				self.downloadData(videoObj.localVideoFile)
 			else:
-				self.downloadData(videoObj.localVideoDir)
-				print('Downloading video ' + videoObj.localVideoDir)
+				self.downloadData(self.localVideoDir)
+				print('Downloading video ' + self.localVideoDir)
 
 
 		elif dtype == 'ClusterClassification':
