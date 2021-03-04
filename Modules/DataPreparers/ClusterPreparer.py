@@ -31,7 +31,7 @@ class ClusterPreparer():
 		assert os.path.getsize(self.videoObj.localVideoFile) > os.path.getsize(self.videoObj.localh264File)
 		os.remove(self.videoObj.localh264File)
 
-		process = subprocess.Popen(['python3', '-m', 'Modules.UnitScripts.UploadData','Cluster', projectID, '--VideoIndex', str(self.videoIndex)])
+		process = subprocess.Popen(['python3', '-m', 'Modules.UnitScripts.UploadData','Cluster', self.fileManager.projectID, '--VideoIndex', str(self.videoIndex)])
 
 		assert os.path.exists(self.fileManager.localTroubleshootingDir)
 		assert os.path.exists(self.fileManager.localAnalysisDir)
