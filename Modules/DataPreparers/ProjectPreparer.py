@@ -54,6 +54,8 @@ class ProjectPreparer():
 			cp_obj = CP(self.fileManager, videoIndex, self.workers)
 			cp_obj.validateInputData()
 			cp_obj.runClusterAnalysis()
+			pdb.set_trace()
+
 
 	def run3DClassification(self):
 		tdcp_obj = TDCP(self.fileManager)
