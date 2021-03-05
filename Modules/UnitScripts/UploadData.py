@@ -12,7 +12,7 @@ args = parser.parse_args()
 print('Uploading data for ' + args.ProjectID, file = sys.stderr)
 
 pp_obj = PP(args.ProjectID)
-if args.DataType == 'Cluster':
+if args.DataType in ['Cluster','Video']:
 	if args.VideoIndex is None:
 		print('Must specify a video index if downloading data for Cluster Analysis')
 	pp_obj.uploadData(args.DataType, videoIndex = args.VideoIndex)
