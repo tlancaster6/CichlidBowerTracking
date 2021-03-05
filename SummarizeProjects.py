@@ -18,7 +18,7 @@ if args.ProjectIDs is not None:
 
 elif args.SummaryFile is not None:
 	s_dt = pd.read_csv(args.SummaryFile, index_col = 0)
-	for projectID in s_dt[s_dt.DepthFiles == False].projectID:
+	for projectID in s_dt.projectID:
 		if 'F' not in projectID:
 			continue
 		fm_obj = FM(projectID = projectID)
