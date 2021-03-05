@@ -30,8 +30,9 @@ class ClusterPreparer():
 			assert os.path.getsize(self.videoObj.localVideoFile) > os.path.getsize(self.videoObj.localh264File)
 			os.remove(self.videoObj.localh264File)
 		print('Syncing and moving on')
-		process = subprocess.Popen(['python3', '-m', 'Modules.UnitScripts.UploadData','Video', self.fileManager.projectID, '--VideoIndex', str(self.videoIndex)])
+		print(['python3', '-m', 'Modules.UnitScripts.UploadData','Video', self.fileManager.projectID, '--VideoIndex', str(self.videoIndex)])
 
+		process = subprocess.run(['python3', '-m', 'Modules.UnitScripts.UploadData','Video', self.fileManager.projectID, '--VideoIndex', str(self.videoIndex)])
 
 
 
