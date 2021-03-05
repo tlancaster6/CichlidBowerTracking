@@ -154,7 +154,7 @@ class FileManager():
 		self.localLabeledFramesFile = self.localAnalysisDir + 'LabeledFrames.csv'
 
 		# Files created by manual labeler preparer
-		self.localDepthSummaryFile = self.localFiguresDir + 'DepthDataSummary.xlsx'
+		self.localDepthSummaryFile = self.localFiguresDir + 'DataSummary.xlsx'
 
 	def createMLData(self, modelID):
 		self.vModelID = modelID
