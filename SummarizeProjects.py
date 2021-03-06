@@ -1,7 +1,7 @@
 import argparse, subprocess, pdb, os
 import pandas as pd
 from Modules.FileManager import FileManager as FM
-from PyPDF2 import PDFFileMerger
+from PyPDF2 import PdfFileMerger
 
 parser = argparse.ArgumentParser(description='This script is used to manually prepared projects for downstream analysis')
 parser.add_argument('--ProjectIDs', type = str, nargs = '+', help = 'Name of projectIDs to run analysis on')
