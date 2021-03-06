@@ -37,8 +37,8 @@ elif args.SummaryFile is not None:
 		except NameError:
 			all_dt = dt
 		os.remove(fm_obj.localDepthSummaryFile)
-	merger.write("F2s_Depth.pdf")
-	merger.close()
+	s_pdfs.write("F2s_Depth.pdf")
+	s_pdfs.close()
 	pdb.set_trace()	
 
 else:
