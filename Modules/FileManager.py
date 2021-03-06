@@ -155,6 +155,8 @@ class FileManager():
 
 		# Files created by manual labeler preparer
 		self.localDepthSummaryFile = self.localFiguresDir + 'DataSummary.xlsx'
+		self.localDepthSummaryFigure = self.localFiguresDir + 'DailyDepthSummary.pdf'
+
 
 	def createMLData(self, modelID):
 		self.vModelID = modelID
