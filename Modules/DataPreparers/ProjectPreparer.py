@@ -7,7 +7,7 @@ from Modules.DataPreparers.ClusterPreparer import ClusterPreparer as CP
 from Modules.DataPreparers.ThreeDClassifierPreparer import ThreeDClassifierPreparer as TDCP
 from Modules.DataPreparers.ManualLabelVideoPreparer import ManualLabelVideoPreparer as MLVP
 from Modules.DataPreparers.ThreeDModelPreparer import ThreeDModelPreparer as TDMP
-#from Modules.DataPreparers.FigurePreparer import FigurePreparer as FP
+from Modules.DataPreparers.SummaryPreparer import SummaryPreparer as SP
 
 class ProjectPreparer():
 	# This class takes in a projectID and runs all the appropriate analysis
@@ -78,13 +78,12 @@ class ProjectPreparer():
 	def runMLFishDetection(self):
 		pass
 
-	def runFigureCreation(self):
-		fc_obj =FP(self.projFileManager)
-		fc_obj.validateInputData()
-		fc_obj.createDepthFigures()
+	def runSummaryCreation(self):
+		sp_obj = SP(self.fileManager)
+		sp_obj.createFullSummary()
 
-		self.createUploadFile(fc_obj.uploads)
-		self.createAnalysisUpdate('Summary', fc_obj)
+		self.createUploadFile(sp_obj.uploads)
+		self.createAnalysisUpdate('Summary', sp_obj)
 
 	def backupAnalysis(self):
 		uploadCommands = set()

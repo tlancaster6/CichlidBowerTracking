@@ -22,6 +22,7 @@ class SummaryPreparer:
         self.da_obj = None
         self.ca_obj = None
         self.lp = None
+        self.uploads = None
         self.validateDepthData()
         self.validateClusterData()
 
