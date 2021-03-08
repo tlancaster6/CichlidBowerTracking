@@ -245,7 +245,7 @@ class SummaryPreparer:
                 if i == 0:
                     axes[j, 0].set_ylabel(str(bid))
             t0 = t1
-        fig.savefig(self.fm.localSummaryDir / 'DailyClusterDistributions.pdf')
+        fig.savefig(self.fm.localSummaryDir + 'DailyClusterDistributions.pdf')
         plt.close(fig=fig)
 
         # heatmaps of the estimated daily scoop and spit areal densities
