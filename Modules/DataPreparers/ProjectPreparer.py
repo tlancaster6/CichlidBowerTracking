@@ -82,9 +82,6 @@ class ProjectPreparer():
 		sp_obj = SP(self.fileManager)
 		sp_obj.createFullSummary()
 
-		self.createUploadFile(sp_obj.uploads)
-		self.createAnalysisUpdate('Summary', sp_obj)
-
 	def backupAnalysis(self):
 		uploadCommands = set()
 
