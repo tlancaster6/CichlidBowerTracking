@@ -32,10 +32,10 @@ class FileManager():
 		self.localMLDir = self.localMasterDir + '__MachineLearningModels/'
 		if modelID is not None:
 			self.createMLData(modelID)
-		# Create file names 
+		# Create file names and parameters
 		self.createPiData()
-
 		self.createAnnotationData()
+		self._createParameters()
 
 	def createPiData(self):
 		self.localCredentialSpreadsheet = self.localMasterDir + '__CredentialFiles/SAcredentials.json'
