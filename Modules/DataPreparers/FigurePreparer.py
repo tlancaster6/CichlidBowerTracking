@@ -26,9 +26,9 @@ class FigurePreparer:
 		assert os.path.exists(self.projFileManager.localTrayFile)
 		self.da_obj = DA(self.projFileManager)
 
-		assert os.path.exists(self.projFileManager.localFiguresDir)
+		assert os.path.exists(self.projFileManager.localSummaryDir)
 
-		self.uploads = [(self.projFileManager.localFiguresDir, self.projFileManager.cloudFiguresDir, '0')]
+		self.uploads = [(self.projFileManager.localSummaryDir, self.projFileManager.cloudSummaryDir, '0')]
 
 	def _combineVideoData(self):
 		pass
@@ -166,7 +166,7 @@ class FigurePreparer:
 		dailyDT = pd.DataFrame(dailyChangeData)
 		hourlyDT = pd.DataFrame(hourlyChangeData)
 
-		writer = pd.ExcelWriter(self.projFileManager.localFiguresDir + 'DataSummary.xlsx')
+		writer = pd.ExcelWriter(self.projFileManager.localSummaryDir + 'DataSummary.xlsx')
 		totalDT.to_excel(writer,'Total')
 		dailyDT.to_excel(writer,'Daily')
 		hourlyDT.to_excel(writer,'Hourly')
@@ -185,8 +185,8 @@ class FigurePreparer:
 
 
 
-		figDaily.savefig(self.projFileManager.localFiguresDir + 'DailyDepthSummary.pdf')  
-		figHourly.savefig(self.projFileManager.localFiguresDir + 'HourlyDepthSummary.pdf')  
+		figDaily.savefig(self.projFileManager.localSummaryDir + 'DailyDepthSummary.pdf')
+		figHourly.savefig(self.projFileManager.localSummaryDir + 'HourlyDepthSummary.pdf')
 
 		plt.clf()
 

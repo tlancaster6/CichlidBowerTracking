@@ -115,7 +115,7 @@ class FileManager():
 
 		# Directories created by analysis
 		self.localAnalysisDir = self.localProjectDir + 'MasterAnalysisFiles/'
-		self.localFiguresDir = self.localProjectDir + 'Figures/'
+		self.localSummaryDir = self.localProjectDir + 'Summary/'
 		self.localAllClipsDir = self.localProjectDir + 'AllClips/'
 		self.localManualLabelClipsDir = self.localProjectDir + 'MLClips/'
 		self.localManualLabelFramesDir = self.localProjectDir + 'MLFrames/'
@@ -133,7 +133,7 @@ class FileManager():
 		self.localTransMFile = self.localAnalysisDir + 'TransMFile.npy'
 		self.localVideoCropFile = self.localAnalysisDir + 'VideoCrop.npy'
 		self.localVideoPointsFile = self.localAnalysisDir + 'VideoPoints.npy'
-		self.localPrepSummaryFigure = self.localFiguresDir + 'PrepSummary.pdf' 
+		self.localPrepSummaryFigure = self.localSummaryDir + 'PrepSummary.pdf'
 
 		# Files created by depth preparer
 		self.localSmoothDepthFile = self.localAnalysisDir + 'smoothedDepthData.npy'
@@ -154,8 +154,8 @@ class FileManager():
 		self.localLabeledFramesFile = self.localAnalysisDir + 'LabeledFrames.csv'
 
 		# Files created by manual labeler preparer
-		self.localDepthSummaryFile = self.localFiguresDir + 'DataSummary.xlsx'
-		self.localDepthSummaryFigure = self.localFiguresDir + 'DailyDepthSummary.pdf'
+		self.localDepthSummaryFile = self.localSummaryDir + 'DataSummary.xlsx'
+		self.localDepthSummaryFigure = self.localSummaryDir + 'DailyDepthSummary.pdf'
 
 
 	def createMLData(self, modelID):
@@ -187,7 +187,7 @@ class FileManager():
 		if dtype == 'Prep':
 			self.createDirectory(self.localMasterDir)
 			self.createDirectory(self.localAnalysisDir)
-			self.createDirectory(self.localFiguresDir)
+			self.createDirectory(self.localSummaryDir)
 			self.createDirectory(self.localLogfileDir)
 			self.downloadData(self.localPrepDir)
 			self.downloadData(self.localLogfile)
@@ -256,9 +256,9 @@ class FileManager():
 			except FileNotFoundError:
 				pass
 
-		elif dtype == 'Figures':
+		elif dtype == 'Summary':
 			self.createDirectory(self.localMasterDir)
-			self.createDirectory(self.localFiguresDir)
+			self.createDirectory(self.localSummaryDir)
 			self.downloadData(self.localLogfile)
 			self.downloadData(self.localAnalysisDir)
 
@@ -376,7 +376,7 @@ class FileManager():
 		videoObj.localManualLabelFramesDir = self.localManualLabelFramesDir + videoObj.baseName + '/'
 		videoObj.localAllClipsPrefix = self.localAllClipsDir + self.lp.projectID + '_' + videoObj.baseName
 		videoObj.localManualLabelClipsPrefix = self.localManualLabelClipsDir + self.lp.projectID + '_' + videoObj.baseName
-		videoObj.localIntensityFile = self.localFiguresDir + videoObj.baseName + '_intensity.pdf'
+		videoObj.localIntensityFile = self.localSummaryDir + videoObj.baseName + '_intensity.pdf'
 		videoObj.localTempDir = self.localTempDir + videoObj.baseName + '/'
 		videoObj.nManualLabelClips = int(self.nManualLabelClips/len(self.lp.movies))
 		videoObj.nManualLabelFrames = int(self.nManualLabelFrames/len(self.lp.movies))

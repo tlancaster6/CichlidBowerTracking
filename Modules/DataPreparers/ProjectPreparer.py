@@ -84,7 +84,7 @@ class ProjectPreparer():
 		fc_obj.createDepthFigures()
 
 		self.createUploadFile(fc_obj.uploads)
-		self.createAnalysisUpdate('Figures', fc_obj)
+		self.createAnalysisUpdate('Summary', fc_obj)
 
 	def backupAnalysis(self):
 		uploadCommands = set()

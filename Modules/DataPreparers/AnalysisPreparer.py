@@ -6,7 +6,7 @@ class AnalysisPreparer:
 	def __init__(self):
 		__version__ = '1.0.0'
 		self.fileManager = FM()
-		self.projectTypes = ['Prep', 'Depth', 'Cluster', 'MLCluster', 'MLObject', 'Figures']
+		self.projectTypes = ['Prep', 'Depth', 'Cluster', 'MLCluster', 'MLObject', 'Summary']
 
 	def updateAnalysisFile(self, newProjects = True, projectSummary = True):
 		self._loadAnalysisDir()
@@ -89,8 +89,8 @@ class AnalysisPreparer:
 				analysisData['MLObject_Version'].append('None')
 				analysisData['MLObject_Date'].append('None')
 
-				analysisData['Figures_Version'].append('None')
-				analysisData['Figures_Date'].append('None')
+				analysisData['Summary_Version'].append('None')
+				analysisData['Summary_Date'].append('None')
 		
 		dt = pd.DataFrame(analysisData, index = sorted(projectIDs))
 		self.anDT = self.anDT.append(dt)
