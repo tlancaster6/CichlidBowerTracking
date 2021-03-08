@@ -22,7 +22,6 @@ class SummaryPreparer:
         self.da_obj = None
         self.ca_obj = None
         self.lp = None
-        self.uploads = None
         self.validateDepthData()
         self.validateClusterData()
 
@@ -43,7 +42,6 @@ class SummaryPreparer:
 
         # If all required files were present, initiate the LogParser and DepthAnalyzer
         self.lp = LP(self.fm.localLogfile)
-        self.uploads = [(self.fm.localSummaryDir, '0')]
         self.da_obj = DepthAnalyzer(self.fm)
 
     def validateClusterData(self):
@@ -63,7 +61,6 @@ class SummaryPreparer:
 
         # If all required files were present, initiate the LogParser and ClusterAnalyzer
         self.lp = LP(self.fm.localLogfile)
-        self.uploads = [(self.fm.localSummaryDir, '0')]
         self.ca_obj = ClusterAnalyzer(self.fm)
 
     def createDepthFigures(self, hourlyDelta=2):
