@@ -325,6 +325,9 @@ class FileManager():
 			self.uploadAndMerge(self.localNewLabeledVideosFile, self.localLabeledClipsFile, ID = 'LID')
 			self.uploadAndMerge(self.localNewLabeledClipsDir, self.localLabeledClipsProjectDir, tarred = True)
 
+		elif dtype == 'Summary':
+			self.uploadData(self.localSummaryDir)
+
 		else:
 			raise KeyError('Unknown key: ' + dtype)
 
