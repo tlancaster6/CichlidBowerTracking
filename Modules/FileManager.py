@@ -121,6 +121,7 @@ class FileManager():
 		self.localManualLabelFramesDir = self.localProjectDir + 'MLFrames/'
 		self.localTroubleshootingDir = self.localProjectDir + 'Troubleshooting/'
 		self.localTempDir = self.localProjectDir + 'Temp/'
+		self.localPaceDir = self.localProjectDir + 'Pace/'
 
 		# Files created by tracker
 		self.localFirstFrame = self.localPrepDir + 'FirstDepth.npy'
@@ -197,6 +198,7 @@ class FileManager():
 			self.createDirectory(self.localAnalysisDir)
 			self.createDirectory(self.localTroubleshootingDir)
 			self.createDirectory(self.localLogfileDir)
+			self.createDirectory(self.localPaceDir)
 
 			self.downloadData(self.localLogfile)
 			self.downloadData(self.localFrameDir, tarred = True)
@@ -212,6 +214,7 @@ class FileManager():
 			self.createDirectory(self.localManualLabelClipsDir)
 			self.createDirectory(self.localManualLabelFramesDir)
 			self.createDirectory(self.localLogfileDir)
+			self.createDirectory(self.localPaceDir)
 
 			self.downloadData(self.localLogfile)
 			if videoIndex is not None:
@@ -232,6 +235,7 @@ class FileManager():
 			self.downloadData(self.localAnalysisDir)
 			self.downloadData(self.localTroubleshootingDir)
 			self.downloadData(self.local3DModelDir)
+			self.createDirectory(self.localPaceDir)
 
 		elif dtype == 'Train3DModel':
 			self.createDirectory(self.local3DModelDir)
@@ -261,6 +265,7 @@ class FileManager():
 			self.createDirectory(self.localSummaryDir)
 			self.downloadData(self.localLogfile)
 			self.downloadData(self.localAnalysisDir)
+			self.downloadData(self.localPaceDir)
 
 		elif dtype == 'All':
 			self.createDirectory(self.localMasterDir)
@@ -272,6 +277,7 @@ class FileManager():
 			self.createDirectory(self.localManualLabelClipsDir)
 			self.createDirectory(self.localManualLabelFramesDir)
 			self.createDirectory(self.localManualLabelFramesDir[:-1] + '_pngs')
+			self.createDirectory(self.localPaceDir)
 			self.downloadData(self.localLogfile)
 			self.downloadData(self.localVideoDir)
 			self.downloadData(self.localFrameDir, tarred = True)
@@ -295,6 +301,7 @@ class FileManager():
 			self.uploadData(self.localRawDepthFile)
 			self.uploadData(self.localInterpDepthFile)
 			self.uploadData(self.localDepthLogfile)
+			self.uploadData(self.localPaceDir)
 
 		elif dtype == 'Video':
 			videoObj = self.returnVideoObject(videoIndex)
@@ -302,6 +309,7 @@ class FileManager():
 
 		elif dtype == 'Cluster':
 			self.uploadData(self.localTroubleshootingDir)
+			self.uploadData(self.localPaceDir)
 
 			if videoIndex is None:
 				videos = list(range(len(self.lp.movies)))
