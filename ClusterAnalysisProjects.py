@@ -24,10 +24,10 @@ if args.ProjectIDs is not None:
 elif args.SummaryFile is not None:
 	dt = pd.read_csv(args.SummaryFile, index_col = 0)
 	for projectID in dt[dt.ClusterFiles == False].projectID:
-		subprocess.run(['python3', '-m', 'Modules.UnitScripts.DownloadData','Cluster', '--ProjectID', projectID])
-		subprocess.run(['python3', '-m', 'Modules.UnitScripts.AnalyzeCluster', projectID, '--Workers', str(workers)])
-		subprocess.run(['python3', '-m', 'Modules.UnitScripts.UploadData','Cluster', projectID])
-		subprocess.run(['python3', '-m', 'Modules.UnitScripts.DeleteData', projectID])
+		o1 = subprocess.run(['python3', '-m', 'Modules.UnitScripts.DownloadData','Cluster', '--ProjectID', projectID], capture_output = True, encoding = 'utf-8')
+		o2 = subprocess.run(['python3', '-m', 'Modules.UnitScripts.AnalyzeCluster', projectID, '--Workers', str(workers)], capture_output = True, encoding = 'utf-8')
+		o3 = subprocess.run(['python3', '-m', 'Modules.UnitScripts.UploadData','Cluster', projectID], capture_output = True, encoding = 'utf-8')
+		o4 = subprocess.run(['python3', '-m', 'Modules.UnitScripts.DeleteData', projectID], capture_output = True, encoding = 'utf-8')
 
 		dt.loc[dt.projectID == projectID,'ClusterFiles'] = True
 		dt.to_csv(args.SummaryFile)
