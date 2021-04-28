@@ -59,7 +59,7 @@ class ThreeDModelPreparer():
 			for line in f:
 				try:
 					if int(line.split()[0]) % 5 == 0:
-						print(line.split[0] + '\t' + line.rstrip().split()[-1])
+						print(line.split()[0] + '\t' + line.rstrip().split()[-1])
 				except ValueError:
 					continue
 			epoch = 1
