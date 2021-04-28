@@ -21,7 +21,7 @@ class ProjectPreparer():
 		self.workers = workers
 
 	def _checkProjectID(self):
-		if projectID is None:
+		if self.projectID is None:
 			return True
 		projectIDs = subprocess.run(['rclone', 'lsf', self.fileManager.cloudMasterDir], capture_output = True, encoding = 'utf-8').stdout.split()
 		if self.projectID + '/' in projectIDs:
