@@ -9,7 +9,7 @@ parser.add_argument('--NewModelID', type = str, help = 'Specify which video shou
 
 args = parser.parse_args()
 
-print('Downloading data for ' + args.ProjectID, file = sys.stderr)
+#print('Downloading data for ' + args.ProjectID, file = sys.stderr)
 
 
 pp_obj = PP(args.ProjectID, args.NewModelID)
