@@ -24,7 +24,7 @@ class FileManager():
 			else:
 				raise Exception('Cant find master directory (' + masterDir + ') in rclone remote (' + rcloneRemote + '')
 
-		if projectID != 'None':
+		if projectID is not None:
 			self.createProjectData(projectID)
 			self.downloadData(self.localLogfile)
 			self.lp = LP(self.localLogfile)
