@@ -1,4 +1,4 @@
-import argparse, pdb, sys
+import argparse, pdb, sys, subprocess
 from Modules.DataPreparers.ProjectPreparer import ProjectPreparer as PP
 
 parser = argparse.ArgumentParser(usage = 'This script will create or finetune a 3D Resnet model for classifying sand manipulation videos')
@@ -12,5 +12,6 @@ parser.set_defaults(ProjectMeans=False)
 
 args = parser.parse_args()
 
+subprocess.run(['python3', '-m', 'Modules.UnitScripts.DownloadData','Train3DModel', '--ProjectID', projectIDs[0]])
 pp_obj = PP('PatrickControl2', args.NewModelID)
 pp_obj.createModel(args.Purpose, args.ProjectIDs, args.GPU, args.ProjectMeans)
