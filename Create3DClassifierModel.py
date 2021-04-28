@@ -13,5 +13,5 @@ parser.set_defaults(ProjectMeans=False)
 args = parser.parse_args()
 
 subprocess.run(['python3', '-m', 'Modules.UnitScripts.DownloadData','Train3DModel'])
-pp_obj = PP(None, args.NewModelID)
+pp_obj = PP(projectID = None, modelID = args.NewModelID)
 pp_obj.createModel(args.Purpose, args.ProjectIDs, args.GPU, args.ProjectMeans)
