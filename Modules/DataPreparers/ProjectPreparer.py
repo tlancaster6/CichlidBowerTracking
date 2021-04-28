@@ -12,7 +12,7 @@ from Modules.DataPreparers.SummaryPreparer import SummaryPreparer as SP
 class ProjectPreparer():
 	# This class takes in a projectID and runs all the appropriate analysis
 
-	def __init__(self, projectID, modelID = None, workers = None):
+	def __init__(self, projectID = None, modelID = None, workers = None):
 		self.projectID = projectID
 		self.fileManager = FM(projectID = projectID, modelID = modelID)
 		self.modelID = modelID
@@ -21,7 +21,8 @@ class ProjectPreparer():
 		self.workers = workers
 
 	def _checkProjectID(self):
-		pass
+		if projectID is None:
+			return True
 		projectIDs = subprocess.run(['rclone', 'lsf', self.fileManager.cloudMasterDir], capture_output = True, encoding = 'utf-8').stdout.split()
 		if self.projectID + '/' in projectIDs:
 			return True
