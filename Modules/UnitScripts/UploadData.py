@@ -1,3 +1,7 @@
+# Things to add
+# 1. Delete model data if it is generated/downloaded
+# 2. Upload model data if it is created
+
 import argparse,sys
 from Modules.DataPreparers.ProjectPreparer import ProjectPreparer as PP
 

@@ -33,9 +33,12 @@ class FileManager():
 		if modelID is not None:
 			print(modelID)
 			self.createMLData(modelID)
+
+		self.localAnalysisStatesDir = self.localMasterDir + '__AnalysisStates/'
 		# Create file names and parameters
 		self.createPiData()
 		self.createAnnotationData()
+
 		self._createParameters()
 
 	def createPiData(self):
@@ -45,20 +48,22 @@ class FileManager():
 	def getAllProjectIDs(self):
 		output = subprocess.run(['rclone', 'lsf', '--dirs-only', self.cloudMasterDir], capture_output = True, encoding = 'utf-8')
 		projectIDs = [x.rstrip('/') for x in output.stdout.split('\n') if x[0:2] != '__']
+		return projectIDs
 
 	def getProjectStates(self):
 
 		# Dictionary to hold row of data
-		row_data = {'projectID':self.projectID, 'tankID':'', 'StartingFiles':False, 'PrepFiles':False, 'DepthFiles':False, 'ClusterFiles':False, '3DClassifyFiles':False}
+		row_data = {'projectID':self.projectID, 'tankID':'', 'StartingFiles':False, 'Prep':False, 'Depth':False, 'Cluster':False, 'ClusterClassification':False}
 
 		# List the files needed for each analysis
 		necessaryFiles = {}
 		necessaryFiles['StartingFiles'] = [self.localLogfile, self.localPrepDir, self.localFrameTarredDir, self.localVideoDir, self.localFirstFrame, self.localLastFrame, self.localPiRGB, self.localDepthRGB]
-		necessaryFiles['PrepFiles'] = [self.localTrayFile,self.localTransMFile,self.localVideoCropFile]
-		necessaryFiles['DepthFiles'] = [self.localSmoothDepthFile]
-		necessaryFiles['ClusterFiles'] = [self.localAllClipsDir, self.localManualLabelClipsDir, self.localManualLabelFramesDir]
-		necessaryFiles['3DClassifyFiles'] = [self.localAllLabeledClustersFile]
+		necessaryFiles['Prep'] = [self.localTrayFile,self.localTransMFile,self.localVideoCropFile]
+		necessaryFiles['Depth'] = [self.localSmoothDepthFile]
+		necessaryFiles['Cluster'] = [self.localAllClipsDir, self.localManualLabelClipsDir, self.localManualLabelFramesDir]
+		necessaryFiles['ClusterClassification'] = [self.localAllLabeledClustersFile]
 
+		print('Starting and downloading logfile for project ' + self.projectID)
 		# Try to download and read logfile
 		try:
 			self.downloadData(self.localLogfile)
@@ -71,10 +76,34 @@ class FileManager():
 			row_data['StartingFiles'] = False
 			print('Malformed Log File')
 			return row_data
+
+		# Get additional files necessary for analysis based on videos
+		for index,vid_obj in enumerate(self.lp.movies):
+			vid_obj = self.returnVideoObject(index)
+			necessaryFiles['StartingFiles'].append(vid_obj.localVideoFile)
+			necessaryFiles['Cluster'].append(vid_obj.localLabeledClustersFile)
+			necessaryFiles['Cluster'].append(vid_obj.localAllClipsDir[:-1] + '.tar')
+			necessaryFiles['Cluster'].append(vid_obj.localManualLabelClipsDir[:-1] + '.tar')
+			necessaryFiles['Cluster'].append(vid_obj.localManualLabelFramesDir[:-1] + '.tar')
+
+
 		row_data['tankID'] = self.lp.tankID
 		# Check if files exists
-		for analysis in necessaryFiles:
-			row_data[analysis] = all([self.checkFileExists(x) for x in necessaryFiles[analysis]])
+		print('Checking if individual files exist')
+
+		directories = {}
+
+		for analysis_type, analysis_files in necessaryFiles.items():
+			for analysis_file in analysis_files:
+				directories[os.path.dirname(os.path.realpath(analysis_file))] = []
+
+		for local_path in directories:
+			cloud_path = local_path.replace(self.localMasterDir, self.cloudMasterDir)
+			output = subprocess.run(['rclone', 'lsf', cloud_path], capture_output = True, encoding = 'utf-8')
+			directories[local_path] = [x.rstrip('/') for x in output.stdout.split('\n')]
+
+		for analysis_type, local_files in necessaryFiles.items():
+			row_data[analysis_type] = all([os.path.basename(x) in directories[os.path.dirname(os.path.realpath(x))] for x in local_files])
 
 		return row_data
 		
