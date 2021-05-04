@@ -34,7 +34,7 @@ for projectID in projectIDs:
 			subprocess.run(['rclone','purge', 'cichlidVideo:McGrath/Apps/CichlidPiData/' + projectID + '/' + bad_data])
 
 	# Files to delete
-	for bad_data in ['AllClips.tar', 'MLClips.tar', 'MLFrames.tar']:
+	for bad_data in ['AllClips.tar', 'MLClips.tar', 'MLFrames.tar', 'Backgrounds.tar']:
 		if bad_data in main_directory_data:
 			print('  Deleting: ' + bad_data)
 			subprocess.run(['rclone','delete', 'cichlidVideo:McGrath/Apps/CichlidPiData/' + projectID + '/' + bad_data])
@@ -53,12 +53,13 @@ for projectID in projectIDs:
 			if os.path.basename(vid_obj.localh264File) not in video_directory_data:
 				print('  Missing videofiles: ' + str(index))
 			else:
-				pass
-				#print('  Need to convert h264 file: ' + str(index))
-				#fm_obj.downloadData(vid_obj.localh264File)
-				#subprocess.run(['python3', '-m', 'Modules.processVideo', vid_obj.localh264File, vid_obj.framerate, projectID])
+				
+				print('  Need to convert h264 file: ' + str(index))
+				fm_obj.downloadData(vid_obj.localh264File)
+				subprocess.run(['python3', 'Modules/processVideo.py', vid_obj.localh264File, str(vid_obj.framerate), projectID])
 				#subprocess.run(['rm', '-rf', vid_obj.localh264File])
 				#subprocess.run(['rclone','delete', 'cichlidVideo:McGrath/Apps/CichlidPiData/' + projectID + '/Videos/' + os.path.basename(vid_obj.localh264File)])
+				pdb.set_trace()
 
 	for main_data in main_directory_data:
 		if '.npy' in main_data or '.pdf' in main_data:
