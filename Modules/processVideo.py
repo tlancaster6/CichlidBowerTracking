@@ -1,4 +1,4 @@
-from FileManager import FileManager as FM
+from Modules.FileManager import FileManager as FM
 import argparse, subprocess, os
 
 parser = argparse.ArgumentParser()
