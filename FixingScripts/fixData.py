@@ -56,7 +56,7 @@ for projectID in projectIDs:
 				
 				print('  Need to convert h264 file: ' + str(index))
 				fm_obj.downloadData(vid_obj.localh264File)
-				subprocess.run(['python3', 'Modules/processVideo.py', vid_obj.localh264File, str(vid_obj.framerate), projectID])
+				subprocess.run(['python3', '-m', 'Modules/processVideo', vid_obj.localh264File, str(vid_obj.framerate), projectID])
 				#subprocess.run(['rm', '-rf', vid_obj.localh264File])
 				#subprocess.run(['rclone','delete', 'cichlidVideo:McGrath/Apps/CichlidPiData/' + projectID + '/Videos/' + os.path.basename(vid_obj.localh264File)])
 				pdb.set_trace()
