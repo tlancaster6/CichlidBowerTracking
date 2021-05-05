@@ -28,5 +28,5 @@ fileManager.uploadData(args.VideoFile.replace('.h264', '.mp4'))
 try:
 	subprocess.run(['mv', args.VideoFile, fileManager.localBackupDir])
 except:
-	continue
+	pass
 
