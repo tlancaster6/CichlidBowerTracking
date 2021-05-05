@@ -3,7 +3,6 @@ import skvideo.io
 import numpy as np
 import pdb, os, sys, datetime, warnings
 import matplotlib.pyplot as plt
-from Modules.LogParser import LogParser as LP
 
 warnings.filterwarnings('ignore')
 
@@ -23,7 +22,7 @@ class DepthPreparer:
 
 	def validateInputData(self):
 		assert os.path.exists(self.fileManager.localLogfile)
-		self.lp = LP(self.fileManager.localLogfile)
+		self.lp = self.fileManager.lp
 		bad_frames = 0
 		for frame in self.lp.frames:
 

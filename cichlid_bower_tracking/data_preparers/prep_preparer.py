@@ -1,8 +1,8 @@
-from Modules.FileManager import FileManager as FM
+from cichlid_bower_tracking.helper_modules.file_manager import FileManager as FM
 
 import matplotlib.pyplot as plt
-import matplotlib, datetime, cv2, pdb, os
-from Modules.roipoly import roipoly
+import matplotlib, datetime, cv2, pdb, os, sys
+from cichlid_bower_tracking.helper_modules.roipoly import roipoly
 import numpy as np
 
 
@@ -12,7 +12,8 @@ class PrepPreparer:
 	def __init__(self, fileManager):
 		self.__version__ = '1.0.0'
 		self.fileManager = fileManager
-		
+		self.createLogFile()
+
 	def validateInputData(self):
 		assert os.path.exists(self.fileManager.localFirstFrame)
 		assert os.path.exists(self.fileManager.localLastFrame)
@@ -30,6 +31,16 @@ class PrepPreparer:
 		self._cropVideo()
 		self._registerDepthCamera()
 		self._summarizePrep()
+
+	def createLogFile(self):
+		with open(self.fileManager.localPrepLogfile,'w') as f:
+			print('PythonVersion: ' + sys.version.replace('\n', ' '), file = f)
+			print('NumpyVersion: ' + np.__version__, file = f)
+			print('MatplotlibVersion: ' + matplotlib.__version__, file = f)
+			print('OpenCVVersion: ' + cv2.__version__, file = f)
+			print('Username: ' + os.getenv('USER'), file = f)
+			print('Nodename: ' + os.uname().nodename, file = f)
+			print('DateAnalyzed: ' + str(datetime.datetime.now()), file = f)
 
 	def _identifyTray(self, thresh = 10):
 

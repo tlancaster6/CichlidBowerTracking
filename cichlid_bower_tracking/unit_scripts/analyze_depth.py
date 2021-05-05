@@ -1,5 +1,5 @@
 import argparse, pdb, sys
-from Modules.DataPreparers.ProjectPreparer import ProjectPreparer as PP
+from cichlid_bower_tracking.data_preparers.project_preparer import ProjectPreparer as PP
 
 parser = argparse.ArgumentParser(usage = 'This script will use a previously trained 3D Resnet model to classify videos')
 parser.add_argument('ProjectID', type = str, help = 'Which projectID you want to identify')

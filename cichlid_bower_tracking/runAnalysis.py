@@ -44,8 +44,10 @@ for i, projectID in enumerate(projectIDs):
 	
 	# Pause script until current analysis is complete and data for next project is downloaded
 	p1.communicate()
-	p2.communicate() # Need to catch an exception if only one project is analyzed
-
+	try:
+		p2.communicate() # Need to catch an exception if only one project is analyzed
+	except NameError:
+		pass
 	#Modify summary file if necessary
 	if args.SummaryFile:
 		dt.loc[dt.projectID == projectID,args.AnalysisType] = True

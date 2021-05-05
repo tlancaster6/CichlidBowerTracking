@@ -1,4 +1,3 @@
-from Modules.LogParser import LogParser as LP
 from matplotlib import (cm, colors, gridspec, ticker)
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -41,7 +40,7 @@ class SummaryPreparer:
                 return False
 
         # If all required files were present, initiate the LogParser and DepthAnalyzer
-        self.lp = LP(self.fm.localLogfile)
+        self.lp = self.fm.lp
         self.da_obj = DepthAnalyzer(self.fm)
 
     def validateClusterData(self):
