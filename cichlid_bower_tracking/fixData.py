@@ -55,9 +55,10 @@ for projectID in projectIDs:
 				output = subprocess.run(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.process_video', vid_obj.localh264File, str(vid_obj.framerate), projectID], capture_output = True)
 				if output.returncode != 0:
 					pdb.set_trace()
-				#subprocess.run(['rm', '-rf', vid_obj.localh264File])
+				subprocess.run(['rm', '-rf', vid_obj.localh264File])
+				subprocess.run(['rm', '-rf', vid_obj.localVideoFile])
+				
 				#subprocess.run(['rclone','delete', 'cichlidVideo:McGrath/Apps/CichlidPiData/' + projectID + '/Videos/' + os.path.basename(vid_obj.localh264File)])
-				pdb.set_trace()
 
 	for main_data in main_directory_data:
 		if '.npy' in main_data or '.pdf' in main_data:

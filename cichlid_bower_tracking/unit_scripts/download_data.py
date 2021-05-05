@@ -1,5 +1,5 @@
 import argparse, sys
-from Modules.DataPreparers.ProjectPreparer import ProjectPreparer as PP
+from cichlid_bower_tracking.data_preparers.project_preparer import ProjectPreparer as PP
 
 parser = argparse.ArgumentParser()
 parser.add_argument('DataType', type = str, choices=['Prep','Depth','Cluster','ClusterClassification','Train3DModel', 'FishDetection','ManualAnnotation','ManualLabelVideos','Summary','All'], help = 'What type of analysis to perform')

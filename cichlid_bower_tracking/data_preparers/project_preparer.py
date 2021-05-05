@@ -1,13 +1,13 @@
 import datetime, os, subprocess, pdb
 
-from Modules.FileManager import FileManager as FM
-from Modules.DataPreparers.PrepPreparer import PrepPreparer as PrP
-from Modules.DataPreparers.DepthPreparer import DepthPreparer as DP
-from Modules.DataPreparers.ClusterPreparer import ClusterPreparer as CP
-from Modules.DataPreparers.ThreeDClassifierPreparer import ThreeDClassifierPreparer as TDCP
-from Modules.DataPreparers.ManualLabelVideoPreparer import ManualLabelVideoPreparer as MLVP
-from Modules.DataPreparers.ThreeDModelPreparer import ThreeDModelPreparer as TDMP
-from Modules.DataPreparers.SummaryPreparer import SummaryPreparer as SP
+from cichlid_bower_tracking.helper_modules.file_manager import FileManager as FM
+from cichlid_bower_tracking.data_preparers.prep_preparer import PrepPreparer as PrP
+from cichlid_bower_tracking.data_preparers.depth_preparer import DepthPreparer as DP
+from cichlid_bower_tracking.data_preparers.cluster_preparer import ClusterPreparer as CP
+from cichlid_bower_tracking.data_preparers.threeD_classifier_preparer import ThreeDClassifierPreparer as TDCP
+from cichlid_bower_tracking.data_preparers.manual_label_video_preparer import ManualLabelVideoPreparer as MLVP
+from cichlid_bower_tracking.data_preparers.threeD_model_preparer import ThreeDModelPreparer as TDMP
+from cichlid_bower_tracking.data_preparers.summary_preparer import SummaryPreparer as SP
 
 class ProjectPreparer():
 	# This class takes in a projectID and runs all the appropriate analysis

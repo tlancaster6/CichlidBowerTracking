@@ -25,22 +25,22 @@ else:
 
 # To run analysis efficiently, we download and upload data in the background while the main script runs
 uploadProcesses = [] # Keep track of all of the processes still uploading so we don't quit before they finish
-subprocess.run(['python3', '-m', 'Modules.UnitScripts.DownloadData',args.AnalysisType, '--ProjectID', projectIDs[0]])
+subprocess.run(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.download_data',args.AnalysisType, '--ProjectID', projectIDs[0]])
 for i, projectID in enumerate(projectIDs):
 
 	# Run appropriate analysis script
 	if args.AnalysisType == 'Prep':
-		p1 = subprocess.Popen(['python3', '-m', 'Modules.UnitScripts.PrepData', projectID])
+		p1 = subprocess.Popen(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.prep_data', projectID])
 	elif args.AnalysisType == 'Depth':
-		p1 = subprocess.Popen(['python3', '-m', 'Modules.UnitScripts.AnalyzeDepth', projectID])
+		p1 = subprocess.Popen(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.analyze_depth', projectID])
 	elif args.AnalysisType == 'Cluster':
-		p1 = subprocess.Popen(['python3', '-m', 'Modules.UnitScripts.AnalyzeClusters', projectID,'--Workers',str(args.Workers)])
+		p1 = subprocess.Popen(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.analyze_clusters', projectID,'--Workers',str(args.Workers)])
 	elif args.AnalysisType == 'ClusterClassification':
-		p1 = subprocess.Popen(['python3', '-m', 'Modules.UnitScripts.ClassifyClusters', projectID,args.ModelID])
+		p1 = subprocess.Popen(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.classify_clusters', projectID,args.ModelID])
 
 	# In the meantime, download data for next project in the background
 	if i+1 < len(projectIDs):
-		p2 = subprocess.Popen(['python3', '-m', 'Modules.UnitScripts.DownloadData', args.AnalysisType, '--ProjectID', projectIDs[i+1]])
+		p2 = subprocess.Popen(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.download_data', args.AnalysisType, '--ProjectID', projectIDs[i+1]])
 	
 	# Pause script until current analysis is complete and data for next project is downloaded
 	p1.communicate()
@@ -52,7 +52,7 @@ for i, projectID in enumerate(projectIDs):
 		dt.to_csv(args.SummaryFile)
 
 	#Upload data and keep track of it
-	uploadProcesses.append(subprocess.Popen(['python3', '-m', 'Modules.UnitScripts.UploadData', args.AnalysisType, '--Delete', projectID]))
+	uploadProcesses.append(subprocess.Popen(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.upload_data', args.AnalysisType, '--Delete', projectID]))
 
 for p in uploadProcesses:
 	p.communicate()
