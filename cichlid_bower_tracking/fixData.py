@@ -46,11 +46,11 @@ for projectID in projectIDs:
 	video_directory_data = subprocess.run(['rclone', 'lsf', 'cichlidVideo:McGrath/Apps/CichlidPiData/' + projectID + '/Videos/'], capture_output = True, encoding = 'utf-8').stdout.split('\n')
 	for index,vid_obj in enumerate(lp.movies):
 		vid_obj = fm_obj.returnVideoObject(index)
+		pdb.set_trace()
 		if os.path.basename(vid_obj.localVideoFile) not in video_directory_data:
 			if os.path.basename(vid_obj.localh264File) not in video_directory_data:
 				print('  Missing videofiles: ' + str(index))
 			else:
-				
 				print('  Need to convert h264 file: ' + str(index))
 				fm_obj.downloadData(vid_obj.localh264File)
 				subprocess.run(['python3', '-m', 'unit_scripts/process_video', vid_obj.localh264File, str(vid_obj.framerate), projectID])
