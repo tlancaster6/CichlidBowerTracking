@@ -14,7 +14,7 @@ if '.h264' not in args.VideoFile:
 	raise Exception(args.VideoFile + ' not an h264 file')
 
 # Convert h264 to mp4
-ffmpeg_output = subprocess.run(['ffmpeg', '-r', str(args.Framerate), '-i', args.VideoFile, '-threads', '1', '-c:v', 'copy', '-r', str(args.Framerate), args.VideoFile.replace('.h264', '.mp4')])
+ffmpeg_output = subprocess.run(['ffmpeg', '-r', str(args.Framerate), '-i', args.VideoFile, '-threads', '1', '-c:v', 'copy', '-r', str(args.Framerate), args.VideoFile.replace('.h264', '.mp4')], capture_output = True)
 assert os.path.isfile(args.VideoFile.replace('.h264', '.mp4'))
 assert os.path.getsize(args.VideoFile.replace('.h264','.mp4')) > os.path.getsize(args.VideoFile)
 
@@ -22,6 +22,8 @@ assert os.path.getsize(args.VideoFile.replace('.h264','.mp4')) > os.path.getsize
 fileManager.uploadData(args.VideoFile.replace('.h264', '.mp4'))
 
 # Delete videos
-subprocess.run(['mv', args.VideoFile, fileManager.localBackupDir])
-
+try:
+	subprocess.run(['mv', args.VideoFile, fileManager.localBackupDir])
+except:
+	continue
 
