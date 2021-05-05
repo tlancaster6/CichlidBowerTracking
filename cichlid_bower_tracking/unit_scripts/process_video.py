@@ -15,8 +15,11 @@ if '.h264' not in args.VideoFile:
 
 # Convert h264 to mp4
 ffmpeg_output = subprocess.run(['ffmpeg', '-r', str(args.Framerate), '-i', args.VideoFile, '-threads', '1', '-c:v', 'copy', '-r', str(args.Framerate), args.VideoFile.replace('.h264', '.mp4')], capture_output = True)
+pdb.set_trace()
+
 assert os.path.isfile(args.VideoFile.replace('.h264', '.mp4'))
 assert os.path.getsize(args.VideoFile.replace('.h264','.mp4')) > os.path.getsize(args.VideoFile)
+
 
 # Sync with cloud (will return error if something goes wrong)
 fileManager.uploadData(args.VideoFile.replace('.h264', '.mp4'))
