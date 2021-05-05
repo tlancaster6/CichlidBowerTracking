@@ -1,4 +1,4 @@
-from Modules.FileManager import FileManager as FM
+from cichlid_bower_tracking.helper_modules.file_manager import FileManager as FM
 import argparse, subprocess, os
 
 parser = argparse.ArgumentParser()
