@@ -100,8 +100,7 @@ class DepthPreparer:
 		np.save(self.fileManager.localSmoothDepthFile, smoothDepthData)
 
 	def createRGBVideo(self):
-		self.lp = LP(self.fileManager.localLogfile)
-		for i, frame in enumerate(self.lp.frames): 
+		for i, frame in enumerate(self.fileManager.lp.frames): 
 			depthRGB = plt.imread(self.fileManager.localProjectDir + frame.pic_file)
 			if depthRGB is None:
 				print(self.fileManager.localProjectDir + frame.pic_file)
