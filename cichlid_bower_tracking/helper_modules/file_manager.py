@@ -331,15 +331,11 @@ class FileManager():
 			self.uploadData(self.localRawDepthFile)
 			self.uploadData(self.localInterpDepthFile)
 			self.uploadData(self.localDepthLogfile)
-			self.uploadData(self.localPaceDir)
-
-		elif dtype == 'Video':
-			videoObj = self.returnVideoObject(videoIndex)
-			self.uploadData(videoObj.localVideoFile)
+			#self.uploadData(self.localPaceDir)
 
 		elif dtype == 'Cluster':
 			self.uploadData(self.localTroubleshootingDir)
-			self.uploadData(self.localPaceDir)
+			#self.uploadData(self.localPaceDir)
 
 			if videoIndex is None:
 				videos = list(range(len(self.lp.movies)))

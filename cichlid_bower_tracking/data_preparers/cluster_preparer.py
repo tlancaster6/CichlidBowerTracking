@@ -20,18 +20,8 @@ class ClusterPreparer():
 
 	def validateInputData(self):
 		
-		try:
-			assert os.path.exists(self.videoObj.localVideoFile)
-		except AssertionError:
-			assert os.path.exists(self.videoObj.localh264File)
-			print('Converting ' + self.videoObj.localh264File + ' to mp4')
-			ffmpeg_output = subprocess.run(['ffmpeg', '-r', str(self.videoObj.framerate), '-i', self.videoObj.localh264File, '-threads', str(self.workers), '-c:v', 'copy', '-r', str(self.videoObj.framerate), self.videoObj.localVideoFile])
-			assert os.path.isfile(self.videoObj.localVideoFile)
-			assert os.path.getsize(self.videoObj.localVideoFile) > os.path.getsize(self.videoObj.localh264File)
-			os.remove(self.videoObj.localh264File)
-			print('Syncing and moving on')
-			process = subprocess.Popen(['python3', '-m', 'Modules.UnitScripts.UploadData','Video', self.fileManager.projectID, '--VideoIndex', str(self.videoIndex)])
-
+		assert os.path.exists(self.videoObj.localVideoFile)
+		
 		assert os.path.exists(self.fileManager.localTroubleshootingDir)
 		assert os.path.exists(self.fileManager.localAnalysisDir)
 		assert os.path.exists(self.fileManager.localTempDir)
@@ -56,7 +46,10 @@ class ClusterPreparer():
 		command.extend(['--Video_start_time', str(self.videoObj.startTime)])
 		command.extend(['--VideoID', self.fileManager.lp.movies[0].baseName])
 		
+		subprocess(['git', 'clone', 'https://www.github.com/ptmcgrat/CichlidActionDetection'])
+
 		os.chdir('CichlidActionDetection')
+		subprocess(['git', 'pull'])
 		subprocess.run(command)
 		os.chdir('..')
 

@@ -10,7 +10,7 @@ parser.add_argument('AnalysisType', type = str, choices=['Prep','Depth','Cluster
 group = parser.add_mutually_exclusive_group(required=True)
 group.add_argument('--ProjectIDs', type = str, nargs = '+', help = 'Name of projectIDs to run analysis on')
 group.add_argument('--SummaryFile', type = str, help = 'Name of csv file that specifies projects to analyze')
-parser.add_argument('--Workers', type = int, default = 1, help = 'Number of workers')
+parser.add_argument('--Workers', type = int, help = 'Number of workers')
 parser.add_argument('--ModelID', type = int, default = 1, help = 'ModelID to use to classify clusters with')
 
 args = parser.parse_args()
@@ -22,6 +22,10 @@ else:
 	dt = pd.read_csv(args.SummaryFile, index_col = 0) # Specified in the csv file
 	projectIDs = list(dt[dt[args.AnalysisType] == False].projectID) # Only run analysis on projects that need it
 
+if args.Workers is None:
+	workers = os.cpu_count()
+else:
+	workers = args.Workers
 
 # To run analysis efficiently, we download and upload data in the background while the main script runs
 uploadProcesses = [] # Keep track of all of the processes still uploading so we don't quit before they finish
@@ -34,7 +38,7 @@ for i, projectID in enumerate(projectIDs):
 	elif args.AnalysisType == 'Depth':
 		p1 = subprocess.Popen(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.analyze_depth', projectID])
 	elif args.AnalysisType == 'Cluster':
-		p1 = subprocess.Popen(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.analyze_clusters', projectID,'--Workers',str(args.Workers)])
+		p1 = subprocess.Popen(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.analyze_clusters', projectID,'--Workers', str(workers)])
 	elif args.AnalysisType == 'ClusterClassification':
 		p1 = subprocess.Popen(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.classify_clusters', projectID,args.ModelID])
 
@@ -54,7 +58,7 @@ for i, projectID in enumerate(projectIDs):
 		dt.to_csv(args.SummaryFile)
 
 	#Upload data and keep track of it
-	uploadProcesses.append(subprocess.Popen(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.upload_data', args.AnalysisType, '--Delete', projectID]))
+	#uploadProcesses.append(subprocess.Popen(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.upload_data', args.AnalysisType, '--Delete', projectID]))
 
 for p in uploadProcesses:
 	p.communicate()
