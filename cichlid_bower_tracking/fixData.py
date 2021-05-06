@@ -25,7 +25,7 @@ for projectID in projectIDs:
 	main_directory_data = subprocess.run(['rclone', 'lsf', 'cichlidVideo:McGrath/Apps/CichlidPiData/' + projectID + '/'], capture_output = True, encoding = 'utf-8').stdout.split('\n')
 
 	# Directories to delete
-	for bad_data in ['PBS/', 'Backgrounds/', 'Figures/', 'DepthAnalysis/', 'VideoAnalysis/']:
+	for bad_data in ['PBS/', 'Backgrounds/', 'Figures/', 'DepthAnalysis/', 'VideoAnalysis/', 'Troubleshooting/','AllClips/','MLClips/', 'MLFrames/']:
 		if bad_data in main_directory_data:
 			print('  Deleting: ' + bad_data)
 			subprocess.run(['rclone','purge', 'cichlidVideo:McGrath/Apps/CichlidPiData/' + projectID + '/' + bad_data])
@@ -57,8 +57,16 @@ for projectID in projectIDs:
 					pdb.set_trace()
 				subprocess.run(['rm', '-rf', vid_obj.localh264File])
 				subprocess.run(['rm', '-rf', vid_obj.localVideoFile])
-				
-				#subprocess.run(['rclone','delete', 'cichlidVideo:McGrath/Apps/CichlidPiData/' + projectID + '/Videos/' + os.path.basename(vid_obj.localh264File)])
+		
+		if os.path.basename(vid_obj.localh264File) in video_directory_data:	
+			print('  Deleting h264 file: ' +  str(index))	
+			subprocess.run(['rclone','delete', 'cichlidVideo:McGrath/Apps/CichlidPiData/' + projectID + '/Videos/' + os.path.basename(vid_obj.localh264File)])
+	
+	analysis_directory_data = subprocess.run(['rclone', 'lsf', 'cichlidVideo:McGrath/Apps/CichlidPiData/' + projectID + '/MasterAnalysisFiles/'], capture_output = True, encoding = 'utf-8').stdout.split('\n')
+	for bad_data in ['smoothedDepthData.npy', 'DepthRGBVideo.mp4']:
+		if bad_data in analysis_directory_data:
+			print('  Deleting: ' + bad_data)
+			subprocess.run(['rclone','delete', 'cichlidVideo:McGrath/Apps/CichlidPiData/' + projectID + '/MasterAnalysisFiles/' + bad_data])
 
 	for main_data in main_directory_data:
 		if '.npy' in main_data or '.pdf' in main_data:

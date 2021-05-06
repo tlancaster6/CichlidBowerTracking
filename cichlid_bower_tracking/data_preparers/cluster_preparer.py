@@ -46,10 +46,10 @@ class ClusterPreparer():
 		command.extend(['--Video_start_time', str(self.videoObj.startTime)])
 		command.extend(['--VideoID', self.fileManager.lp.movies[0].baseName])
 		
-		subprocess(['git', 'clone', 'https://www.github.com/ptmcgrat/CichlidActionDetection'])
+		subprocess.run(['git', 'clone', 'https://www.github.com/ptmcgrat/CichlidActionDetection'])
 
 		os.chdir('CichlidActionDetection')
-		subprocess(['git', 'pull'])
+		subprocess.run(['git', 'pull'])
 		subprocess.run(command)
 		os.chdir('..')
 
