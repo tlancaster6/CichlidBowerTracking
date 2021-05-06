@@ -2,7 +2,7 @@
 # 1. Make summary file on Dropbox
 # 2. Handle Sigint to make sure uploads complete
 
-import argparse, subprocess, pdb
+import argparse, subprocess, pdb, datetime
 import pandas as pd
 
 parser = argparse.ArgumentParser(description='This script is used to manually prepared projects for downstream analysis')
