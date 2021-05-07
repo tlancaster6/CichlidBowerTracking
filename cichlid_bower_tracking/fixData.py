@@ -18,7 +18,7 @@ if args.SummaryFile is not None:
 	dt = pd.read_csv(summary_file, index_col = 0)
 	projectIDs = list(dt.projectID)
 	if args.Start:
-		projectIDs = projectIDs[args.Start:args.Start + args.Start + args.Total]
+		projectIDs = projectIDs[args.Start:args.Start: args.Start + args.Total]
 else:
 	projectIDs = fm_obj.getAllProjectIDs()
 
