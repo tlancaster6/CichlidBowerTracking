@@ -9,7 +9,7 @@ class FileManager():
 		if platform.node() == 'raspberrypi' or 'Pi' in platform.node():
 			self._identifyPiDirectory()
 		else:
-			self.localMasterDir = os.getenv('HOME') + '/' + 'Temp/CichlidAnalyzer/'
+			self.localMasterDir = os.getenv('HOME').rstrip('/') + '/' + 'Temp/CichlidAnalyzer/'
 
 		# Identify cloud directory for rclone
 		self.rcloneRemote = rcloneRemote
