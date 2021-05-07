@@ -5,6 +5,9 @@ from cichlid_bower_tracking.helper_modules.file_manager import FileManager as FM
 
 parser = argparse.ArgumentParser(description='This script is used to manually prepared projects for downstream analysis')
 parser.add_argument('--SummaryFile', type = str, help = 'Restrict analysis to projectIDs specified in csv file, which will be rewritten. ProjectIDs must be found in a column called projectID')
+parser.add_argument('--Start', type = int)
+parser.add_argument('--Total', type = int)
+
 args = parser.parse_args()
 
 fm_obj = FM() 
@@ -14,6 +17,8 @@ if args.SummaryFile is not None:
 	fm_obj.downloadData(summary_file)
 	dt = pd.read_csv(summary_file, index_col = 0)
 	projectIDs = list(dt.projectID)
+	if args.Start:
+		projectIDs = projectIDs[args.Start:args.Start + args.Start + args.Total]
 else:
 	projectIDs = fm_obj.getAllProjectIDs()
 
