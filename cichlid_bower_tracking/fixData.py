@@ -7,7 +7,6 @@ parser = argparse.ArgumentParser(description='This script is used to manually pr
 parser.add_argument('--SummaryFile', type = str, help = 'Restrict analysis to projectIDs specified in csv file, which will be rewritten. ProjectIDs must be found in a column called projectID')
 parser.add_argument('--Start', type = int)
 parser.add_argument('--Total', type = int)
-
 args = parser.parse_args()
 
 fm_obj = FM() 
@@ -18,8 +17,7 @@ if args.SummaryFile is not None:
 	dt = pd.read_csv(summary_file, index_col = 0)
 	projectIDs = list(dt.projectID)
 	if args.Start is not None:
-		projectIDs = projectIDs[args.Start:args.Start: args.Start + args.Total]
-	pdb.set_trace()
+		projectIDs = projectIDs[args.Start: args.Start + args.Total]
 else:
 	projectIDs = fm_obj.getAllProjectIDs()
 
