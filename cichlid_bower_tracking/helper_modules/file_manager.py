@@ -105,8 +105,6 @@ class FileManager():
 		for analysis_type, local_files in necessaryFiles.items():
 			row_data[analysis_type] = all([os.path.basename(x) in directories[os.path.dirname(os.path.realpath(x))] for x in local_files])
 
-		pdb.set_trace()
-
 		return row_data
 		
 	def checkFileExists(self, local_data):
