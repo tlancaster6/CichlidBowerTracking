@@ -17,7 +17,7 @@ if args.SummaryFile is not None:
 	fm_obj.downloadData(summary_file)
 	dt = pd.read_csv(summary_file, index_col = 0)
 	projectIDs = list(dt.projectID)
-	if args.Start:
+	if args.Start is not None:
 		projectIDs = projectIDs[args.Start:args.Start: args.Start + args.Total]
 	pdb.set_trace()
 else:
