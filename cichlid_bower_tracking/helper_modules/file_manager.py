@@ -68,13 +68,16 @@ class FileManager():
 		try:
 			self.downloadData(self.localLogfile)
 		except FileNotFoundError:
+			print('  Cantfind Log File')
 			row_data['StartingFiles'] = False
+			pdb.set_trace()
 			return row_data
 
 		self.lp = LP(self.localLogfile)
 		if self.lp.malformed_file:
 			row_data['StartingFiles'] = False
-			print('Malformed Log File')
+			print('  Malformed Log File')
+			pdb.set_trace()
 			return row_data
 
 		# Get additional files necessary for analysis based on videos
