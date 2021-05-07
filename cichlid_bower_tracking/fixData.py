@@ -19,6 +19,7 @@ if args.SummaryFile is not None:
 	projectIDs = list(dt.projectID)
 	if args.Start:
 		projectIDs = projectIDs[args.Start:args.Start: args.Start + args.Total]
+	pdb.set_trace()
 else:
 	projectIDs = fm_obj.getAllProjectIDs()
 
