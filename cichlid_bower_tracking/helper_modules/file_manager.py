@@ -346,6 +346,7 @@ class FileManager():
 				self.uploadData(videoObj.localAllClipsDir, tarred = True)
 				self.uploadData(videoObj.localManualLabelClipsDir, tarred = True)
 				self.uploadData(videoObj.localManualLabelFramesDir, tarred = True)
+				self.uploadData(self.videoObj.localLogfile)
 
 		elif dtype == 'ManualAnnotation':
 			self.uploadAndMerge(self.localNewLabeledVideosFile, self.localLabeledClipsFile, ID = 'LID')

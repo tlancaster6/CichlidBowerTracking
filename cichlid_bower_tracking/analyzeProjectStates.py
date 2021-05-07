@@ -13,7 +13,7 @@ fm_obj = FM()
 if args.SummaryFile is not None:
 	summary_file = fm_obj.localAnalysisStatesDir + args.SummaryFile
 	fm_obj.downloadData(summary_file)
-	dt = pd.read_csv(summary_file, index_col = 0)
+	dt = pd.read_csv(summary_file)
 	projectIDs = list(dt.projectID)
 else:
 	fm_obj.createDirectory(fm_obj.localAnalysisStatesDir)
