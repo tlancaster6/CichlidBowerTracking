@@ -71,10 +71,11 @@ class ProjectPreparer():
 		mlf_obj.validateInputData()
 		mlf_obj.labelFrames()
 	
-	def createModel(self, purpose, projectIDs, gpu, projectMeans):
-		tdm_obj = TDMP(self.fileManager, purpose, projectIDs, self.modelID, gpu, projectMeans)
-		tdm_obj.validateInputData()
-		tdm_obj.create3DModel()
+	def createModel(self, MLtype, projectIDs, gpu):
+		if MLtype == '3DResnet': 
+			tdm_obj = TDMP(self.fileManager, projectIDs, self.modelID, gpu)
+			tdm_obj.validateInputData()
+			tdm_obj.create3DModel()
 
 	def runMLFishDetection(self):
 		pass
