@@ -1,4 +1,4 @@
-import os, subprocess, pdb, platform
+import os, subprocess, pdb, platform, shutil
 import pandas as pd
 from cichlid_bower_tracking.helper_modules.log_parser import LogParser as LP
 
@@ -270,7 +270,7 @@ class FileManager():
 			self.downloadData(self.local3DModelDir)
 			self.createDirectory(self.localPaceDir)
 
-		elif dtype == 'Train3DModel':
+		elif dtype == 'Train3DResnet':
 			self.createDirectory(self.local3DModelDir)
 			self.createDirectory(self.local3DModelTempDir)
 			self.createDirectory(self.localMasterDir)
@@ -319,7 +319,7 @@ class FileManager():
 		else:
 			raise KeyError('Unknown key: ' + dtype)
 
-	def uploadProjectData(self, dtype, videoIndex):
+	def uploadProjectData(self, dtype, videoIndex, delete):
 		if dtype == 'Prep':
 			self.uploadData(self.localTrayFile)
 			self.uploadData(self.localTransMFile)
@@ -327,6 +327,9 @@ class FileManager():
 			self.uploadData(self.localVideoPointsFile)
 			self.uploadData(self.localPrepSummaryFigure)
 			self.uploadData(self.localPrepLogfile)
+
+			if delete:
+				shutil.rmtree(self.localProjectDir)
 		
 		elif dtype == 'Depth':
 			self.uploadData(self.localSmoothDepthFile)
@@ -335,6 +338,8 @@ class FileManager():
 			self.uploadData(self.localInterpDepthFile)
 			self.uploadData(self.localDepthLogfile)
 			#self.uploadData(self.localPaceDir)
+			if delete:
+				shutil.rmtree(self.localProjectDir)
 
 		elif dtype == 'Cluster':
 			self.uploadData(self.localTroubleshootingDir)
@@ -350,10 +355,18 @@ class FileManager():
 				self.uploadData(videoObj.localManualLabelClipsDir, tarred = True)
 				self.uploadData(videoObj.localManualLabelFramesDir, tarred = True)
 				self.uploadData(self.videoObj.localLogfile)
+			if delete:
+				shutil.rmtree(self.localProjectDir)
+
+		elif dtype == 'Train3DResnet':
+			self.uploadData(self.local3DModelDir)
+			if delete:
+				shutil.rmtree(self.local3DModelDir)
 
 		elif dtype == 'ManualAnnotation':
 			self.uploadAndMerge(self.localNewLabeledVideosFile, self.localLabeledClipsFile, ID = 'LID')
 			self.uploadAndMerge(self.localNewLabeledClipsDir, self.localLabeledClipsProjectDir, tarred = True)
+
 
 		elif dtype == 'Summary':
 			self.uploadData(self.localSummaryDir)

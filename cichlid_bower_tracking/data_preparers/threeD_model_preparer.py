@@ -8,17 +8,15 @@ class ThreeDModelPreparer():
 	# 3. Automatically identifies bower location
 	# 4. Analyze building, shape, and other pertinent info of the bower
 
-	def __init__(self, fileManager, purpose, projects, modelID, gpu, projectMeans):
+	def __init__(self, fileManager, projects, modelID, gpu):
 
 		self.__version__ = '1.0.0'
 
 		self.fileManager = fileManager
-		self.fileManager.createDirectory(self.fileManager.local3DModelDir)
-		self.fileManager.createDirectory(self.fileManager.local3DModelTempDir)
 		
 		self.projects = projects
 		self.gpu = gpu
-		self.projectMeans = projectMeans
+		self.modelID = modelID
 
 	def validateInputData(self):
 		
@@ -32,7 +30,7 @@ class ThreeDModelPreparer():
 		dt = pd.read_csv(self.fileManager.localLabeledClipsFile, index_col = 0)
 		dt['ProjectID'] = dt.ClipName.str.split('__').str[0]
 		dt['Dataset'] = ''
-		if self.projects[0].lower() != 'all':
+		if self.projects is not None:
 			dt.loc[~dt.ProjectID.isin(self.projects),'Dataset'] = 'Validate'
 		dt['ClipName'] = dt.ClipName + '.mp4'
 		dt = dt.rename(columns = {'ClipName':'VideoFile', 'ManualLabel':'Label'})
@@ -42,15 +40,16 @@ class ThreeDModelPreparer():
 		command.extend(['--Videos_directory', self.fileManager.localLabeledClipsDir])
 		command.extend(['--Videos_file', self.fileManager.localVideoProjectsFile])
 		command.extend(['--Results_directory', self.fileManager.local3DModelTempDir])
-		command.extend(['--Purpose', 'denovo'])
 		command.extend(['--gpu', str(self.gpu)])
-		if self.projectMeans:
-			command.extend(['--projectMeans'])
-
 		
+
+		if not os.path.isdir('VideoClassifier'):
+			subprocess.run(['git', 'clone', 'https://www.github.com/ptmcgrat/VideoClassifier'])
+
 		#command = "source activate CichlidActionClassification; " + ' ' .join(command)
 		command = "source " + os.getenv('HOME') + "/anaconda3/etc/profile.d/conda.sh; conda activate CichlidActionClassification; " + ' '.join(command)
 		os.chdir('VideoClassifier')
+		subprocess.run(['git', 'pull'])
 		subprocess.run('bash -c \"' + command + '\"', shell = True)
 		os.chdir('..')
 
@@ -66,10 +65,10 @@ class ThreeDModelPreparer():
 			while epoch % 5 != 0:
 				epoch = int(input('Choose epoch to use'))
 			# Move files
-			shutil.copy(os.path.join(self.fileManager.local3DModelTempDir,'val.log'), self.local3DModelTempDir)
-			shutil.copy(os.path.join(self.fileManager.local3DModelTempDir,'epoch_' + str(epoch) + '.pth'), self.localVideoModelFile)
-			shutil.copy(os.path.join(self.fileManager.local3DModelTempDir,'epoch_' + str(epoch) + 'confusion_matrix.csv'), self.localVideoLabels)
-			shutil.copy(os.path.join(self.fileManager.local3DModelTempDir,'TrainingLog.txt'), self.localModelCommandsFile)
-			shutil.copy(os.path.join(self.fileManager.local3DModelTempDir,'VideoSplit.csv'), self.localVideoProjectsFile)
-			shutil.copy(os.path.join(self.fileManager.local3DModelTempDir,'MissingVideos.csv'), self.local3DModelTempDir)
+			shutil.copy(os.path.join(self.fileManager.local3DModelTempDir,'val.log'), self.fileManager.local3DModelTempDir)
+			shutil.copy(os.path.join(self.fileManager.local3DModelTempDir,'epoch_' + str(epoch) + '.pth'), self.fileManager.localVideoModelFile)
+			shutil.copy(os.path.join(self.fileManager.local3DModelTempDir,'epoch_' + str(epoch) + 'confusion_matrix.csv'), self.fileManager.localVideoLabels)
+			shutil.copy(os.path.join(self.fileManager.local3DModelTempDir,'TrainingLog.txt'), self.fileManager.localModelCommandsFile)
+			shutil.copy(os.path.join(self.fileManager.local3DModelTempDir,'VideoSplit.csv'), self.fileManager.localVideoProjectsFile)
+			shutil.copy(os.path.join(self.fileManager.local3DModelTempDir,'MissingVideos.csv'), self.fileManager.local3DModelTempDir)
 	
