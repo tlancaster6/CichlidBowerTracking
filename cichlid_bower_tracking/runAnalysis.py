@@ -64,7 +64,7 @@ for i, projectID in enumerate(projectIDs):
 	if args.SummaryFile:
 
 		dt.loc[dt.projectID == projectID,args.AnalysisType] = True
-		dt.to_csv(args.SummaryFile)
+		dt.to_csv(summary_file)
 		fm_obj.uploadData(summary_file)
 
 
