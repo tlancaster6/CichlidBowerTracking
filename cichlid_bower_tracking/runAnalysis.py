@@ -4,6 +4,7 @@
 
 import argparse, subprocess, pdb, datetime
 import pandas as pd
+from cichlid_bower_tracking.helper_modules.file_manager import FileManager as FM
 
 parser = argparse.ArgumentParser(description='This script is used to manually prepared projects for downstream analysis')
 parser.add_argument('AnalysisType', type = str, choices=['Prep','Depth','Cluster','ClusterClassification','Summary'], help = 'Type of analysis to run')
@@ -19,7 +20,11 @@ args = parser.parse_args()
 if args.ProjectIDs is not None:
 	projectIDs = args.ProjectIDs # Specified at the command line
 else:
-	dt = pd.read_csv(args.SummaryFile, index_col = 0) # Specified in the csv file
+	fm_obj = FM() 
+	summary_file = fm_obj.localAnalysisStatesDir + args.SummaryFile
+	fm_obj.downloadData(summary_file)
+	dt = pd.read_csv(summary_file, index_col = 0)
+
 	projectIDs = list(dt[dt[args.AnalysisType] == False].projectID) # Only run analysis on projects that need it
 
 if args.Workers is None:
@@ -60,6 +65,8 @@ for i, projectID in enumerate(projectIDs):
 
 		dt.loc[dt.projectID == projectID,args.AnalysisType] = True
 		dt.to_csv(args.SummaryFile)
+		fm_obj.uploadData(summary_file)
+
 
 	#Upload data and keep track of it
 	print('Uploading: ' + projectID + ' ' + str(datetime.datetime.now()))

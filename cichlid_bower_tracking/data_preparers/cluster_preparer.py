@@ -44,7 +44,7 @@ class ClusterPreparer():
 		command.extend(['--ML_frames_directory', self.videoObj.localManualLabelFramesDir])
 		command.extend(['--ML_videos_directory', self.videoObj.localManualLabelClipsDir])
 		command.extend(['--Video_start_time', str(self.videoObj.startTime)])
-		command.extend(['--VideoID', self.fileManager.lp.movies[0].baseName])
+		command.extend(['--VideoID', self.videoObj.baseName])
 		
 		if not os.path.isdir('CichlidActionDetection'):
 			subprocess.run(['git', 'clone', 'https://www.github.com/ptmcgrat/CichlidActionDetection'])
