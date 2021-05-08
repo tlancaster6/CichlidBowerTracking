@@ -12,6 +12,6 @@ args = parser.parse_args()
 subprocess.run(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.download_data', 'Train' + args.MLType, '--ModelID', args.ModelID])
 
 pp_obj = PP(projectID = None, modelID = args.ModelID)
-pp_obj.createModel(args.type, args.ProjectIDs, args.GPU)
+pp_obj.createModel(args.MLType, args.ProjectIDs, args.GPU)
 
 subprocess.run(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.upload_data', 'Train' + args.MLType, '--ModelID', args.ModelID])
