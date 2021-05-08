@@ -9,9 +9,9 @@ parser.add_argument('--GPU', type = str, default = '0', help = 'Specify the GPU 
 
 args = parser.parse_args()
 
-subprocess.run(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.download_data', 'Train' + args.MLType], '--ModelID', args.ModelID)
+subprocess.run(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.download_data', 'Train' + args.MLType, '--ModelID', args.ModelID])
 
 pp_obj = PP(projectID = None, modelID = args.NewModelID)
 pp_obj.createModel(args.type, args.ProjectIDs, args.GPU)
 
-subprocess.run(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.upload_data', 'Train' + args.MLType], '--ModelID', args.ModelID)
+subprocess.run(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.upload_data', 'Train' + args.MLType, '--ModelID', args.ModelID])
