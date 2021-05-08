@@ -74,5 +74,7 @@ for i, projectID in enumerate(projectIDs):
 	#uploadProcesses.append(subprocess.Popen(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.upload_data', args.AnalysisType, '--Delete', projectID]))
 	uploadProcesses.append(subprocess.Popen(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.upload_data', args.AnalysisType, projectID]))
 
-for p in uploadProcesses:
+for i,p in enumerate(uploadProcesses):
+	print('Finishing uploading process ' + str(i) + ': ' + str(datetime.datetime.now()))
 	p.communicate()
+print('Finished analysis: ' + str(datetime.datetime.now()))
