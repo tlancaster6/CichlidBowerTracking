@@ -32,8 +32,8 @@ class ProjectPreparer():
 	def downloadData(self, dtype, videoIndex = None):
 		self.fileManager.downloadProjectData(dtype, videoIndex)
 
-	def uploadData(self, dtype, videoIndex = None):
-		self.fileManager.uploadProjectData(dtype, videoIndex)
+	def uploadData(self, dtype, videoIndex = None, delete = False):
+		self.fileManager.uploadProjectData(dtype, videoIndex, delete)
 
 	def runPrepAnalysis(self):
 		prp_obj = PrP(self.fileManager)
