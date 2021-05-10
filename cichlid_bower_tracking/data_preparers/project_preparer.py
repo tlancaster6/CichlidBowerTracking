@@ -19,6 +19,7 @@ class ProjectPreparer():
 		if not self._checkProjectID():
 			raise Exception(projectID + ' is not valid.')
 		self.workers = workers
+		pdb.set_trace()
 
 	def _checkProjectID(self):
 		if self.projectID is None:
