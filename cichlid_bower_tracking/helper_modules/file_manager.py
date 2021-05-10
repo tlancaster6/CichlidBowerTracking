@@ -264,7 +264,7 @@ class FileManager():
 			self.createDirectory(self.localLogfileDir)
 
 			self.downloadData(self.localLogfile)
-			self.downloadData(self.localAllClipsDir, tarred = True)
+			self.downloadData(self.localAllClipsDir, tarred_subdirs = True)
 			self.downloadData(self.localAnalysisDir)
 			self.downloadData(self.localTroubleshootingDir)
 			self.downloadData(self.local3DModelDir)
