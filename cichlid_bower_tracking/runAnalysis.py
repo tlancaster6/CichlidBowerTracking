@@ -12,7 +12,7 @@ group = parser.add_mutually_exclusive_group(required=True)
 group.add_argument('--ProjectIDs', type = str, nargs = '+', help = 'Name of projectIDs to run analysis on')
 group.add_argument('--SummaryFile', type = str, help = 'Name of csv file that specifies projects to analyze')
 parser.add_argument('--Workers', type = int, help = 'Number of workers')
-parser.add_argument('--ModelID', type = int, default = 1, help = 'ModelID to use to classify clusters with')
+parser.add_argument('--ModelID', type = str, help = 'ModelID to use to classify clusters with')
 
 args = parser.parse_args()
 
