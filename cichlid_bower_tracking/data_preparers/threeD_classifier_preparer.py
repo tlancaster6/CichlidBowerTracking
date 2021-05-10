@@ -48,7 +48,6 @@ class ThreeDClassifierPreparer:
 		command.extend(['--Output_file', self.fileManager.localVideoLabels])
 		command.extend(['--Results_directory', self.fileManager.localTempClassifierDir])
 		command.extend(['--Temporary_output_directory', self.fileManager.localTempClassifierDir])
-
 		print(' '.join(command))
 
 

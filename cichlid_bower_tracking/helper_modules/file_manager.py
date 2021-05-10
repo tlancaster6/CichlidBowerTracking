@@ -179,6 +179,9 @@ class FileManager():
 		# Files created by cluster preparer
 		self.localAllLabeledClustersFile = self.localAnalysisDir + 'AllLabeledClusters.csv'
 
+		# Files created by cluster classifier preparer
+		self.localTempClassifierDir = self.localProjectDir + 'TempClassifier/'
+
 		# Files created by manual labeler preparer
 		self.localLabeledFramesFile = self.localAnalysisDir + 'LabeledFrames.csv'
 		self.localNewLabeledVideosFile = self.localAnalysisDir + 'NewLabeledVideos.csv'
