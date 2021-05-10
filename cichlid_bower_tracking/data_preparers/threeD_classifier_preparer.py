@@ -19,8 +19,7 @@ class ThreeDClassifierPreparer:
 		assert os.path.exists(self.fileManager.localAllClipsDir)
 		assert os.path.exists(self.fileManager.localVideoModelFile)
 		assert os.path.exists(self.fileManager.localVideoClassesFile)
-		assert os.path.exists(self.fileManager.localVideoCommandsFile)
-					
+		assert os.path.exists(self.fileManager.localModelCommandsFile )
 
 	def predictLabels(self):
 
