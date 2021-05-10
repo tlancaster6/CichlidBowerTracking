@@ -26,7 +26,7 @@ class ThreeDModelPreparer():
 		assert os.path.exists(self.fileManager.local3DModelTempDir)
 
 	def create3DModel(self):
-		"""
+		
 		# Filter out annotated videos so they only include projects requested
 		dt = pd.read_csv(self.fileManager.localLabeledClipsFile, index_col = 0)
 		dt['ProjectID'] = dt.ClipName.str.split('__').str[0]
@@ -53,7 +53,7 @@ class ThreeDModelPreparer():
 		subprocess.run(['git', 'pull'])
 		subprocess.run('bash -c \"' + command + '\"', shell = True)
 		os.chdir('..')
-		"""
+		
 		with open(os.path.join(self.fileManager.local3DModelTempDir,'val.log')) as f:
 			print('Epoch\tAccuracy')
 			for line in f:

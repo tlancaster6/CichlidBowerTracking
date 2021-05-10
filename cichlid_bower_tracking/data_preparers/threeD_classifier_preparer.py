@@ -24,14 +24,7 @@ class ThreeDClassifierPreparer:
 
 	def predictLabels(self):
 
-		dt = pd.read_csv(self.fileManager.localLabeledClipsFile, index_col = 0)
-		dt['ProjectID'] = dt.ClipName.str.split('__').str[0]
-		dt['Dataset'] = ''
-		if self.projects is not None:
-			dt.loc[~dt.ProjectID.isin(self.projects),'Dataset'] = 'Validate'
-		dt['ClipName'] = dt.ClipName + '.mp4'
-		dt = dt.rename(columns = {'ClipName':'VideoFile', 'ManualLabel':'Label'})
-		dt.to_csv(self.fileManager.localVideoProjectsFile)
+
 		# Create mapping from videos to projectID
 
 		with open(self.fileManager.localVideoProjectDictionary, 'w') as f:
