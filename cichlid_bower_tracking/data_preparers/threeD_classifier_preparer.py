@@ -24,7 +24,7 @@ class ThreeDClassifierPreparer:
 
 	def predictLabels(self):
 
-	dt = pd.read_csv(self.fileManager.localLabeledClipsFile, index_col = 0)
+		dt = pd.read_csv(self.fileManager.localLabeledClipsFile, index_col = 0)
 		dt['ProjectID'] = dt.ClipName.str.split('__').str[0]
 		dt['Dataset'] = ''
 		if self.projects is not None:
@@ -45,7 +45,7 @@ class ThreeDClassifierPreparer:
 		command.extend(['--Input_videos_directory', self.fileManager.localAllClipsDir])
 		command.extend(['--Videos_to_project_file', self.fileManager.localVideoProjectDictionary])
 		command.extend(['--Trained_model', self.fileManager.localVideoModelFile])
-		command.extend(['--Training_log', self.fileManager.localVideoCommandsFile])
+		command.extend(['--Training_log', self.fileManager.localModelCommandsFile])
 		command.extend(['--Output_file', self.fileManager.localVideoLabels])
 		command.extend(['--Results_directory', self.fileManager.localConvertedClipsDir])
 		command.extend(['--Temporary_output_directory', self.fileManager.localVideoLabelsDir])
