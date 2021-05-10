@@ -16,31 +16,38 @@ class ThreeDClassifierPreparer:
 		self.fileManager = fileManager
 
 	def validateInputData(self):
-		assert os.path.exists(self.fileManager.localAllClipsDir)
-		assert os.path.exists(self.fileManager.localVideoModelFile)
-		assert os.path.exists(self.fileManager.localVideoClassesFile)
-		assert os.path.exists(self.fileManager.localModelCommandsFile )
+		assert os.path.exists(self.fileManager.localAllClipsDir) # Clips
+		assert os.path.exists(self.fileManager.localVideoModelFile) # Model
+		assert os.path.exists(self.fileManager.localVideoClassesFile) # Classes
+		assert os.path.exists(self.fileManager.localModelCommandsFile) # Commands
+
+		videos = list(range(len(self.fileManager.lp.movies)))
+		
+		for videoIndex in videos:
+			videoObj = self.returnVideoObject(videoIndex)
+			assert os.path.exists(videoObj.localLabeledClustersFile)
+
 
 	def predictLabels(self):
 
 
 		# Create mapping from videos to projectID
 
-		with open(self.fileManager.localVideoProjectDictionary, 'w') as f:
+		with open(self.fileManager.localVideoProjectsFile, 'w') as f:
 			print('VideoFile,Label,ProjectID', file = f)
 
-			for videofile in [x.replace('.mp4','') for x in os.listdir(self.fileManager.localAllClipsDir) if '.mp4' in x]:
+			for videofile in [x.replace('.mp4','') for x in os.listdir(self.fileManager.localVideoProjectsFile) if '.mp4' in x]:
 				print(videofile + ',,' + self.fileManager.projectID, file = f)
 
 		# Run command
 		command = ['python3', 'ClassifyVideos.py']
 		command.extend(['--Input_videos_directory', self.fileManager.localAllClipsDir])
-		command.extend(['--Videos_to_project_file', self.fileManager.localVideoProjectDictionary])
+		command.extend(['--Videos_to_project_file', self.fileManager.localVideoProjectsFile])
 		command.extend(['--Trained_model', self.fileManager.localVideoModelFile])
 		command.extend(['--Training_log', self.fileManager.localModelCommandsFile])
 		command.extend(['--Output_file', self.fileManager.localVideoLabels])
-		command.extend(['--Results_directory', self.fileManager.localConvertedClipsDir])
-		command.extend(['--Temporary_output_directory', self.fileManager.localVideoLabelsDir])
+		command.extend(['--Results_directory', self.fileManager.localTempClassifierDir])
+		command.extend(['--Temporary_output_directory', self.fileManager.localTempClassifierDir])
 
 		print(' '.join(command))
 
