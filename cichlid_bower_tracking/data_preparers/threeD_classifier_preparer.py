@@ -36,7 +36,7 @@ class ThreeDClassifierPreparer:
 		with open(self.fileManager.localVideoProjectsFile, 'w') as f:
 			print('VideoFile,Label,ProjectID', file = f)
 
-			for videofile in [x if '.mp4' in x]:
+			for videofile in [x for x in os.listdir(self.fileManager.localAllClipsDir if '.mp4' in x]:
 				print(videofile + ',,' + self.fileManager.projectID, file = f)
 
 		# Run command
