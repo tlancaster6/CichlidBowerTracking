@@ -41,7 +41,6 @@ class FileManager():
 
 		self._createParameters()
 
-		pdb.set_trace()
 
 	def createPiData(self):
 		self.localCredentialSpreadsheet = self.localMasterDir + '__CredentialFiles/SAcredentials.json'
