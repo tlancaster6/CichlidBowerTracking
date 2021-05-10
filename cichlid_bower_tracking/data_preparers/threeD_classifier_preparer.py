@@ -40,14 +40,12 @@ class ThreeDClassifierPreparer:
 				print(videofile + ',,' + self.fileManager.projectID, file = f)
 
 		# Run command
-		command = ['python3', 'ClassifyVideos.py']
-		command.extend(['--Input_videos_directory', self.fileManager.localAllClipsDir])
-		command.extend(['--Videos_to_project_file', self.fileManager.localVideoProjectsFile])
+		command = ['python3', 'PredictLabels.py']
+		command.extend(['--Videos_directory', self.fileManager.localAllClipsDir])
+		command.extend(['--Videos_file', self.fileManager.localVideoProjectsFile])
 		command.extend(['--Trained_model', self.fileManager.localVideoModelFile])
 		command.extend(['--Training_log', self.fileManager.localModelCommandsFile])
-		command.extend(['--Output_file', self.fileManager.localVideoLabels])
 		command.extend(['--Results_directory', self.fileManager.localTempClassifierDir])
-		command.extend(['--Temporary_output_directory', self.fileManager.localTempClassifierDir])
 		print(' '.join(command))
 
 
