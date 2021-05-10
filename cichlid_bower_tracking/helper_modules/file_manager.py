@@ -135,7 +135,7 @@ class FileManager():
 		# Create logfiles
 		self.localPrepLogfile = self.localLogfileDir + 'PrepLog.txt'
 		self.localDepthLogfile = self.localLogfileDir + 'DepthLog.txt'
-		self.localClassifyLogfile = self.localLogfileDir + 'ClassifyLog.txt'
+		self.localClusterClassificationLogfile = self.localLogfileDir + 'ClassifyLog.txt'
 		
 
 		# Data directories created by tracker
@@ -231,7 +231,7 @@ class FileManager():
 			self.createDirectory(self.localAnalysisDir)
 			self.createDirectory(self.localTroubleshootingDir)
 			self.createDirectory(self.localLogfileDir)
-			self.createDirectory(self.localPaceDir)
+			#self.createDirectory(self.localPaceDir)
 
 			self.downloadData(self.localLogfile)
 			self.downloadData(self.localFrameDir, tarred = True)
@@ -247,7 +247,7 @@ class FileManager():
 			self.createDirectory(self.localManualLabelClipsDir)
 			self.createDirectory(self.localManualLabelFramesDir)
 			self.createDirectory(self.localLogfileDir)
-			self.createDirectory(self.localPaceDir)
+			#self.createDirectory(self.localPaceDir)
 
 			self.downloadData(self.localLogfile)
 			if videoIndex is not None:
@@ -268,7 +268,7 @@ class FileManager():
 			self.downloadData(self.localAnalysisDir)
 			self.downloadData(self.localTroubleshootingDir)
 			self.downloadData(self.local3DModelDir)
-			self.createDirectory(self.localPaceDir)
+			#self.createDirectory(self.localPaceDir)
 
 		elif dtype == 'Train3DResnet':
 			self.createDirectory(self.local3DModelDir)
@@ -357,6 +357,11 @@ class FileManager():
 				self.uploadData(videoObj.localLogfile)
 			if delete:
 				shutil.rmtree(self.localProjectDir)
+
+		elif dtype == 'ClusterClassification':
+			self.uploadData(self.localAllLabeledClustersFile)
+			self.uploadData(self.localClusterClassificationLogfile)
+
 
 		elif dtype == 'Train3DResnet':
 			self.uploadData(self.local3DModelDir)

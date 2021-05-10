@@ -17,7 +17,6 @@ class ThreeDClassifierPreparer:
 
 	def validateInputData(self):
 		assert os.path.exists(self.fileManager.localAllClipsDir)
-
 		assert os.path.exists(self.fileManager.localVideoModelFile)
 		assert os.path.exists(self.fileManager.localVideoClassesFile)
 		assert os.path.exists(self.fileManager.localVideoCommandsFile)
@@ -25,26 +24,44 @@ class ThreeDClassifierPreparer:
 
 	def predictLabels(self):
 
+	dt = pd.read_csv(self.fileManager.localLabeledClipsFile, index_col = 0)
+		dt['ProjectID'] = dt.ClipName.str.split('__').str[0]
+		dt['Dataset'] = ''
+		if self.projects is not None:
+			dt.loc[~dt.ProjectID.isin(self.projects),'Dataset'] = 'Validate'
+		dt['ClipName'] = dt.ClipName + '.mp4'
+		dt = dt.rename(columns = {'ClipName':'VideoFile', 'ManualLabel':'Label'})
+		dt.to_csv(self.fileManager.localVideoProjectsFile)
 		# Create mapping from videos to projectID
 
 		with open(self.fileManager.localVideoProjectDictionary, 'w') as f:
-			print('Location,MeanID', file = f)
+			print('VideoFile,Label,ProjectID', file = f)
 
 			for videofile in [x.replace('.mp4','') for x in os.listdir(self.fileManager.localAllClipsDir) if '.mp4' in x]:
-				print(videofile + ',' + self.fileManager.projectID, file = f)
+				print(videofile + ',,' + self.fileManager.projectID, file = f)
 
 		# Run command
 		command = ['python3', 'ClassifyVideos.py']
 		command.extend(['--Input_videos_directory', self.fileManager.localAllClipsDir])
 		command.extend(['--Videos_to_project_file', self.fileManager.localVideoProjectDictionary])
 		command.extend(['--Trained_model', self.fileManager.localVideoModelFile])
-		command.extend(['--Trained_categories', self.fileManager.localVideoClassesFile])
-		command.extend(['--Training_options', self.fileManager.localVideoCommandsFile])
+		command.extend(['--Training_log', self.fileManager.localVideoCommandsFile])
 		command.extend(['--Output_file', self.fileManager.localVideoLabels])
-		command.extend(['--Temporary_clips_directory', self.fileManager.localConvertedClipsDir])
+		command.extend(['--Results_directory', self.fileManager.localConvertedClipsDir])
 		command.extend(['--Temporary_output_directory', self.fileManager.localVideoLabelsDir])
 
 		print(' '.join(command))
+
+
+		if not os.path.isdir('VideoClassifier'):
+			subprocess.run(['git', 'clone', 'https://www.github.com/ptmcgrat/VideoClassifier'])
+
+		#command = "source activate CichlidActionClassification; " + ' ' .join(command)
+		command = "source " + os.getenv('HOME') + "/anaconda3/etc/profile.d/conda.sh; conda activate CichlidActionClassification; " + ' '.join(command)
+		os.chdir('VideoClassifier')
+		subprocess.run(['git', 'pull'])
+		subprocess.run('bash -c \"' + command + '\"', shell = True)
+		os.chdir('..')
 
 		#os.chdir('CichlidActionClassification')
 		#subprocess.run(command)

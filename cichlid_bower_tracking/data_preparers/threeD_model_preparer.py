@@ -26,6 +26,7 @@ class ThreeDModelPreparer():
 		assert os.path.exists(self.fileManager.local3DModelTempDir)
 
 	def create3DModel(self):
+		"""
 		# Filter out annotated videos so they only include projects requested
 		dt = pd.read_csv(self.fileManager.localLabeledClipsFile, index_col = 0)
 		dt['ProjectID'] = dt.ClipName.str.split('__').str[0]
@@ -52,7 +53,7 @@ class ThreeDModelPreparer():
 		subprocess.run(['git', 'pull'])
 		subprocess.run('bash -c \"' + command + '\"', shell = True)
 		os.chdir('..')
-
+		"""
 		with open(os.path.join(self.fileManager.local3DModelTempDir,'val.log')) as f:
 			print('Epoch\tAccuracy')
 			for line in f:
@@ -63,7 +64,10 @@ class ThreeDModelPreparer():
 					continue
 			epoch = 1
 			while epoch % 5 != 0:
-				epoch = int(input('Choose epoch to use'))
+				try:
+					epoch = int(input('Choose epoch to use'))
+				except ValueError:
+					continue
 			# Move files
 			shutil.copy(os.path.join(self.fileManager.local3DModelTempDir,'val.log'), self.fileManager.local3DModelTempDir)
 			shutil.copy(os.path.join(self.fileManager.local3DModelTempDir,'epoch_' + str(epoch) + '.pth'), self.fileManager.localVideoModelFile)
@@ -71,4 +75,3 @@ class ThreeDModelPreparer():
 			shutil.copy(os.path.join(self.fileManager.local3DModelTempDir,'TrainingLog.txt'), self.fileManager.localModelCommandsFile)
 			shutil.copy(os.path.join(self.fileManager.local3DModelTempDir,'VideoSplit.csv'), self.fileManager.localVideoProjectsFile)
 			shutil.copy(os.path.join(self.fileManager.local3DModelTempDir,'MissingVideos.csv'), self.fileManager.local3DModelTempDir)
-	
