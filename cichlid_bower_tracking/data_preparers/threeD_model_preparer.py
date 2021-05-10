@@ -70,7 +70,7 @@ class ThreeDModelPreparer():
 					continue
 			# Move files
 			shutil.copy(os.path.join(self.fileManager.local3DModelTempDir,'val.log'), self.fileManager.local3DModelDir)
-			shutil.copy(os.path.join(self.fileManager.local3DModelTempDir,'epoch_' + str(epoch) + '.pth'), self.fileManager.localVideoModelFile)
+			shutil.copy(os.path.join(self.fileManager.local3DModelTempDir,'save_' + str(epoch) + '.pth'), self.fileManager.localVideoModelFile)
 			shutil.copy(os.path.join(self.fileManager.local3DModelTempDir,'epoch_' + str(epoch) + 'confusion_matrix.csv'), self.fileManager.localVideoLabels)
 			shutil.copy(os.path.join(self.fileManager.local3DModelTempDir,'TrainingLog.txt'), self.fileManager.localModelCommandsFile)
 			shutil.copy(os.path.join(self.fileManager.local3DModelTempDir,'VideoSplit.csv'), self.fileManager.localVideoProjectsFile)
