@@ -24,7 +24,7 @@ class ThreeDClassifierPreparer:
 		videos = list(range(len(self.fileManager.lp.movies)))
 		
 		for videoIndex in videos:
-			videoObj = self.returnVideoObject(videoIndex)
+			videoObj = self.fileManager.returnVideoObject(videoIndex)
 			assert os.path.exists(videoObj.localLabeledClustersFile)
 
 
