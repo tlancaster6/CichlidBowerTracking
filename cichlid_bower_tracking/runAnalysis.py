@@ -47,7 +47,7 @@ for i, projectID in enumerate(projectIDs):
 	elif args.AnalysisType == 'Cluster':
 		p1 = subprocess.Popen(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.analyze_clusters', projectID,'--Workers', str(workers)])
 	elif args.AnalysisType == 'ClusterClassification':
-		p1 = subprocess.Popen(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.classify_clusters', projectID,args.ModelID])
+		p1 = subprocess.Popen(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.classify_clusters', projectID, args.ModelID])
 
 	# In the meantime, download data for next project in the background
 	if i+1 < len(projectIDs):
@@ -70,8 +70,8 @@ for i, projectID in enumerate(projectIDs):
 	#Upload data and keep track of it
 	print('Uploading: ' + projectID + ' ' + str(datetime.datetime.now()))
 
-	uploadProcesses.append(subprocess.Popen(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.upload_data', args.AnalysisType, '--Delete', '--ProjectID', projectID]))
-	#uploadProcesses.append(subprocess.Popen(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.upload_data', args.AnalysisType, projectID]))
+	#uploadProcesses.append(subprocess.Popen(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.upload_data', args.AnalysisType, '--Delete', '--ProjectID', projectID]))
+	uploadProcesses.append(subprocess.Popen(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.upload_data', args.AnalysisType, projectID]))
 
 for i,p in enumerate(uploadProcesses):
 	print('Finishing uploading process ' + str(i) + ': ' + str(datetime.datetime.now()))
