@@ -73,5 +73,5 @@ class ThreeDClassifierPreparer:
 				c_dt = c_dt.append(new_dt)
 			except NameError:
 				c_dt = new_dt
-		pred_dt = pd.read_csv(os.path.join(self.fileManager.local3DModelTempDir,'predictions_0.csv'), index_col = 0)
+		pred_dt = pd.read_csv(os.path.join(self.fileManager.localTempClassifierDir,'predictions_0.csv'), index_col = 0)
 		pdb.set_trace()
