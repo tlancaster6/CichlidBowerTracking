@@ -74,4 +74,7 @@ class ThreeDClassifierPreparer:
 			except NameError:
 				c_dt = new_dt
 		pred_dt = pd.read_csv(os.path.join(self.fileManager.localTempClassifierDir,'predictions_0.csv'), index_col = 0)
+		pred_dt['ClipName'] = pred_dt.VideoFile.str.replace('.mp4','')
+		out_dt = pd.merge(c_dt, pred_dt[['ClipName','Prediction','Confidence']], on='ClipName', how = 'left')
+		out_dt['modelID'] = self.fileManager.vModelID
 		pdb.set_trace()
