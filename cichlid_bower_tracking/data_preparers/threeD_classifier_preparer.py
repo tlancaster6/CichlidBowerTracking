@@ -69,6 +69,10 @@ class ThreeDClassifierPreparer:
 		for videoIndex, video in enumerate(self.fileManager.lp.movies):
 			videoObj = self.fileManager.returnVideoObject(videoIndex)
 			new_dt = pd.read_csv(videoObj.localLabeledClustersFile)
+			try:
+				dt.append(new_dt)
+			except NameError:
+				dt = new_dt
 			pdb.set_trace()
 
 
