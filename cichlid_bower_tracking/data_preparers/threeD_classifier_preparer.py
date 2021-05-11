@@ -59,7 +59,7 @@ class ThreeDClassifierPreparer:
 		subprocess.run(['git', 'pull'])
 		subprocess.run('bash -c \"' + command + '\"', shell = True)
 		os.chdir('..')
-		
+		shutil.copy(os.path.join(self.fileManager.localTempClassifierDir,'TrainingLog.txt'), self.localClusterClassificationLogfile)
 
 	def createSummaryFile(self):
 		
@@ -74,4 +74,5 @@ class ThreeDClassifierPreparer:
 		pred_dt['ClipName'] = pred_dt.VideoFile.str.replace('.mp4','')
 		out_dt = pd.merge(c_dt, pred_dt[['ClipName','Prediction','Confidence']], on='ClipName', how = 'left')
 		out_dt['modelID'] = self.fileManager.vModelID
+		out_dt.to_csv(self.localAllLabeledClustersFile)
 		pdb.set_trace()

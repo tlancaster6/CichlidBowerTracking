@@ -176,11 +176,10 @@ class FileManager():
 		self.localRawDepthFile = self.localTroubleshootingDir + 'rawDepthData.npy'
 		self.localInterpDepthFile = self.localTroubleshootingDir + 'interpDepthData.npy'
 
-		# Files created by cluster preparer
-		self.localAllLabeledClustersFile = self.localAnalysisDir + 'AllLabeledClusters.csv'
 
 		# Files created by cluster classifier preparer
 		self.localTempClassifierDir = self.localProjectDir + 'TempClassifier/'
+		self.localAllLabeledClustersFile = self.localAnalysisDir + 'AllLabeledClusters.csv'
 
 		# Files created by manual labeler preparer
 		self.localLabeledFramesFile = self.localAnalysisDir + 'LabeledFrames.csv'
@@ -365,12 +364,16 @@ class FileManager():
 		elif dtype == 'ClusterClassification':
 			self.uploadData(self.localAllLabeledClustersFile)
 			self.uploadData(self.localClusterClassificationLogfile)
-
+			if delete:
+				shutil.rmtree(self.localProjectDir)
+				shutil.rmtree(self.local3DModelDir)
 
 		elif dtype == 'Train3DResnet':
 			self.uploadData(self.local3DModelDir)
 			if delete:
 				shutil.rmtree(self.local3DModelDir)
+				shutil.rmtree(self.local3DModelTempDir)
+				shutil.rmtree(self.localAnnotationDir)
 
 		elif dtype == 'ManualAnnotation':
 			self.uploadAndMerge(self.localNewLabeledVideosFile, self.localLabeledClipsFile, ID = 'LID')
