@@ -1,5 +1,4 @@
 import os, subprocess, pdb, platform, shutil
-import pandas as pd
 from cichlid_bower_tracking.helper_modules.log_parser import LogParser as LP
 
 class FileManager():
@@ -589,7 +588,7 @@ class FileManager():
 		if os.path.isfile(local_data):
 			#We are merging two crv files
 			self.downloadData(master_file)
-
+			import pandas as pd
 			if ID:
 				old_dt = pd.read_csv(master_file, index_col = ID)
 				new_dt = pd.read_csv(local_data, index_col = ID)
