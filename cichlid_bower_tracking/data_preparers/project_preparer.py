@@ -59,7 +59,7 @@ class ProjectPreparer():
 	def run3DClassification(self):
 		tdcp_obj = TDCP(self.fileManager)
 		tdcp_obj.validateInputData()
-		#tdcp_obj.predictLabels()
+		tdcp_obj.predictLabels()
 		tdcp_obj.createSummaryFile()
 
 	def manuallyLabelVideos(self, initials, number):
