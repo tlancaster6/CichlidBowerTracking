@@ -59,9 +59,6 @@ class ThreeDClassifierPreparer:
 		subprocess.run(['git', 'pull'])
 		subprocess.run('bash -c \"' + command + '\"', shell = True)
 		os.chdir('..')
-
-		shutil.copy(os.path.join(self.fileManager.local3DModelTempDir,'save_' + str(epoch) + '.pth'), self.fileManager.localVideoModelFile)
-		shutil.copy(os.path.join(self.fileManager.local3DModelTempDir,'epoch_' + str(epoch) + '_confusion_matrix.csv'), self.fileManager.localVideoLabels)
 		
 
 	def createSummaryFile(self):
