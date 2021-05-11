@@ -70,10 +70,8 @@ class ThreeDClassifierPreparer:
 			videoObj = self.fileManager.returnVideoObject(videoIndex)
 			new_dt = pd.read_csv(videoObj.localLabeledClustersFile)
 			try:
-				c_dt.append(new_dt)
+				c_dt = c_dt.append(new_dt)
 			except NameError:
 				c_dt = new_dt
-			pdb.set_trace()
 		pred_dt = pd.read_csv(os.path.join(self.fileManager.local3DModelTempDir,'epoch_0_confusion_matrix.csv'))
-
-
+		pdb.set_trace()
