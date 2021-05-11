@@ -1,6 +1,6 @@
 import argparse, datetime, gspread
-from LogParser import LogParser as LP
-from FileManager import FileManager as FM
+from cichlid_bower_tracking.helper_modules.file_manager import FileManager as FM
+from cichlid_bower_tracking.helper_modules.log_parser import LogParser as LP
 import matplotlib
 matplotlib.use('Pdf')  # Enables creation of pdf without needing to worry about X11 forwarding when ssh'ing into the Pi
 import matplotlib.pyplot as plt
