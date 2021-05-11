@@ -59,7 +59,7 @@ class ThreeDClassifierPreparer:
 		subprocess.run(['git', 'pull'])
 		subprocess.run('bash -c \"' + command + '\"', shell = True)
 		os.chdir('..')
-		shutil.copy(os.path.join(self.fileManager.localTempClassifierDir,'TrainingLog.txt'), self.localClusterClassificationLogfile)
+		shutil.copy(os.path.join(self.fileManager.localTempClassifierDir,'TrainingLog.txt'), self.fileManager.localClusterClassificationLogfile)
 
 	def createSummaryFile(self):
 		
