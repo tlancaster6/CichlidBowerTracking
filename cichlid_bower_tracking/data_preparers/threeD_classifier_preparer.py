@@ -45,6 +45,7 @@ class ThreeDClassifierPreparer:
 		command.extend(['--Videos_file', self.fileManager.localVideoProjectsFile])
 		command.extend(['--Trained_model', self.fileManager.localVideoModelFile])
 		command.extend(['--Training_log', self.fileManager.localModelCommandsFile])
+		command.extend(['--Classes_file', self.fileManager.localVideoClassesFile])
 		command.extend(['--Results_directory', self.fileManager.localTempClassifierDir])
 		print(' '.join(command))
 
@@ -59,10 +60,16 @@ class ThreeDClassifierPreparer:
 		subprocess.run('bash -c \"' + command + '\"', shell = True)
 		os.chdir('..')
 
-		#os.chdir('CichlidActionClassification')
-		#subprocess.run(command)
-		#os.chdir('..')
+		shutil.copy(os.path.join(self.fileManager.local3DModelTempDir,'save_' + str(epoch) + '.pth'), self.fileManager.localVideoModelFile)
+		shutil.copy(os.path.join(self.fileManager.local3DModelTempDir,'epoch_' + str(epoch) + '_confusion_matrix.csv'), self.fileManager.localVideoLabels)
+		
 
+	def createSummaryFile(self):
+		
+		for videoIndex, video in enumerate(self.fileManager.lp.movies):
+			videoObj = self.fileManager.returnVideoObject(videoIndex)
+			new_dt = pd.read_csv(videoObj.localLabeledClustersFile)
+			pdb.set_trace()
 
 
 
