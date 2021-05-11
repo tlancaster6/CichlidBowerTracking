@@ -74,6 +74,6 @@ class ThreeDClassifierPreparer:
 			except NameError:
 				c_dt = new_dt
 			pdb.set_trace()
-		pred_dt = pd.read_csv(os.path.join(self.fileManager.local3DModelTempDir,'epoch_0_confusion_matrix.csv')
+		pred_dt = pd.read_csv(os.path.join(self.fileManager.local3DModelTempDir,'epoch_0_confusion_matrix.csv'))
 
 
