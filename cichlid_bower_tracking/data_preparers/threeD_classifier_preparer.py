@@ -74,5 +74,5 @@ class ThreeDClassifierPreparer:
 		pred_dt['ClipName'] = pred_dt.VideoFile.str.replace('.mp4','')
 		out_dt = pd.merge(c_dt, pred_dt[['ClipName','Prediction','Confidence']], on='ClipName', how = 'left')
 		out_dt['modelID'] = self.fileManager.vModelID
-		out_dt.to_csv(self.localAllLabeledClustersFile)
+		out_dt.to_csv(self.fileManager.localAllLabeledClustersFile)
 		pdb.set_trace()
