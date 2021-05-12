@@ -1,6 +1,6 @@
 import platform, sys, os, shutil, datetime, subprocess, gspread, time, socket
-from cichlid_bower_tracking.helper_modules.file_manager import FileManager as FM
-from cichlid_bower_tracking.helper_modules.log_parser import LogParser as LP
+from helper_modules.file_manager import FileManager as FM
+from helper_modules.log_parser import LogParser as LP
 
 from picamera import PiCamera
 import numpy as np
