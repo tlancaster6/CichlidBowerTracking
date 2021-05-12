@@ -1,5 +1,5 @@
 import os, subprocess, pdb, platform, shutil
-from helper_modules.log_parser import LogParser as LP
+from cichlid_bower_tracking.helper_modules.log_parser import LogParser as LP
 
 class FileManager():
 	def __init__(self, projectID = None, modelID = None, rcloneRemote = 'cichlidVideo:', masterDir = 'McGrath/Apps/CichlidPiData/'):
