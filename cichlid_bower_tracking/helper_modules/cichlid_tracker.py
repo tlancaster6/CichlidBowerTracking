@@ -103,7 +103,7 @@ class CichlidTracker:
                     self.camera.stop_recording()
                     self._print('PiCameraStopped: Time: ' + str(datetime.datetime.now()) + ',,File: Videos/' + str(self.videoCounter).zfill(4) + "_vid.h264")
                     
-                    command = ['python3', '-m', 'unit_scripts/process_video.py', self.videoDirectory + str(self.videoCounter).zfill(4) + '_vid.h264']
+                    command = ['python3', '-m', 'unit_scripts/process_video', self.videoDirectory + str(self.videoCounter).zfill(4) + '_vid.h264']
                     command += [str(self.camera.framerate[0]), self.projectID]
                     self._print(command)
                     self.processes.append(subprocess.Popen(command))
@@ -226,7 +226,7 @@ class CichlidTracker:
                     self.camera.stop_recording()
                     self._print('PiCameraStopped: Time: ' + str(datetime.datetime.now()) + ',, File: Videos/' + str(self.videoCounter).zfill(4) + "_vid.h264")
                     #self._print(['rclone', 'copy', self.videoDirectory + str(self.videoCounter).zfill(4) + "_vid.h264"])
-                    command = ['python3', '-m', 'unit_scripts/processVideo.py', self.videoDirectory + str(self.videoCounter).zfill(4) + '_vid.h264']
+                    command = ['python3', '-m', 'unit_scripts/processVideo', self.videoDirectory + str(self.videoCounter).zfill(4) + '_vid.h264']
                     command += [str(self.camera.framerate[0]), self.projectID]
                     self._print(command)
                     self.processes.append(subprocess.Popen(command))
@@ -241,7 +241,7 @@ class CichlidTracker:
                     out = self._captureFrame(current_frame_time, max_frames = max_frames, stdev_threshold = stdev_threshold)
                 if out is not None:
                     current_background_time += datetime.timedelta(seconds = 60 * background_delta)
-                subprocess.Popen(['python3', '-m', 'unit_scripts/drive_updater.py', self.loggerFile])
+                subprocess.Popen(['python3', '-m', 'unit_scripts/drive_updater', self.loggerFile])
             else:
                 if command == 'Snapshots':
                     out = self._captureFrame(current_frame_time, max_frames = max_frames, stdev_threshold = stdev_threshold, snapshots = True)
@@ -606,7 +606,7 @@ class CichlidTracker:
         
         for movieFile in os.listdir(self.videoDirectory):
             if '.h264' in movieFile:
-                command = ['python3', '-m', 'unit_scripts/process_video.py', movieFile]
+                command = ['python3', '-m', 'unit_scripts/process_video', movieFile]
                 command += [str(self.camera.framerate[0]), self.projectID]
                 self._print(command)
                 self.processes.append(subprocess.Popen(command))
