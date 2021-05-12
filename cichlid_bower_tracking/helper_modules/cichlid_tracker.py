@@ -606,7 +606,7 @@ class CichlidTracker:
         
         for movieFile in os.listdir(self.videoDirectory):
             if '.h264' in movieFile:
-                command = ['python3', 'unit_scripts/process_video.py', movieFile]
+                command = ['python3', '-m', 'unit_scripts/process_video.py', movieFile]
                 command += [str(self.camera.framerate[0]), self.projectID]
                 self._print(command)
                 self.processes.append(subprocess.Popen(command))
