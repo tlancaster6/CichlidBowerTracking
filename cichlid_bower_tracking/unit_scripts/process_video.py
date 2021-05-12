@@ -30,4 +30,5 @@ try:
 except:
 	print('Failed to move h264 video')
 	pass
+print('Video Processed')
 
