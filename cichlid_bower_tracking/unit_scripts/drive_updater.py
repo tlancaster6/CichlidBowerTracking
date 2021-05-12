@@ -10,9 +10,11 @@ from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 from oauth2client.service_account import ServiceAccountCredentials
 
+
 parser = argparse.ArgumentParser()
 parser.add_argument('Logfile', type = str, help = 'Name of logfile')
 args = parser.parse_args()
+
 
 class DriveUpdater:
     def __init__(self, logfile):

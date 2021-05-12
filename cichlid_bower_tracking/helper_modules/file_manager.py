@@ -25,8 +25,11 @@ class FileManager():
 
 		if projectID is not None:
 			self.createProjectData(projectID)
-			self.downloadData(self.localLogfile)
-			self.lp = LP(self.localLogfile)
+			try:
+				self.downloadData(self.localLogfile)
+				self.lp = LP(self.localLogfile)
+			except FileNotFoundError:
+				pass 
 
 		self.localMLDir = self.localMasterDir + '__MachineLearningModels/'
 		if modelID is not None:

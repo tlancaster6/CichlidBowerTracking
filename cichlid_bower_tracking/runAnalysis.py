@@ -35,7 +35,7 @@ else:
 # To run analysis efficiently, we download and upload data in the background while the main script runs
 uploadProcesses = [] # Keep track of all of the processes still uploading so we don't quit before they finish
 print('Downloading: ' + projectIDs[0] + ' ' + str(datetime.datetime.now()))
-#subprocess.run(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.download_data',args.AnalysisType, '--ProjectID', projectIDs[0], '--ModelID', args.ModelID])
+subprocess.run(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.download_data',args.AnalysisType, '--ProjectID', projectIDs[0], '--ModelID', args.ModelID])
 for i, projectID in enumerate(projectIDs):
 	print('Running: ' + projectID + ' ' + str(datetime.datetime.now()))
 
@@ -70,7 +70,7 @@ for i, projectID in enumerate(projectIDs):
 	#Upload data and keep track of it
 	print('Uploading: ' + projectID + ' ' + str(datetime.datetime.now()))
 
-	#uploadProcesses.append(subprocess.Popen(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.upload_data', args.AnalysisType, '--Delete', '--ProjectID', projectID]))
+	uploadProcesses.append(subprocess.Popen(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.upload_data', args.AnalysisType, '--Delete', '--ProjectID', projectID]))
 	#uploadProcesses.append(subprocess.Popen(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.upload_data', args.AnalysisType, projectID]))
 
 for i,p in enumerate(uploadProcesses):
