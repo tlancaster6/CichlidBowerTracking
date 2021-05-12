@@ -8,9 +8,14 @@ from PIL import Image
 from oauth2client.service_account import ServiceAccountCredentials
 import matplotlib.image
 
+sys.path.append(sys.path[0] + '/unit_scripts')
+sys.path.append(sys.path[0] + '/helper_modules')
+
 class CichlidTracker:
     def __init__(self):
         
+
+
         # 1: Define valid commands and ignore warnings
         self.commands = ['New', 'Restart', 'Stop', 'Rewrite', 'UploadData', 'LocalDelete', 'Snapshots']
         np.seterr(invalid='ignore')
