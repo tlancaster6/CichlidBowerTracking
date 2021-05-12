@@ -416,7 +416,7 @@ class CichlidTracker:
     def _returnDepth(self):
         # This function returns a float64 npy array containing one frame of data with all bad data as NaNs
         if self.device == 'kinect':
-            data = freenect.sync_get_depth()[0].astype('Float64')
+            data = freenect.sync_get_depth()[0].astype('float64')
             data[data == 2047] = np.nan # 2047 indicates bad data from Kinect 
             return data[self.r[1]:self.r[1]+self.r[3], self.r[0]:self.r[0]+self.r[2]]
         
