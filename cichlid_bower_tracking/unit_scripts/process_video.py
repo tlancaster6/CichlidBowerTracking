@@ -25,7 +25,9 @@ fileManager.uploadData(args.VideoFile.replace('.h264', '.mp4'))
 
 # Delete videos
 try:
+	print(['mv', args.VideoFile, fileManager.localBackupDir])
 	subprocess.run(['mv', args.VideoFile, fileManager.localBackupDir])
 except:
+	print('Failed to move h264 video')
 	pass
 
