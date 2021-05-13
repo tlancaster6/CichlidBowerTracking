@@ -75,4 +75,3 @@ class ThreeDClassifierPreparer:
 		out_dt = pd.merge(c_dt, pred_dt[['ClipName','Prediction','Confidence']], on='ClipName', how = 'left')
 		out_dt['modelID'] = self.fileManager.vModelID
 		out_dt.to_csv(self.fileManager.localAllLabeledClustersFile)
-		pdb.set_trace()

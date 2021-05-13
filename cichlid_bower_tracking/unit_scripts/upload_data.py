@@ -1,6 +1,4 @@
 # Things to add
-# 1. Delete model data if it is generated/downloaded
-# 2. Upload model data if it is created
 
 import argparse,sys
 from cichlid_bower_tracking.data_preparers.project_preparer import ProjectPreparer as PP
@@ -17,5 +15,3 @@ args = parser.parse_args()
 pp_obj = PP(args.ProjectID, args.ModelID)
 pp_obj.uploadData(args.DataType, args.VideoIndex, args.Delete)
 
-if args.Delete:
-	pp_obj.localDelete()

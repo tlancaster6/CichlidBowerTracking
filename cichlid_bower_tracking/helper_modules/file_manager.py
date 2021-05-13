@@ -31,8 +31,10 @@ class FileManager():
 			except FileNotFoundError:
 				pass 
 
+		self.modelID = modelID
 		self.localMLDir = self.localMasterDir + '__MachineLearningModels/'
 		if modelID is not None:
+
 			print(modelID)
 			self.createMLData(modelID)
 
@@ -272,7 +274,8 @@ class FileManager():
 			self.downloadData(self.localAllClipsDir, tarred_subdirs = True)
 			self.downloadData(self.localAnalysisDir)
 			self.downloadData(self.localTroubleshootingDir)
-			self.downloadData(self.local3DModelDir)
+			if self.modelID is not None:
+				self.downloadData(self.local3DModelDir)
 			#self.createDirectory(self.localPaceDir)
 
 		elif dtype == 'Train3DResnet':
