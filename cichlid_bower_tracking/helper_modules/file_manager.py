@@ -371,7 +371,11 @@ class FileManager():
 			self.uploadData(self.localClusterClassificationLogfile)
 			if delete:
 				shutil.rmtree(self.localProjectDir)
-				shutil.rmtree(self.local3DModelDir)
+				try:
+					shutil.rmtree(self.local3DModelDir)
+				except AttributeError:
+					pass
+
 
 		elif dtype == 'Train3DResnet':
 			self.uploadData(self.local3DModelDir)
