@@ -48,7 +48,7 @@ class CichlidTracker:
         # 8: Set size of frame
         try:
             self.r
-        except NameError:
+        except AttributeError:
             self.r = (0,0,640,480)
 
         # 9: Await instructions
