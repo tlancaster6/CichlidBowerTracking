@@ -27,7 +27,7 @@ class DriveUpdater:
         self.credentialDrive = self.fileManager.localCredentialDrive
         self.credentialSpreadsheet = self.fileManager.localCredentialSpreadsheet
         self._createImage()
-        f = self.uploadImage(self.lp.tankID + '.jpg', self.lp.tankID)
+        f = self.uploadImage(self.projectDirectory + self.lp.tankID + '.jpg', self.lp.tankID)
         self.insertImage(f)
 
     def _createImage(self):
@@ -72,7 +72,7 @@ class DriveUpdater:
         ax6.imshow(dpth_6 - dpth_3, vmin = -5, vmax = 5)
         
         #plt.subplots_adjust(bottom = 0.15, left = 0.12, wspace = 0.24, hspace = 0.57)
-        plt.savefig(self.lp.tankID + '.jpg')
+        plt.savefig(self.projectDirectory + self.lp.tankID + '.jpg')
         #return self.graph_summary_fname       
     
     def uploadImage(self, image_file, name): #name should have format 't###_icon' or 't###_link'
