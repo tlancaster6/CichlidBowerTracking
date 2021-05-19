@@ -504,29 +504,30 @@ class FileManager():
 
 	def _identifyPiDirectory(self):
 		writableDirs = []
+		mounted_dir = '/media/' + os.getenv('HOME') + '/'
 		try:
-			possibleDirs = os.listdir('/media/pi')
+			possibleDirs = os.listdir(mounted_dir)
 		except FileNotFoundError:
 			return
 
 		for d in possibleDirs:
 
 			try:
-				with open('/media/pi/' + d + '/temp.txt', 'w') as f:
+				with open(mounted_dir + d + '/temp.txt', 'w') as f:
 					print('Test', file = f)
-				with open('/media/pi/' + d + '/temp.txt', 'r') as f:
+				with open(mounted_dir + d + '/temp.txt', 'r') as f:
 					for line in f:
 						if 'Test' in line:
 							writableDirs.append(d)
 			except:
 				pass
 			try:
-				os.remove('/media/pi/' + d + '/temp.txt')
+				os.remove(mounted_dir + d + '/temp.txt')
 			except FileNotFoundError:
 				continue
 		
 		if len(writableDirs) == 1:
-			self.localMasterDir = '/media/pi/' + d + '/CichlidAnalyzer/'
+			self.localMasterDir = mounted_dir + d + '/CichlidAnalyzer/'
 			self.system = 'pi'
 		elif len(writableDirs) == 0:
 			raise Exception('No writable drives in /media/pi/')
