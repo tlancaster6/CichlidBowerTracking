@@ -46,7 +46,10 @@ class CichlidTracker:
         self.processes = [] 
 
         # 8: Set size of frame
-        self.r = (0,0,640,480)
+        try:
+            self.r
+        except NameError:
+            self.r = (0,0,640,480)
 
         # 9: Await instructions
         self.monitorCommands()
@@ -325,25 +328,27 @@ class CichlidTracker:
             kinect = False
 
         try:
-            global FN2
-            import pylibfreenect2 as FN2
-            if FN2.Freenect2().enumerateDevices() == 1:
-                kinect2 = True
-            elif FN2.Freenect2().enumerateDevices() > 1:
-                self._initError('Multiple Kinect2s attached. Unsure how to handle')
-            else:
-                kinect2 = False
-        except ImportError:
-            kinect2 = False
+            global rs
+            import pyrealsense2 as rs
 
-        if kinect and kinect2:
-            self._initError('Kinect1 and Kinect2 attached. Unsure how to handle')
-        elif not kinect and not kinect2:
-            self._initError('No depth sensor  attached')
+            ctx = rs.context()
+            if len(ctx.devices) == 0:
+                realsense = False
+            if len(ctx.devices) > 1:
+                self._initError('Multiple RealSense devices attached. Unsure how to handle')
+            else:
+                realsense = True
+        except ImportError:
+            realsense = False
+
+        if kinect and realsense:
+            self._initError('Kinect1 and RealSense devices attached. Unsure how to handle')
+        elif not kinect and not realsense:
+            self._initError('No depth sensor attached')
         elif kinect:
             self.device = 'kinect'
         else:
-            self.device = 'kinect2'
+            self.device = 'realsense'
        
     def _identifyTank(self):
         while True:
@@ -397,16 +402,11 @@ class CichlidTracker:
         if self.device == 'kinect':
             out = freenect.sync_get_video()[0]
             
-        elif self.device == 'kinect2':
-            undistorted = FN2.Frame(512, 424, 4)
-            registered = FN2.Frame(512, 424, 4)
-            frames = self.listener.waitForNewFrame()
-            color = frames["color"]
-            depth = frames["depth"]
-            self.registration.apply(color, depth, undistorted, registered, enable_filter=False)
-            reg_image =  registered.asarray(np.uint8)[:,:,0:3].copy()
-            self.listener.release(frames)
-            out = reg_image
+        if self.device == 'realsense':
+            frames = pipeline.wait_for_frames()
+            color_frame = frames.get_depth_frame()
+            data = np.asanyarray(color_frame.get_data())
+            return data[self.r[1]:self.r[1]+self.r[3], self.r[0]:self.r[0]+self.r[2]]
 
         if crop:
             return out[self.r[1]:self.r[1]+self.r[3], self.r[0]:self.r[0]+self.r[2]]
@@ -420,11 +420,11 @@ class CichlidTracker:
             data[data == 2047] = np.nan # 2047 indicates bad data from Kinect 
             return data[self.r[1]:self.r[1]+self.r[3], self.r[0]:self.r[0]+self.r[2]]
         
-        elif self.device == 'kinect2':
-            frames = self.listener.waitForNewFrame(timeout = 1000)
-            output = frames['depth'].asarray()
-            self.listener.release(frames)
-            return output[self.r[1]:self.r[1]+self.r[3], self.r[0]:self.r[0]+self.r[2]]
+        if self.device == 'realsense':
+            frames = pipeline.wait_for_frames()
+            depth_frame = frames.get_depth_frame()
+            data = np.asanyarray(depth_frame.get_data())
+            return data[self.r[1]:self.r[1]+self.r[3], self.r[0]:self.r[0]+self.r[2]]
 
     def _returnCommand(self):
         if not self._authenticateGoogleSpreadSheets():
@@ -484,35 +484,22 @@ class CichlidTracker:
             freenect.sync_get_depth() #Grabbing a frame initializes the device
             freenect.sync_get_video()
 
-        elif self.device == 'kinect2':
-            # a: Identify pipeline to use: 1) OpenGL, 2) OpenCL, 3) CPU
-            try:
-                self.pipeline = FN2.OpenCLPacketPipeline()
-            except:
-                try:
-                    self.pipeline = FN2.OpenGLPacketPipeline()
-                except:
-                    self.pipeline = FN2.CpuPacketPipeline()
-            self._print('PacketPipeline: ' + type(self.pipeline).__name__)
+        elif self.device == 'realsense'
+            # Create a context object. This object owns the handles to all connected realsense devices
+            self.pipeline = rs.pipeline()
 
-            # b: Create and set logger
-            self.logger = FN2.createConsoleLogger(FN2.LoggerLevel.NONE)
-            FN2.setGlobalLogger(self.logger)
+            # Configure streams
+            config = rs.config()
+            config.enable_stream(rs.stream.depth, rs.format.z16, 10)
+            config.enable_stream(rs.stream.color, rs.format.bgr8, 10)
 
-            # c: Identify device and create listener
-            self.fn = FN2.Freenect2()
-            serial = self.fn.getDeviceSerialNumber(0)
-            self.K2device = self.fn.openDevice(serial, pipeline=self.pipeline)
+            # Start streaming
+            self.pipeline.start(config)
+        
+            frames = self.pipeline.wait_for_frames()
+            depth = frames.get_depth_frame()
+            self.r = (0,0,depth.width,depth.height)
 
-            self.listener = FN2.SyncMultiFrameListener(
-                FN2.FrameType.Color | FN2.FrameType.Depth)
-            # d: Register listeners
-            self.K2device.setColorFrameListener(self.listener)
-            self.K2device.setIrAndDepthFrameListener(self.listener)
-            # e: Start device and create registration
-            self.K2device.start()
-            self.registration = FN2.Registration(self.K2device.getIrCameraParams(), self.K2device.getColorCameraParams())
-    
     def _diagnose_speed(self, time = 10):
         print('Diagnosing speed for ' + str(time) + ' seconds.', file = sys.stderr)
         delta = datetime.timedelta(seconds = time)
