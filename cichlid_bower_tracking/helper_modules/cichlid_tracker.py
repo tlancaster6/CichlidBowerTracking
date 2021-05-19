@@ -15,7 +15,6 @@ class CichlidTracker:
     def __init__(self):
         
 
-
         # 1: Define valid commands and ignore warnings
         self.commands = ['New', 'Restart', 'Stop', 'Rewrite', 'UploadData', 'LocalDelete', 'Snapshots']
         np.seterr(invalid='ignore')
@@ -26,6 +25,7 @@ class CichlidTracker:
 
         # 3: Create file manager
         self.fileManager = FM()
+
 
         # 4: Download credential files
         self.fileManager.downloadData(self.fileManager.localCredentialSpreadsheet)
@@ -96,6 +96,7 @@ class CichlidTracker:
 
         # Rename files to make code more readable 
         self.projectDirectory = self.fileManager.localProjectDir
+        self.print(self.projectDirectory)
         self.loggerFile = self.fileManager.localLogfile
         self.frameDirectory = self.fileManager.localFrameDir
         self.videoDirectory = self.fileManager.localVideoDir
