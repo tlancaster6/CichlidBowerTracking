@@ -96,7 +96,6 @@ class CichlidTracker:
 
         # Rename files to make code more readable 
         self.projectDirectory = self.fileManager.localProjectDir
-        self.print(self.projectDirectory)
         self.loggerFile = self.fileManager.localLogfile
         self.frameDirectory = self.fileManager.localFrameDir
         self.videoDirectory = self.fileManager.localVideoDir
