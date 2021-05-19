@@ -484,7 +484,7 @@ class CichlidTracker:
             freenect.sync_get_depth() #Grabbing a frame initializes the device
             freenect.sync_get_video()
 
-        elif self.device == 'realsense'
+        elif self.device == 'realsense':
             # Create a context object. This object owns the handles to all connected realsense devices
             self.pipeline = rs.pipeline()
 
