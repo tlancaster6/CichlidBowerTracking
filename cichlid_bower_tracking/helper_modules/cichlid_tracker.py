@@ -403,10 +403,9 @@ class CichlidTracker:
             out = freenect.sync_get_video()[0]
             
         if self.device == 'realsense':
-            frames = pipeline.wait_for_frames()
+            frames = self.pipeline.wait_for_frames()
             color_frame = frames.get_depth_frame()
             data = np.asanyarray(color_frame.get_data())
-            return data[self.r[1]:self.r[1]+self.r[3], self.r[0]:self.r[0]+self.r[2]]
 
         if crop:
             return out[self.r[1]:self.r[1]+self.r[3], self.r[0]:self.r[0]+self.r[2]]
@@ -421,7 +420,7 @@ class CichlidTracker:
             return data[self.r[1]:self.r[1]+self.r[3], self.r[0]:self.r[0]+self.r[2]]
         
         if self.device == 'realsense':
-            frames = pipeline.wait_for_frames()
+            frames = self.pipeline.wait_for_frames()
             depth_frame = frames.get_depth_frame()
             data = np.asanyarray(depth_frame.get_data())
             return data[self.r[1]:self.r[1]+self.r[3], self.r[0]:self.r[0]+self.r[2]]
