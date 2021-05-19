@@ -503,6 +503,7 @@ class FileManager():
 		self.nManualLabelFrames = 500
 
 	def _identifyPiDirectory(self):
+		pdb.set_trace()
 		writableDirs = []
 		mounted_dir = '/media/' + os.getenv('HOME') + '/'
 		try:
