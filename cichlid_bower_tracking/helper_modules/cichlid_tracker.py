@@ -419,9 +419,9 @@ class CichlidTracker:
             return data[self.r[1]:self.r[1]+self.r[3], self.r[0]:self.r[0]+self.r[2]]
         
         if self.device == 'realsense':
-            frames = self.pipeline.wait_for_frames()
-            depth_frame = frames.get_depth_frame()
-            data = np.asanyarray(depth_frame.get_data())
+            depth_frame() = self.pipeline.wait_for_frames().get_depth_frame().as_depth_frame()
+            data = np.asanyarray(depth_frame.get_distance(x,y))
+            pdb.set_trace()
             return data[self.r[1]:self.r[1]+self.r[3], self.r[0]:self.r[0]+self.r[2]]
 
     def _returnCommand(self):
@@ -489,7 +489,7 @@ class CichlidTracker:
             # Configure streams
             config = rs.config()
             config.enable_stream(rs.stream.depth, rs.format.z16, 30)
-            config.enable_stream(rs.stream.color, rs.format.bgr8, 30)
+            config.enable_stream(rs.stream.color, rs.format.rgb8, 30)
 
             # Start streaming
             self.pipeline.start(config)
