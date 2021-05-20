@@ -526,7 +526,7 @@ class CichlidTracker:
 
         self._print('FirstFrameCaptured: FirstFrame: Frames/FirstFrame.npy,,GoodDataCount: Frames/FirstDataCount.npy,,StdevCount: Frames/StdevCount.npy')
     
-    def _captureFrame(self, endtime, max_frames = 40, stdev_threshold = 25, snapshots = False):
+    def _captureFrame(self, endtime, max_frames = 40, stdev_threshold = .05, snapshots = False):
         # Captures time averaged frame of depth data
         
         sums = np.zeros(shape = (self.r[3], self.r[2]))
@@ -571,7 +571,6 @@ class CichlidTracker:
 
             med[med > 1] = 1
             n += med
-            pdb.set_trace()
             current_time = datetime.datetime.now()
             if current_time >= endtime:
                 break
