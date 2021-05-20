@@ -420,8 +420,8 @@ class CichlidTracker:
         
         if self.device == 'realsense':
             depth_frame = self.pipeline.wait_for_frames().get_depth_frame().as_depth_frame()
-            data = np.asanyarray(depth_frame.get_distance(x,y))
             pdb.set_trace()
+            data = np.asanyarray(depth_frame.get_distance(x,y))
             return data[self.r[1]:self.r[1]+self.r[3], self.r[0]:self.r[0]+self.r[2]]
 
     def _returnCommand(self):
