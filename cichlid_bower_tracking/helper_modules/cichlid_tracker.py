@@ -403,7 +403,7 @@ class CichlidTracker:
             
         if self.device == 'realsense':
             frames = self.pipeline.wait_for_frames()
-            color_frame = frames.get_depth_frame()
+            color_frame = frames.get_color_frame()
             out = np.asanyarray(color_frame.get_data())
 
         if crop:
