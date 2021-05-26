@@ -1,4 +1,4 @@
-import platform, sys, os, shutil, datetime, subprocess, gspread, time, socket, pdb
+import platform, sys, os, shutil, datetime, subprocess, gspread, time, socket, pdb, time
 from cichlid_bower_tracking.helper_modules.file_manager import FileManager as FM
 from cichlid_bower_tracking.helper_modules.log_parser import LogParser as LP
 
@@ -554,6 +554,7 @@ class CichlidTracker:
 
                 if current_time >= endtime:
                     break
+                time.sleep(5)
               
             med = np.nanmedian(all_data, axis = 0)
             med[np.isnan(med)] = 0

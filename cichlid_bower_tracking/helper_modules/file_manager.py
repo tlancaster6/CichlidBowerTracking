@@ -136,20 +136,20 @@ class FileManager():
 		# Create logfile
 		self.localLogfile = self.localProjectDir + 'Logfile.txt'
 		self.localLogfileDir = self.localProjectDir + 'Logfiles/'
-
-		# Create logfiles
 		self.localPrepLogfile = self.localLogfileDir + 'PrepLog.txt'
 		self.localDepthLogfile = self.localLogfileDir + 'DepthLog.txt'
 		self.localClusterClassificationLogfile = self.localLogfileDir + 'ClassifyLog.txt'
 		
-
 		# Data directories created by tracker
 		self.localPrepDir = self.localProjectDir + 'PrepFiles/'
 		self.localFrameDir = self.localProjectDir + 'Frames/'
 		self.localFrameTarredDir = self.localProjectDir + 'Frames.tar'
-		
 		self.localVideoDir = self.localProjectDir + 'Videos/'
 		self.localBackupDir = self.localProjectDir + 'Backups/'
+		self.localFirstFrame = self.localPrepDir + 'FirstDepth.npy'
+		self.localLastFrame = self.localPrepDir + 'LastDepth.npy'
+		self.localPiRGB = self.localPrepDir + 'PiCameraRGB.jpg'
+		self.localDepthRGB = self.localPrepDir + 'DepthRGB.jpg'
 
 		# Directories created by analysis
 		self.localAnalysisDir = self.localProjectDir + 'MasterAnalysisFiles/'
@@ -160,12 +160,6 @@ class FileManager():
 		self.localTroubleshootingDir = self.localProjectDir + 'Troubleshooting/'
 		self.localTempDir = self.localProjectDir + 'Temp/'
 		self.localPaceDir = self.localProjectDir + 'Pace/'
-
-		# Files created by tracker
-		self.localFirstFrame = self.localPrepDir + 'FirstDepth.npy'
-		self.localLastFrame = self.localPrepDir + 'LastDepth.npy'
-		self.localPiRGB = self.localPrepDir + 'PiCameraRGB.jpg'
-		self.localDepthRGB = self.localPrepDir + 'DepthRGB.jpg'
 
 		# Files created by prep preparer
 		self.localTrayFile = self.localAnalysisDir + 'DepthCrop.txt'
@@ -180,21 +174,20 @@ class FileManager():
 		self.localRawDepthFile = self.localTroubleshootingDir + 'rawDepthData.npy'
 		self.localInterpDepthFile = self.localTroubleshootingDir + 'interpDepthData.npy'
 
-
 		# Files created by cluster classifier preparer
 		self.localTempClassifierDir = self.localProjectDir + 'TempClassifier/'
 		self.localAllLabeledClustersFile = self.localAnalysisDir + 'AllLabeledClusters.csv'
 
-		# Files created by manual labeler preparer
-		self.localLabeledFramesFile = self.localAnalysisDir + 'LabeledFrames.csv'
-		self.localNewLabeledVideosFile = self.localAnalysisDir + 'NewLabeledVideos.csv'
-		self.localNewLabeledClipsDir = self.localProjectDir + 'NewLabeledClips/'
+		# Files created by manual labelerer  preparers
+		self.localLabeledFramesFile = self.localTempDir + 'NewLabeledFrames.csv'
+		self.localNewLabeledVideosFile = self.localTempDir + 'NewLabeledVideos.csv'
+		self.localNewLabeledClipsDir = self.localTempDir + 'NewLabeledClips/'
 		self.localLabeledClipsProjectDir = self.localLabeledClipsDir + projectID + '/'
 
 		# Files created by manual labeler preparer
 		self.localLabeledFramesFile = self.localAnalysisDir + 'LabeledFrames.csv'
 
-		# Files created by manual labeler preparer
+		# Files created by summary preparer
 		self.localDepthSummaryFile = self.localSummaryDir + 'DataSummary.xlsx'
 		self.localDepthSummaryFigure = self.localSummaryDir + 'DailyDepthSummary.pdf'
 
@@ -286,6 +279,7 @@ class FileManager():
 			self.downloadData(self.localLabeledClipsDir, tarred_subdirs = True)		
 			
 		elif dtype == 'ManualLabelVideos':
+
 			self.createDirectory(self.localMasterDir)
 			self.createDirectory(self.localAnalysisDir)
 			self.createDirectory(self.localNewLabeledClipsDir)
@@ -327,48 +321,52 @@ class FileManager():
 		else:
 			raise KeyError('Unknown key: ' + dtype)
 
-	def uploadProjectData(self, dtype, videoIndex, delete):
+	def uploadProjectData(self, dtype, videoIndex, delete, no_upload):
 		if dtype == 'Prep':
-			self.uploadData(self.localTrayFile)
-			self.uploadData(self.localTransMFile)
-			self.uploadData(self.localVideoCropFile)
-			self.uploadData(self.localVideoPointsFile)
-			self.uploadData(self.localPrepSummaryFigure)
-			self.uploadData(self.localPrepLogfile)
+			if not no_upload:
+				self.uploadData(self.localTrayFile)
+				self.uploadData(self.localTransMFile)
+				self.uploadData(self.localVideoCropFile)
+				self.uploadData(self.localVideoPointsFile)
+				self.uploadData(self.localPrepSummaryFigure)
+				self.uploadData(self.localPrepLogfile)
 
 			if delete:
 				shutil.rmtree(self.localProjectDir)
 		
 		elif dtype == 'Depth':
-			self.uploadData(self.localSmoothDepthFile)
-			self.uploadData(self.localRGBDepthVideo)
-			self.uploadData(self.localRawDepthFile)
-			self.uploadData(self.localInterpDepthFile)
-			self.uploadData(self.localDepthLogfile)
-			#self.uploadData(self.localPaceDir)
+			if not no_upload:
+				self.uploadData(self.localSmoothDepthFile)
+				self.uploadData(self.localRGBDepthVideo)
+				self.uploadData(self.localRawDepthFile)
+				self.uploadData(self.localInterpDepthFile)
+				self.uploadData(self.localDepthLogfile)
+				#self.uploadData(self.localPaceDir)
 			if delete:
 				shutil.rmtree(self.localProjectDir)
 
 		elif dtype == 'Cluster':
-			self.uploadData(self.localTroubleshootingDir)
-			#self.uploadData(self.localPaceDir)
+			if not no_upload:
+				self.uploadData(self.localTroubleshootingDir)
+				#self.uploadData(self.localPaceDir)
 
-			if videoIndex is None:
-				videos = list(range(len(self.lp.movies)))
-			else:
-				videos = [videoIndex]
-			for videoIndex in videos:
-				videoObj = self.returnVideoObject(videoIndex)
-				self.uploadData(videoObj.localAllClipsDir, tarred = True)
-				self.uploadData(videoObj.localManualLabelClipsDir, tarred = True)
-				self.uploadData(videoObj.localManualLabelFramesDir, tarred = True)
-				self.uploadData(videoObj.localLogfile)
+				if videoIndex is None:
+					videos = list(range(len(self.lp.movies)))
+				else:
+					videos = [videoIndex]
+				for videoIndex in videos:
+					videoObj = self.returnVideoObject(videoIndex)
+					self.uploadData(videoObj.localAllClipsDir, tarred = True)
+					self.uploadData(videoObj.localManualLabelClipsDir, tarred = True)
+					self.uploadData(videoObj.localManualLabelFramesDir, tarred = True)
+					self.uploadData(videoObj.localLogfile)
 			if delete:
 				shutil.rmtree(self.localProjectDir)
 
 		elif dtype == 'ClusterClassification':
-			self.uploadData(self.localAllLabeledClustersFile)
-			self.uploadData(self.localClusterClassificationLogfile)
+			if not no_upload:
+				self.uploadData(self.localAllLabeledClustersFile)
+				self.uploadData(self.localClusterClassificationLogfile)
 			if delete:
 				shutil.rmtree(self.localProjectDir)
 				try:
@@ -376,13 +374,22 @@ class FileManager():
 				except AttributeError:
 					pass
 
-
 		elif dtype == 'Train3DResnet':
-			self.uploadData(self.local3DModelDir)
+			if not no_upload:
+				self.uploadData(self.local3DModelDir)
 			if delete:
 				shutil.rmtree(self.local3DModelDir)
 				shutil.rmtree(self.local3DModelTempDir)
 				shutil.rmtree(self.localAnnotationDir)
+
+		elif dtype == 'ManualLabelVideos':
+			if not no_upload:
+				self.uploadAndMerge(self.localNewLabeledVideosFile, self.localLabeledClipsFile, ID = 'LID')
+				self.uploadAndMerge(self.localNewLabeledClipsDir, self.localLabeledClipsProjectDir, tarred = True)
+
+			if delete:
+				shutil.rmtree(self.localProjectDir)
+
 
 		elif dtype == 'ManualAnnotation':
 			self.uploadAndMerge(self.localNewLabeledVideosFile, self.localLabeledClipsFile, ID = 'LID')

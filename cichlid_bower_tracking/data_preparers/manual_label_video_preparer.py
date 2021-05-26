@@ -19,23 +19,15 @@ class ManualLabelVideoPreparer():
 		self.number = number
 
 		# 10 categories of annotation plus quit and skip commands
-		self.commands = ['c','f','p','t','b','m','s','x','o','d','q','k']
-		self.commands_help = "Type 'c': build scoop; 'f': feed scoop; 'p': build spit; 't': feed spit; 'b': build multiple; 'm': feed multiple; 'd': drop sand; s': spawn; 'o': fish other; 'x': nofish other; 'q': quit; 'k': skip"
+		self.commands = ['c','f','p','t','b','m','s','x','o','d','q','k','r']
+		self.commands_help = "Type 'c': build scoop; 'f': feed scoop; 'p': build spit; 't': feed spit; 'b': build multiple; 'm': feed multiple; 'd': drop sand; s': spawn; 'o': fish other; 'x': nofish other; 'q': quit; 'k': skip; 'r': redo"
 
 	def validateInputData(self):
 
-		assert os.path.exists(self.fileManager.localAnalysisDir)
 		assert os.path.exists(self.fileManager.localManualLabelClipsDir)
-		assert os.path.exists(self.fileManager.localLabeledClipsFile)
 		assert os.path.exists(self.fileManager.localNewLabeledClipsDir)
-		"""self.uploads = [(self.fileManager.localTroubleshootingDir, self.fileManager.cloudTroubleshootingDir, '0'), 
-						(self.fileManager.localAnalysisDir, self.fileManager.cloudAnalysisDir, '0'),
-						(self.fileManager.localAllClipsDir, self.fileManager.cloudMasterDir, '1'),
-						(self.fileManager.localManualLabelClipsDir, self.fileManager.cloudMasterDir, '1'),
-						(self.fileManager.localManualLabelFramesDir, self.fileManager.cloudMasterDir, '1'),
-						(self.fileManager.localManualLabelFramesDir[:-1] + '_pngs', self.fileManager.cloudMasterDir[:-1] + '_pngs', '1')
-						]"""
-
+		assert os.path.exists(self.fileManager.localLabeledClipsFile)
+	
 	def labelVideos(self):
 
 		# Read in annotations and create csv file for all annotations with the same user and projectID
@@ -51,7 +43,9 @@ class ManualLabelVideoPreparer():
 		annotatedClips = 0 # Keep track of all the new clips that have been labeled
 		random.shuffle(clips) # Shuffle the clips so that it's a random sample
 
-		for f in clips:
+		index = 0
+		while index < len(clips): # We use a while loop so we can reannotate a clip if a mistake is made
+			f = clips[index] # Get current clip
 
 			if not previouslyLabeled_dt.loc[previouslyLabeled_dt.ClipName == f]['ManualLabel'].empty:
 				print('Skipping ' + f + ' since it is already labeled', file = sys.stderr)
@@ -60,7 +54,6 @@ class ManualLabelVideoPreparer():
 			cap = cv2.VideoCapture(self.fileManager.localManualLabelClipsDir + f) # Open video object and display it
 	
 			while(True):
-
 				ret, frame = cap.read()
 				if not ret:
 					cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
@@ -78,16 +71,28 @@ class ManualLabelVideoPreparer():
 				return
 
 			if info == ord('k'):
+				index += 1
 				continue #skip
 
-			newlyLabeled_dt.loc[len(newlyLabeled_dt)] = [f.replace('_ManualLabel.mp4',''), chr(info), self.initials, str(datetime.datetime.now())] # Create new annotation
+			if info == ord('r'):
+				index = index - 1
+				continue
+
+			clip_name = self.fileManager.projectID + '__' + f.replace('_ManualLabel.mp4','')
+
+			if clip_name in newlyLabeled_dt.ClipName:
+				newlyLabeled_dt.loc[newlyLabeled_dt.ClipName == clip_name,'ManualLabel'] = chr(info)
+			else:
+				newlyLabeled_dt.loc[len(newlyLabeled_dt)] = [clip_name, chr(info), self.initials, str(datetime.datetime.now())] # Create new annotation
 
 			newlyLabeled_dt.to_csv(self.fileManager.localNewLabeledVideosFile, sep = ',')
 
 			subprocess.run(['mv', self.fileManager.localManualLabelClipsDir + f.replace('_ManualLabel',''), self.fileManager.localNewLabeledClipsDir])
 
 			annotatedClips += 1
+			index += 1
 
 			if annotatedClips >= self.number:
-				return
+				break
+
 
