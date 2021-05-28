@@ -6,7 +6,8 @@ class FileManager():
 
 		# Identify directory for temporary local files
 		if platform.node() == 'raspberrypi' or 'Pi' in platform.node() or platform.node() == 'realsense':
-			self._identifyPiDirectory()
+			self.localMasterDir = os.getenv('HOME').rstrip('/') + '/' + 'Temp/CichlidAnalyzer/'
+			#self._identifyPiDirectory()
 		else:
 			self.localMasterDir = os.getenv('HOME').rstrip('/') + '/' + 'Temp/CichlidAnalyzer/'
 
@@ -131,7 +132,7 @@ class FileManager():
 	def createProjectData(self, projectID):
 		self.createAnnotationData()
 		self.projectID = projectID
-		self.localProjectDir = self.localMasterDir + projectID + '/'
+		self.localProjectDir = self.localMasterDir + '__ProjectData/' + projectID + '/'
 
 		# Create logfile
 		self.localLogfile = self.localProjectDir + 'Logfile.txt'
@@ -179,13 +180,14 @@ class FileManager():
 		self.localAllLabeledClustersFile = self.localAnalysisDir + 'AllLabeledClusters.csv'
 
 		# Files created by manual labelerer  preparers
-		self.localLabeledFramesFile = self.localTempDir + 'NewLabeledFrames.csv'
+		self.localNewLabeledFramesFile = self.localTempDir + 'NewLabeledFrames.csv'
+		self.localNewLabeledFramesDir = self.localTempDir + 'NewLabeledFrames/'
 		self.localNewLabeledVideosFile = self.localTempDir + 'NewLabeledVideos.csv'
 		self.localNewLabeledClipsDir = self.localTempDir + 'NewLabeledClips/'
+		
 		self.localLabeledClipsProjectDir = self.localLabeledClipsDir + projectID + '/'
+		self.localLabeledFramesProjectDir = self.localBoxedFishDir + projectID + '/'
 
-		# Files created by manual labeler preparer
-		self.localLabeledFramesFile = self.localAnalysisDir + 'LabeledFrames.csv'
 
 		# Files created by summary preparer
 		self.localDepthSummaryFile = self.localSummaryDir + 'DataSummary.xlsx'
@@ -211,7 +213,6 @@ class FileManager():
 
 		self.localLabeledClipsFile = self.local3DVideosDir + 'ManualLabels.csv'
 		self.localLabeledClipsDir = self.local3DVideosDir + 'Clips/'
-		self.localOrganizedLabeledClipsDir = self.local3DVideosDir + 'OrganizedClips/'
 
 		self.localBoxedFishFile = self.localObjectDetectionDir + 'BoxedFish.csv'
 		self.localBoxedFishDir = self.localObjectDetectionDir + 'BoxedImages/'
@@ -286,14 +287,12 @@ class FileManager():
 			self.downloadData(self.localManualLabelClipsDir, tarred_subdirs = True)
 			self.downloadData(self.localLabeledClipsFile)
 
-		elif dtype == 'ManualAnnotation':
+		elif dtype == 'ManualLabelFrames':
 			self.createDirectory(self.localMasterDir)
 			self.createDirectory(self.localAnalysisDir)
-			self.downloadData(self.manualLabelFramesDir, tarred = True)
-			try:
-				self.downloadData(self.localLabeledFramesFile)
-			except FileNotFoundError:
-				pass
+			self.createDirectory(self.localNewLabeledFramesDir)
+			self.downloadData(self.localManualLabelFramesDir, tarred_subdirs = True)
+			self.downloadData(self.localBoxedFishFile)
 
 		elif dtype == 'Summary':
 			self.createDirectory(self.localMasterDir)
@@ -391,10 +390,12 @@ class FileManager():
 				shutil.rmtree(self.localProjectDir)
 
 
-		elif dtype == 'ManualAnnotation':
-			self.uploadAndMerge(self.localNewLabeledVideosFile, self.localLabeledClipsFile, ID = 'LID')
-			self.uploadAndMerge(self.localNewLabeledClipsDir, self.localLabeledClipsProjectDir, tarred = True)
-
+		elif dtype == 'ManualLabelFrames':
+			if not no_upload:
+				self.uploadAndMerge(self.localNewLabeledFramesFile, self.localBoxedFishFile, ID = 'LID')
+				self.uploadAndMerge(self.localNewLabeledFramesDir, self.localLabeledFramesProjectDir, tarred = True)
+			if delete:
+				shutil.rmtree(self.localProjectDir)
 
 		elif dtype == 'Summary':
 			self.uploadData(self.localSummaryDir)
@@ -402,45 +403,6 @@ class FileManager():
 		else:
 			raise KeyError('Unknown key: ' + dtype)
 
-	"""def downloadAnnotationData(self, dtype):
-		if dtype == 'LabeledVideos':
-			good_count, bad_count = 0,0
-
-			self.createDirectory(self.localMasterDir)
-			self.createDirectory(self.local3DVideosDir)
-			self.downloadData(self.localLabeledClipsFile)
-
-			# Identify directories that need to be untarred and download them
-			labeledProjects = subprocess.run(['rclone', 'lsf', self.localLabeledClipsDir.replace(self.localMasterDir, self.cloudMasterDir)], capture_output = True, encoding = 'utf-8').stdout.split()
-			for lp in labeledProjects:
-				if '.tar' in lp:
-					self.downloadData(self.localLabeledClipsDir + lp.replace('.tar',''), tarred = True)
-
-			# Reorganize data for VideoLoader to automatically download
-			dt = pd.read_csv(self.localLabeledClipsFile)
-			for row in dt.itertuples():
-				dest_dir = self.localOrganizedLabeledClipsDir + row.ManualLabel + '/'
-				if not os.path.exists(dest_dir):
-					self.createDirectory(dest_dir)
-				output = subprocess.run(['mv', self.localLabeledClipsDir + row.ClipName.split('__')[0] + '/' + row.ClipName + '.mp4', dest_dir], capture_output = True, encoding = 'utf-8')
-				if output.stderr == '':
-					good_count += 1
-				else:
-					bad_count += 1
-			print(str(good_count) + ' labeled videos moved. Missing videos for ' + str(bad_count) + ' total videos.')
-			subprocess.call(['rm', '-rf', self.localLabeledClipsDir])
-
-		elif dtype == 'BoxedFish':
-			self.createDirectory(self.localMasterDir)
-			self.createDirectory(self.localObjectDetectionDir)
-			self.downloadData(self.localBoxedFishFile)
-			
-			boxedProjects = subprocess.run(['rclone', 'lsf', self.localBoxedFishDir.replace(self.localMasterDir, self.cloudMasterDir)], capture_output = True, encoding = 'utf-8').stdout.split()
-			for bp in boxedProjects:
-				if '.tar' in bp:
-					self.downloadData(self.localBoxedFishDir + bp.replace('.tar',''), tarred = True)
-		else:
-			raise KeyError('Unknown key: ' + dtype)"""
 
 	def returnVideoObject(self, index):
 		self._createParameters()
