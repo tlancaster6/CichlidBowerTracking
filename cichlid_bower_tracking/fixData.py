@@ -26,28 +26,28 @@ for projectID in projectIDs:
 	print(projectID)
 	lp = fm_obj.lp
 
-	main_directory_data = subprocess.run(['rclone', 'lsf', 'cichlidVideo:McGrath/Apps/CichlidPiData/' + projectID + '/'], capture_output = True, encoding = 'utf-8').stdout.split('\n')
+	main_directory_data = subprocess.run(['rclone', 'lsf', 'cichlidVideo:McGrath/Apps/CichlidPiData/' + '__ProjectData' + projectID + '/'], capture_output = True, encoding = 'utf-8').stdout.split('\n')
 
 	# Directories to delete
 	for bad_data in ['PBS/', 'Backgrounds/', 'Figures/', 'DepthAnalysis/', 'VideoAnalysis/', 'Troubleshooting/','AllClips/','MLClips/', 'MLFrames/']:
 		if bad_data in main_directory_data:
 			print('  Deleting: ' + bad_data)
-			subprocess.run(['rclone','purge', 'cichlidVideo:McGrath/Apps/CichlidPiData/' + projectID + '/' + bad_data])
+			subprocess.run(['rclone','purge', 'cichlidVideo:McGrath/Apps/CichlidPiData/' + '__ProjectData' + projectID + '/' + bad_data])
 
 	# Files to delete
 	for bad_data in ['AllClips.tar', 'MLClips.tar', 'MLFrames.tar', 'Backgrounds.tar']:
 		if bad_data in main_directory_data:
 			print('  Deleting: ' + bad_data)
-			subprocess.run(['rclone','delete', 'cichlidVideo:McGrath/Apps/CichlidPiData/' + projectID + '/' + bad_data])
+			subprocess.run(['rclone','delete', 'cichlidVideo:McGrath/Apps/CichlidPiData/' + '__ProjectData' + projectID + '/' + bad_data])
 
 	if 'Frames/' in main_directory_data:
 		if 'Frames.tar' in main_directory_data:
 			print('  Deleting: Frames/')
-			subprocess.run(['rclone','purge', 'cichlidVideo:McGrath/Apps/CichlidPiData/' + projectID + '/' + 'Frames/'])
+			subprocess.run(['rclone','purge', 'cichlidVideo:McGrath/Apps/CichlidPiData/' + '__ProjectData' + projectID + '/' + 'Frames/'])
 		else:
 			print('  Need to convert Frames to tar')
 
-	video_directory_data = subprocess.run(['rclone', 'lsf', 'cichlidVideo:McGrath/Apps/CichlidPiData/' + projectID + '/Videos/'], capture_output = True, encoding = 'utf-8').stdout.split('\n')
+	video_directory_data = subprocess.run(['rclone', 'lsf', 'cichlidVideo:McGrath/Apps/CichlidPiData/' + '__ProjectData' + projectID + '/Videos/'], capture_output = True, encoding = 'utf-8').stdout.split('\n')
 	for index,vid_obj in enumerate(lp.movies):
 		vid_obj = fm_obj.returnVideoObject(index)
 		if os.path.basename(vid_obj.localVideoFile) not in video_directory_data:
@@ -64,23 +64,23 @@ for projectID in projectIDs:
 		
 		if os.path.basename(vid_obj.localh264File) in video_directory_data:	
 			print('  Deleting h264 file: ' +  str(index))	
-			subprocess.run(['rclone','delete', 'cichlidVideo:McGrath/Apps/CichlidPiData/' + projectID + '/Videos/' + os.path.basename(vid_obj.localh264File)])
+			subprocess.run(['rclone','delete', 'cichlidVideo:McGrath/Apps/CichlidPiData/' + '__ProjectData' + projectID + '/Videos/' + os.path.basename(vid_obj.localh264File)])
 	
-	analysis_directory_data = subprocess.run(['rclone', 'lsf', 'cichlidVideo:McGrath/Apps/CichlidPiData/' + projectID + '/MasterAnalysisFiles/'], capture_output = True, encoding = 'utf-8').stdout.split('\n')
+	analysis_directory_data = subprocess.run(['rclone', 'lsf', 'cichlidVideo:McGrath/Apps/CichlidPiData/' + '__ProjectData' + projectID + '/MasterAnalysisFiles/'], capture_output = True, encoding = 'utf-8').stdout.split('\n')
 	for bad_data in ['smoothedDepthData.npy', 'DepthRGBVideo.mp4']:
 		if bad_data in analysis_directory_data:
 			print('  Deleting: ' + bad_data)
-			subprocess.run(['rclone','delete', 'cichlidVideo:McGrath/Apps/CichlidPiData/' + projectID + '/MasterAnalysisFiles/' + bad_data])
+			subprocess.run(['rclone','delete', 'cichlidVideo:McGrath/Apps/CichlidPiData/' + '__ProjectData' + projectID + '/MasterAnalysisFiles/' + bad_data])
 
 	for main_data in main_directory_data:
 		if '.npy' in main_data or '.pdf' in main_data:
 			print(' Deleting: ' + main_data)
-			subprocess.run(['rclone','delete', 'cichlidVideo:McGrath/Apps/CichlidPiData/' + projectID + '/' + main_data])
+			subprocess.run(['rclone','delete', 'cichlidVideo:McGrath/Apps/CichlidPiData/' + '__ProjectData' + projectID + '/' + main_data])
 
-	analysis_directory_data = subprocess.run(['rclone', 'lsf', 'cichlidVideo:McGrath/Apps/CichlidPiData/' + projectID + '/MasterAnalysisFiles/'], capture_output = True, encoding = 'utf-8').stdout.split('\n')
+	analysis_directory_data = subprocess.run(['rclone', 'lsf', 'cichlidVideo:McGrath/Apps/CichlidPiData/' + '__ProjectData' + projectID + '/MasterAnalysisFiles/'], capture_output = True, encoding = 'utf-8').stdout.split('\n')
 	if 'AllLabeledClusters.csv' in analysis_directory_data:
 		print('  Deleting: AllLabeledClusters.csv')
-		subprocess.run(['rclone','delete', 'cichlidVideo:McGrath/Apps/CichlidPiData/' + projectID + '/MasterAnalysisFiles/AllLabeledClusters.csv'])
+		subprocess.run(['rclone','delete', 'cichlidVideo:McGrath/Apps/CichlidPiData/' + '__ProjectData' + projectID + '/MasterAnalysisFiles/AllLabeledClusters.csv'])
 
 	subprocess.run(['rm', '-rf', fm_obj.localProjectDir])
 
