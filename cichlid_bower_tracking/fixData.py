@@ -14,7 +14,7 @@ fm_obj = FM()
 if args.SummaryFile is not None:
 	summary_file = fm_obj.localAnalysisStatesDir + args.SummaryFile
 	fm_obj.downloadData(summary_file)
-	dt = pd.read_csv(summary_file, index_col = 0)
+	dt = pd.read_csv(summary_file, index_col = False)
 	projectIDs = list(dt.projectID)
 	if args.Start is not None:
 		projectIDs = projectIDs[args.Start: args.Start + args.Total]
