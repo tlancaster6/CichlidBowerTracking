@@ -1,5 +1,5 @@
 from cichlid_bower_tracking.helper_modules.file_manager import FileManager as FM
-import argparse, subprocess, os pdb
+import argparse, subprocess, os, pdb
 
 parser = argparse.ArgumentParser()
 parser.add_argument('VideoFile', type = str, help = 'Name of h264 file to be processed')
