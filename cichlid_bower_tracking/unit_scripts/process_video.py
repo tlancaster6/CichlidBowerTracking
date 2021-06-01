@@ -1,5 +1,5 @@
 from cichlid_bower_tracking.helper_modules.file_manager import FileManager as FM
-import argparse, subprocess, os
+import argparse, subprocess, os, pdb
 
 parser = argparse.ArgumentParser()
 parser.add_argument('VideoFile', type = str, help = 'Name of h264 file to be processed')
@@ -16,19 +16,25 @@ if '.h264' not in args.VideoFile:
 # Convert h264 to mp4
 ffmpeg_output = subprocess.run(['ffmpeg', '-r', str(args.Framerate), '-i', args.VideoFile, '-threads', '1', '-c:v', 'copy', '-r', str(args.Framerate), args.VideoFile.replace('.h264', '.mp4')], capture_output = True)
 
-assert os.path.isfile(args.VideoFile.replace('.h264', '.mp4'))
-assert os.path.getsize(args.VideoFile.replace('.h264','.mp4')) > os.path.getsize(args.VideoFile)
-
+try:
+	assert os.path.isfile(args.VideoFile.replace('.h264', '.mp4'))
+	assert os.path.getsize(args.VideoFile.replace('.h264','.mp4')) > os.path.getsize(args.VideoFile)
+except:
+	pdb.set_trace()
 
 # Sync with cloud (will return error if something goes wrong)
-fileManager.uploadData(args.VideoFile.replace('.h264', '.mp4'))
-
-# Delete videos
 try:
-	print(['mv', args.VideoFile, fileManager.localBackupDir])
-	subprocess.run(['mv', args.VideoFile, fileManager.localBackupDir])
+	fileManager.uploadData(args.VideoFile.replace('.h264', '.mp4'))
 except:
-	print('Failed to move h264 video')
-	pass
+	try:
+		fileManager.uploadData(args.VideoFile.replace('.h264', '.mp4'))
+	except:
+		try:
+			fileManager.uploadData(args.VideoFile.replace('.h264', '.mp4'))
+		except:
+			pdb.set_trace()
+
+# Delete video
+subprocess.run(['rm', '-f', args.VideoFile])
 print('Video Processed')
 

@@ -13,7 +13,7 @@ group.add_argument('--ProjectIDs', type = str, nargs = '+', help = 'Name of proj
 group.add_argument('--SummaryFile', type = str, help = 'Name of csv file that specifies projects to analyze')
 parser.add_argument('-n', '--Number', type = int, help = 'Limit annotation to x number of videos/frames per project.')
 parser.add_argument('-p', '--Practice', action = 'store_true', help = 'Use if you dont want to save annotations')
-parser.add_argument('-i', '--Initials', type = str, help = 'Initials to save annotations')
+parser.add_argument('-i', '--Initials', required = True, type = str, help = 'Initials to save annotations')
 
 args = parser.parse_args()
 
@@ -39,7 +39,9 @@ for i, projectID in enumerate(projectIDs):
 	# Run appropriate analysis script
 	if args.DataType == 'Videos':
 		subprocess.run(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.annotate_videos', projectID, str(args.Number), args.Initials])
-	
+	elif args.DataType == 'Frames':
+		subprocess.run(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.annotate_frames', projectID, str(args.Number), args.Initials])
+
 	#Upload data and keep track of it
 	if not args.Practice:
 		print('Uploading: ' + projectID + ' ' + str(datetime.datetime.now()))

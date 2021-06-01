@@ -155,15 +155,15 @@ class CichlidTracker:
         if command == 'Rewrite':
             if os.path.exists(self.projectDirectory):
                 shutil.rmtree(self.projectDirectory)
-            os.mkdir(self.projectDirectory)
+            os.makedirs(self.projectDirectory)
             
         if command in ['New','Rewrite']:
             self.masterStart = datetime.datetime.now()
             if command == 'New':
-                os.mkdir(self.projectDirectory)
-            os.mkdir(self.frameDirectory)
-            os.mkdir(self.videoDirectory)
-            os.mkdir(self.backupDirectory)
+                os.makedirs(self.projectDirectory)
+            os.makedirs(self.frameDirectory)
+            os.makedirs(self.videoDirectory)
+            os.makedirs(self.backupDirectory)
             #self._createDropboxFolders()
             self.frameCounter = 1
             self.videoCounter = 1
