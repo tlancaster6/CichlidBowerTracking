@@ -31,6 +31,8 @@ if args.Workers is None:
 	workers = os.cpu_count()
 else:
 	workers = args.Workers
+if args.ModelID is None:
+	args.ModelID = 'Model18_All'
 
 # To run analysis efficiently, we download and upload data in the background while the main script runs
 uploadProcesses = [] # Keep track of all of the processes still uploading so we don't quit before they finish
@@ -48,6 +50,8 @@ for i, projectID in enumerate(projectIDs):
 		p1 = subprocess.Popen(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.analyze_clusters', projectID,'--Workers', str(workers)])
 	elif args.AnalysisType == 'ClusterClassification':
 		p1 = subprocess.Popen(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.classify_clusters', projectID, args.ModelID])
+	elif args.AnalysisType == 'Summary':
+		p1 = subprocess.Popen(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.summarize', projectID])
 
 	# In the meantime, download data for next project in the background
 	if i+1 < len(projectIDs):

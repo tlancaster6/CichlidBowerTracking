@@ -59,7 +59,7 @@ class SummaryPreparer:
                 return False
 
         # If all required files were present, initiate the LogParser and ClusterAnalyzer
-        self.lp = LP(self.fm.localLogfile)
+        self.lp = self.fm.lp
         self.ca_obj = ClusterAnalyzer(self.fm)
 
     def createDepthFigures(self, hourlyDelta=2):
@@ -548,7 +548,7 @@ class DepthAnalyzer():
 
     def __init__(self, fileManager):
         self.fileManager = fileManager
-        self.lp = LP(self.fileManager.localLogfile)
+        self.lp = self.fileManager.lp
         self._loadData()
         self.goodPixels = (self.tray_r[2] - self.tray_r[0]) * (self.tray_r[3] - self.tray_r[1])
 
@@ -719,7 +719,7 @@ class ClusterAnalyzer:
     def __init__(self, fileManager):
         self.fileManager = fileManager
         self.bids = ['c', 'p', 'b', 'f', 't', 'm', 's', 'd', 'o', 'x']
-        self.lp = LP(fileManager.localLogfile)
+        self.lp = self.fileManager.lp
         self._loadData()
 
     def _loadData(self):
@@ -763,12 +763,12 @@ class ClusterAnalyzer:
         # cropped: If True, return only rows corresponding to events that occur within the area defined by tray_r
 
         df_slice = self.clusterData if input_frame is None else input_frame
-        df_slice = df_slice.dropna(subset=['Model18_All_pred']).sort_index()
+        df_slice = df_slice.dropna(subset=['Prediction']).sort_index()
         if t0 is not None:
             self._checkTimes(t0, t1)
             df_slice = df_slice[t0:t1]
         if bid is not None:
-            df_slice = df_slice[df_slice.Model18_All_pred.isin(bid if type(bid) is list else [bid])]
+            df_slice = df_slice[df_slice.Prediction.isin(bid if type(bid) is list else [bid])]
         if cropped:
             df_slice = df_slice[(df_slice.X_depth > self.tray_r[0]) & (df_slice.X_depth < self.tray_r[2]) &
                                 (df_slice.Y_depth > self.tray_r[1]) & (df_slice.Y_depth < self.tray_r[3])]
@@ -790,11 +790,11 @@ class ClusterAnalyzer:
         df_slice = self.sliceDataframe(cropped=cropped)
         if bid == 'all':
             df_slice = self.sliceDataframe(t0=t0, t1=t1, input_frame=df_slice)
-            row = df_slice.Model18_All_pred.value_counts().to_dict
+            row = df_slice.Prediction.value_counts().to_dict
             return row
         else:
             df_slice = self.sliceDataframe(t0=t0, t1=t1, bid=bid, input_frame=df_slice)
-            cell = df_slice.Model18_All_pred.count()
+            cell = df_slice.Prediction.count()
             return cell
 
     def returnClusterKDE(self, t0, t1, bid, cropped=False, bandwidth=None):

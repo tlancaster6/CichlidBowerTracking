@@ -20,7 +20,7 @@ else:
 	summary_file = fm_obj.localAnalysisStatesDir + 'AllProjects.csv'
 	projectIDs = fm_obj.getAllProjectIDs()
 
-dt = pd.DataFrame(columns = ['projectID', 'tankID', 'StartingFiles', 'Prep', 'Depth', 'Cluster', 'ClusterClassification'])
+dt = pd.DataFrame(columns = ['projectID', 'tankID', 'StartingFiles', 'Prep', 'Depth', 'Cluster', 'ClusterClassification', 'Summary'])
 
 for projectID in projectIDs:
 	fm_obj.createProjectData(projectID)

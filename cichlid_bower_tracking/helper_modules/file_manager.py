@@ -58,7 +58,7 @@ class FileManager():
 	def getProjectStates(self):
 
 		# Dictionary to hold row of data
-		row_data = {'projectID':self.projectID, 'tankID':'', 'StartingFiles':False, 'Prep':False, 'Depth':False, 'Cluster':False, 'ClusterClassification':False}
+		row_data = {'projectID':self.projectID, 'tankID':'', 'StartingFiles':False, 'Prep':False, 'Depth':False, 'Cluster':False, 'ClusterClassification':False, 'Summary': False}
 
 		# List the files needed for each analysis
 		necessaryFiles = {}
@@ -67,6 +67,7 @@ class FileManager():
 		necessaryFiles['Depth'] = [self.localSmoothDepthFile]
 		necessaryFiles['Cluster'] = [self.localAllClipsDir, self.localManualLabelClipsDir, self.localManualLabelFramesDir]
 		necessaryFiles['ClusterClassification'] = [self.localAllLabeledClustersFile]
+		necessaryFiles['Summary'] = [self.localSummaryDir, self.localAllLabeledClustersFile, self.localSmoothDepthFile, self.localTrayFile, self.localTransMFile, self.localLogfile]
 
 		print('Starting and downloading logfile for project ' + self.projectID)
 		# Try to download and read logfile
@@ -300,7 +301,7 @@ class FileManager():
 			self.createDirectory(self.localSummaryDir)
 			self.downloadData(self.localLogfile)
 			self.downloadData(self.localAnalysisDir)
-			self.downloadData(self.localPaceDir)
+			# self.downloadData(self.localPaceDir)
 
 		elif dtype == 'All':
 			self.createDirectory(self.localMasterDir)
