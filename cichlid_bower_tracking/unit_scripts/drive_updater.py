@@ -65,10 +65,10 @@ class DriveUpdater:
         ax6.set_title('Last 1 hour change\n'+h_change)
         
 
-        print(dpth_3.min())
-        print(dpth_3.max())
-        print((dpth_4-dpth_3).min())
-        print((dpth_4-dpth_3).max())
+        print(np.nanmin(dpth_3))
+        print(np.nanmax(dpth_3))
+        print(np.nanmin(dpth_4-dpth_3))
+        print(np.nanmax(dpth_4-dpth_3))
 
         ax1.imshow(img_1)
         ax2.imshow(img_2)
