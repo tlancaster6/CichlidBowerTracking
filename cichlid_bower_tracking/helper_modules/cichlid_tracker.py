@@ -420,8 +420,9 @@ class CichlidTracker:
         
         if self.device == 'realsense':
             depth_frame = self.pipeline.wait_for_frames().get_depth_frame().as_depth_frame()
-            data = np.asanyarray(depth_frame.data)*depth_frame.get_units()
+            data = np.asanyarray(depth_frame.data)*depth_frame.get_units() # Convert to meters
             data[data==0] = np.nan # 0 indicates bad data from RealSense
+            data[data>1] = np.nan # Anything further away than 1 m is a mistake
             return data[self.r[1]:self.r[1]+self.r[3], self.r[0]:self.r[0]+self.r[2]]
 
     def _returnCommand(self):
@@ -538,57 +539,49 @@ class CichlidTracker:
             return
 
         counter = 1
-        while True:
-            all_data = np.empty(shape = (int(max_frames), self.r[3], self.r[2]))
-            all_data[:] = np.nan
-            for i in range(0, max_frames):
-                all_data[i] = self._returnDepth()
-                current_time = datetime.datetime.now()
 
-                if snapshots:
-                    self._print('SnapshotCaptured: NpyFile: Frames/Snapshot_' + str(counter).zfill(6) + '.npy,,Time: ' + str(current_time)  + ',,GP: ' + str(np.count_nonzero(~np.isnan(all_data[i]))))
-                    np.save(self.projectDirectory +'Frames/Snapshot_' + str(counter).zfill(6) + '.npy', all_data[i])
-
-                
-                counter += 1
-
-                if current_time >= endtime:
-                    break
-                time.sleep(5)
-            
-            pdb.set_trace()  
-            med = np.nanmedian(all_data, axis = 0)
-            med[np.isnan(med)] = 0
-            std = np.nanstd(all_data, axis = 0)
-            med[np.isnan(std)] = 0
-            med[std > stdev_threshold] = 0
-            std[std > stdev_threshold] = 0
-            counts = np.count_nonzero(~np.isnan(all_data), axis = 0)
-            med[counts < 3] = 0
-            std[counts < 3] = 0
-
-            
-            sums += med
-            stds += std
-
-            med[med > 1] = 1
-            n += med
+        all_data = np.empty(shape = (int(max_frames), self.r[3], self.r[2]))
+        all_data[:] = np.nan
+        
+        for i in range(0, max_frames):
+            all_data[i] = self._returnDepth()
             current_time = datetime.datetime.now()
+
+            if snapshots:
+                self._print('SnapshotCaptured: NpyFile: Frames/Snapshot_' + str(counter).zfill(6) + '.npy,,Time: ' + str(current_time)  + ',,GP: ' + str(np.count_nonzero(~np.isnan(all_data[i]))))
+                np.save(self.projectDirectory +'Frames/Snapshot_' + str(counter).zfill(6) + '.npy', all_data[i])
+
+            
+            counter += 1
+
             if current_time >= endtime:
                 break
+            time.sleep(10)
+        
+        med = np.nanmean(all_data, axis = 0)
+        
+        std = np.nanstd(all_data, axis = 0)
+        
+        med[np.isnan(std)] = np.nan
 
-        avg_med = sums/n
-        avg_std = stds/n
+        med[std > stdev_threshold] = np.nan
+        std[std > stdev_threshold] = np.nan
+
+        counts = np.count_nonzero(~np.isnan(all_data), axis = 0)
+
+        med[counts < 3] = np.nan
+        std[counts < 3] = np.nan
+
         color = self._returnRegColor()                        
-        num_frames = int(max_frames*(n.max()-1) + i + 1)
         
-        self._print('FrameCaptured: NpyFile: Frames/Frame_' + str(self.frameCounter).zfill(6) + '.npy,,PicFile: Frames/Frame_' + str(self.frameCounter).zfill(6) + '.jpg,,Time: ' + str(endtime)  + ',,NFrames: ' + str(num_frames) + ',,AvgMed: '+ '%.2f' % np.nanmean(avg_med) + ',,AvgStd: ' + '%.2f' % np.nanmean(avg_std) + ',,GP: ' + str(np.count_nonzero(~np.isnan(avg_med))))
+        self._print('FrameCaptured: NpyFile: Frames/Frame_' + str(self.frameCounter).zfill(6) + '.npy,,PicFile: Frames/Frame_' + str(self.frameCounter).zfill(6) + '.jpg,,Time: ' + str(endtime)  + ',,NFrames: ' + str(i) + ',,AvgMed: '+ '%.2f' % np.nanmean(med) + ',,AvgStd: ' + '%.2f' % np.nanmean(std) + ',,GP: ' + str(np.count_nonzero(~np.isnan(med))))
         
-        np.save(self.projectDirectory +'Frames/Frame_' + str(self.frameCounter).zfill(6) + '.npy', avg_med)
+        np.save(self.projectDirectory +'Frames/Frame_' + str(self.frameCounter).zfill(6) + '.npy', med)
         matplotlib.image.imsave(self.projectDirectory+'Frames/Frame_' + str(self.frameCounter).zfill(6) + '.jpg', color)
+        
         self.frameCounter += 1
 
-        return avg_med
+        return med
 
             
     def _uploadFiles(self):
