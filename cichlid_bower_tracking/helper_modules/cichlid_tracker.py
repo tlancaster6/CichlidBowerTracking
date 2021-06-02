@@ -422,6 +422,7 @@ class CichlidTracker:
             depth_frame = self.pipeline.wait_for_frames().get_depth_frame().as_depth_frame()
             data = np.asanyarray(depth_frame.data)*depth_frame.get_units()
             data[data==0] = np.nan # 0 indicates bad data from RealSense
+            pdb.set_trace()
             return data[self.r[1]:self.r[1]+self.r[3], self.r[0]:self.r[0]+self.r[2]]
 
     def _returnCommand(self):
