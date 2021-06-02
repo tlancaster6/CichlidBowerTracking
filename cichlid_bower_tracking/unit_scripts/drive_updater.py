@@ -73,10 +73,10 @@ class DriveUpdater:
 
         ax1.imshow(img_1)
         ax2.imshow(img_2)
-        ax3.imshow(dpth_3, vmin = 1, vmax = 50)
-        ax4.imshow(dpth_4 - dpth_3, vmin = -0.1, vmax = .1)
-        ax5.imshow(dpth_5 - dpth_3, vmin = -0.1, vmax = .1)
-        ax6.imshow(dpth_6 - dpth_3, vmin = -0.1, vmax = .1)
+        ax3.imshow(dpth_3, vmin = 0, vmax = 1)
+        ax4.imshow(dpth_4 - dpth_3, vmin = -0.05, vmax = .05)
+        ax5.imshow(dpth_5 - dpth_3, vmin = -0.05, vmax = .05)
+        ax6.imshow(dpth_6 - dpth_3, vmin = -0.05, vmax = .05)
         
         #plt.subplots_adjust(bottom = 0.15, left = 0.12, wspace = 0.24, hspace = 0.57)
         plt.savefig(self.projectDirectory + self.lp.tankID + '.jpg')
