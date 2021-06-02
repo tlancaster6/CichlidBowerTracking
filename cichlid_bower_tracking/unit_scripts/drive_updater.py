@@ -64,9 +64,15 @@ class DriveUpdater:
         ax5.set_title('Last 24 hours change\n'+d_change)
         ax6.set_title('Last 1 hour change\n'+h_change)
         
+
+        print(dpth_3.min())
+        print(dpth_3.max())
+        print((dpth_4-dpth_3).min())
+        print((dpth_4-dpth_3).max())
+
         ax1.imshow(img_1)
         ax2.imshow(img_2)
-        ax3.imshow(dpth_3, vmin = 0.5, vmax = 1.0)
+        ax3.imshow(dpth_3, vmin = 0.05, vmax = 1.0)
         ax4.imshow(dpth_4 - dpth_3, vmin = -0.1, vmax = .1)
         ax5.imshow(dpth_5 - dpth_3, vmin = -0.1, vmax = .1)
         ax6.imshow(dpth_6 - dpth_3, vmin = -0.1, vmax = .1)

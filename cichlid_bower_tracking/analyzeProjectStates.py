@@ -40,7 +40,6 @@ for projectID in projectIDs:
 
 	subprocess.run(['rm', '-rf', fm_obj.localProjectDir])
 
-pdb.set_trace()
 dt.to_csv(summary_file, index = False)
 fm_obj.uploadData(summary_file)
 
