@@ -18,11 +18,15 @@ class SummaryPreparer:
     def __init__(self, FileManager):
         self.__version__ = '1.0.0'
         self.fm = FileManager
+        self.projectID = self.fm.projectID
         self.da_obj = None
         self.ca_obj = None
+        self.euth_data = None
         self.lp = None
+        self.pid = None
         self.validateDepthData()
         self.validateClusterData()
+        self.validateSinglenucData()
 
     def validateDepthData(self):
         # Determine whether or not the required data for depth figures in present, and initiate a DepthAnalyzer
@@ -61,6 +65,27 @@ class SummaryPreparer:
         # If all required files were present, initiate the LogParser and ClusterAnalyzer
         self.lp = self.fm.lp
         self.ca_obj = ClusterAnalyzer(self.fm)
+
+    def validateSinglenucData(self):
+        # confirm that files required for both cluster and depth analysis are present, that euthanization data
+        # is accessible, and that the project ID is present in the euthanization data
+        if self.ca_obj is None:
+            self.validateClusterData()
+        if self.da_obj is None:
+            self.validateDepthData()
+        if (self.da_obj is None) or (self.ca_obj is None):
+            return False
+
+        try:
+            self.euth_data = pd.read_csv(self.fm.localEuthData, index_col='project_id', parse_dates=['dissection_time'],
+                                         infer_datetime_format=True)
+            self.euth_data = self.euth_data.loc[self.projectID]
+        except:
+            return False
+
+
+
+
 
     def createDepthFigures(self, hourlyDelta=2):
         # Create all figures based on depth data. Adjust hourlyDelta to influence the resolution of the
@@ -532,7 +557,41 @@ class SummaryPreparer:
             all_data.to_csv(self.fm.localSummaryDir + 'paceSummary.csv')
 
         else:
-            print('no .out files in troubleshooting directory, skipping pace summary')
+            pass
+
+    def createSinglenucFigures(self):
+
+        # confirm that the required data is present
+        if self.euth_data is None:
+            return
+
+        # determine time window immediately before euthanization
+        t1 = self.euth_data.dissection_time - np.timedelta64(10, 'm')
+        t0 = t1 - np.timedelta64(2, 'h')
+
+        # generate a parent figure
+        fig = plt.figure(figsize=(22, 8.5))
+        fig.suptitle(self.projectID + ' activity in 2 hours preceding euthanization')
+        outer_grid = gridspec.GridSpec(22, 1)
+
+        # plot whole-period metrics at the top of the parent figure
+        curr_grid = gridspec.GridSpecFromSubplotSpec(1, 4, subplot_spec=outer_grid[0:4])
+
+        curr_ax = fig.add_subplot(curr_grid[0])
+        curr_plot = curr_ax.imshow(self.da_obj.returnHeightChange(t0, t1, cropped=True), vmin=-1, vmax=1)
+        curr_ax.set_title('Whole Period Depth Change (cm)')
+        curr_ax.tick_params(colors=[0, 0, 0, 0])
+        plt.colorbar(curr_plot, ax=curr_ax)
+
+        curr_ax = fig.add_subplot(curr_grid[1])
+        curr_plot = curr_ax.imshow(self.da_obj.returnHeightChange(t0, t1, cropped=True, masked=True, vmin=-1, vamx=1))
+        curr_ax.set_title('Whole Period In-Bower Depth Change (cm)')
+        curr_ax.tick_params(colors=[0, 0, 0, 0])
+        plt.colorbar(curr_plot, ax=curr_ax)
+
+
+
+
 
     def createFullSummary(self, clusterHourlyDelta=1, depthHourlyDelta=2):
         # Attempt to create all possible figures and summary files. If files required for a particular figure are
@@ -542,6 +601,7 @@ class SummaryPreparer:
         self.createClusterFigures(hourlyDelta=clusterHourlyDelta)
         self.createCombinedFigures()
         self.createPaceSummary()
+        self.createSinglenucFigures()
 
 class DepthAnalyzer():
     # Contains code process depth data for figure creation

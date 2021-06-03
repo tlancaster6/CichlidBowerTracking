@@ -192,6 +192,10 @@ class FileManager():
 		self.localDepthSummaryFile = self.localSummaryDir + 'DataSummary.xlsx'
 		self.localDepthSummaryFigure = self.localSummaryDir + 'DailyDepthSummary.pdf'
 
+		# miscellaneous files
+		# TODO: confirm file name
+		self.localEuthData = self.localMasterDir + 'euthanization_data.csv'
+
 
 	def createMLData(self, modelID):
 		self.vModelID = modelID
@@ -291,17 +295,15 @@ class FileManager():
 			self.createDirectory(self.localMasterDir)
 			self.createDirectory(self.localAnalysisDir)
 			self.downloadData(self.manualLabelFramesDir, tarred = True)
-			try:
-				self.downloadData(self.localLabeledFramesFile)
-			except FileNotFoundError:
-				pass
+			self.downloadData(self.localLabeledFramesFile, allow_errors=True)
 
 		elif dtype == 'Summary':
 			self.createDirectory(self.localMasterDir)
 			self.createDirectory(self.localSummaryDir)
 			self.downloadData(self.localLogfile)
 			self.downloadData(self.localAnalysisDir)
-			# self.downloadData(self.localPaceDir)
+			self.downloadData(self.localPaceDir, allow_errors=True)
+			self.downloadData(self.localEuthData, allow_errors=True)
 
 		elif dtype == 'All':
 			self.createDirectory(self.localMasterDir)
@@ -318,6 +320,7 @@ class FileManager():
 			self.downloadData(self.localVideoDir)
 			self.downloadData(self.localFrameDir, tarred = True)
 			self.downloadData(self.local3DModelDir)
+			self.downloadData(self.localEuthData, allow_errors=True)
 
 		else:
 			raise KeyError('Unknown key: ' + dtype)
@@ -547,7 +550,7 @@ class FileManager():
 			os.makedirs(directory)
 
 
-	def downloadData(self, local_data, tarred = False, tarred_subdirs = False):
+	def downloadData(self, local_data, tarred = False, tarred_subdirs = False, allow_errors=False):
 
 		relative_name = local_data.rstrip('/').split('/')[-1] + '.tar' if tarred else local_data.rstrip('/').split('/')[-1]
 		local_path = local_data.split(local_data.rstrip('/').split('/')[-1])[0]
@@ -560,10 +563,16 @@ class FileManager():
 		elif relative_name in cloud_objects: #file
 			output = subprocess.run(['rclone', 'copy', cloud_path + relative_name, local_path], capture_output = True, encoding = 'utf-8')
 		else:
-			raise FileNotFoundError('Cant find file for download: ' + cloud_path + relative_name)
+			if allow_errors:
+				print('Warning: Cannot find {}. Continuing'.format(cloud_path + relative_name))
+			else:
+				raise FileNotFoundError('Cant find file for download: ' + cloud_path + relative_name)
 
 		if not os.path.exists(local_path + relative_name):
-			raise FileNotFoundError('Error downloading: ' + local_path + relative_name)
+			if allow_errors:
+				print('Warning. Cannot download {}. Continuing'.format(local_path + relative_name))
+			else:
+				raise FileNotFoundError('Error downloading: ' + local_path + relative_name)
 
 		if tarred:
 			# Untar directory
