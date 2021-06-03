@@ -1,6 +1,6 @@
-import pdb
-import pandas as pd
-from Modules.Annotations.ObjectLabeler import ObjectLabeler as OL
+import pdb, os
+from cichlid_bower_tracking.helper_modules.object_labeler import ObjectLabeler as OL
+
 
 class ManualLabelFramesPreparer():
 	# This class takes in directory information and a logfile containing depth information and performs the following:
@@ -18,26 +18,17 @@ class ManualLabelFramesPreparer():
 		self.number = number
 
 	def validateInputData(self):
-		fm_obj = FM(projectID = args.ProjectID)
 
-		assert os.path.exists(self.fileManager.localAnalysisDir)
 		assert os.path.exists(self.fileManager.localManualLabelFramesDir)
+		assert os.path.exists(self.fileManager.localNewLabeledFramesDir)
 		assert os.path.exists(self.fileManager.localBoxedFishFile)
-		"""self.uploads = [(self.fileManager.localTroubleshootingDir, self.fileManager.cloudTroubleshootingDir, '0'), 
-						(self.fileManager.localAnalysisDir, self.fileManager.cloudAnalysisDir, '0'),
-						(self.fileManager.localAllClipsDir, self.fileManager.cloudMasterDir, '1'),
-						(self.fileManager.localManualLabelClipsDir, self.fileManager.cloudMasterDir, '1'),
-						(self.fileManager.localManualLabelFramesDir, self.fileManager.cloudMasterDir, '1'),
-						(self.fileManager.localManualLabelFramesDir[:-1] + '_pngs', self.fileManager.cloudMasterDir[:-1] + '_pngs', '1')
-						]"""
+		assert os.path.exists(self.fileManager.localLabeledFramesProjectDir)
 
 	def labelFrames(self):
+		
+		obj = OL(self.fileManager.localManualLabelFramesDir, self.fileManager.localNewLabeledFramesFile, self.number, self.fileManager.projectID, self.initials)
 
-# Read in annotations and create csv file for all annotations with the same user and projectID
-		previouslyLabeled_dt = pd.read_csv(self.fileManager.localBoxedFishFile)
-		previouslyLabeled_dt = previouslyLabeled_dt[(previouslyLabeled.ProjectID == self.fileManager.projectID) & (self.previouslyLabeled_dt.User == self.initials)]
-		previouslyLabeled_dt.to_csv(self.fileManager.localLabeledFramesFile, sep = ',', columns = ['ProjectID', 'Framefile', 'Nfish', 'Sex', 'Box', 'CorrectAnnotation', 'User', 'DateTime'])
+	def correctAnnotations(self, user1, user2):
 
-		obj = OL(self.fileManager.localManualLabelFramesDir, self.fileManager.localLabeledFramesFile, self.number, self.projectID)
-
+		obj = AD(self.fileManager.localLabeledFramesProjectDir, self.fileManager.localBoxedFishFile, self.fileManager.projectID, user1, user2)
 

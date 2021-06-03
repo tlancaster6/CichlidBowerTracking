@@ -6,6 +6,7 @@ from cichlid_bower_tracking.data_preparers.depth_preparer import DepthPreparer a
 from cichlid_bower_tracking.data_preparers.cluster_preparer import ClusterPreparer as CP
 from cichlid_bower_tracking.data_preparers.threeD_classifier_preparer import ThreeDClassifierPreparer as TDCP
 from cichlid_bower_tracking.data_preparers.manual_label_video_preparer import ManualLabelVideoPreparer as MLVP
+from cichlid_bower_tracking.data_preparers.manual_label_frames_preparer import ManualLabelFramesPreparer as MLFP
 from cichlid_bower_tracking.data_preparers.threeD_model_preparer import ThreeDModelPreparer as TDMP
 from cichlid_bower_tracking.data_preparers.summary_preparer import SummaryPreparer as SP
 

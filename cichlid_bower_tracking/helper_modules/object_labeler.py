@@ -59,7 +59,7 @@ class Annotation():
 		self.rectangle = None
 
 class ObjectLabeler():
-	def __init__(self, frameDirectory, annotationFile, number, projectID):
+	def __init__(self, frameDirectory, annotationFile, number, projectID, initials):
 
 		self.frameDirectory = frameDirectory
 		self.annotationFile = annotationFile
@@ -87,7 +87,7 @@ class ObjectLabeler():
 		self.f_dt = pd.DataFrame(columns=['ProjectID', 'Framefile','Sex', 'Box', 'User', 'CorrectAnnotation', 'DateTime'])
 
 		# Get user and current time
-		self.user = os.getenv('USER')
+		self.user = initials
 		self.now = datetime.datetime.now()
 
 		# Create Annotation object
@@ -369,13 +369,12 @@ class ObjectLabeler():
 		plt.close(self.fig)
 
 class AnnotationDisagreements:
-	def __init__(self, frameDirectory, annotationFile, projectID, user1, user2, all):
+	def __init__(self, frameDirectory, annotationFile, projectID, user1, user2):
 		self.frameDirectory = frameDirectory
 		self.annotationFile = annotationFile
 		self.projectID = projectID
 		self.user1 = user1
 		self.user2 = user2
-		self.all = all
 
 		self.IOU_cutoff = 0.5
 
