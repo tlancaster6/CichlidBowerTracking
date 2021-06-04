@@ -1,5 +1,6 @@
 from matplotlib import (cm, colors, gridspec, ticker)
 import matplotlib.pyplot as plt
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 import pandas as pd
 import numpy as np
 import seaborn as sns
@@ -77,9 +78,11 @@ class SummaryPreparer:
             return False
 
         try:
-            self.euth_data = pd.read_csv(self.fm.localEuthData, index_col='project_id', parse_dates=['dissection_time'],
+            self.euth_data = pd.read_csv(self.fm.localEuthData, index_col='pid', parse_dates=['dissection_time'],
                                          infer_datetime_format=True)
             self.euth_data = self.euth_data.loc[self.projectID]
+            self.euth_data.dissection_time = self.euth_data.dissection_time.to_pydatetime()
+
         except:
             return False
 
@@ -566,32 +569,179 @@ class SummaryPreparer:
             return
 
         # determine time window immediately before euthanization
-        t1 = self.euth_data.dissection_time - np.timedelta64(10, 'm')
-        t0 = t1 - np.timedelta64(2, 'h')
+        t1 = self.euth_data.dissection_time - datetime.timedelta(minutes=10)
+        t0 = t1 - datetime.timedelta(hours=2)
 
         # generate a parent figure
-        fig = plt.figure(figsize=(22, 8.5))
+        fig = plt.figure(figsize=(17, 22))
         fig.suptitle(self.projectID + ' activity in 2 hours preceding euthanization')
-        outer_grid = gridspec.GridSpec(22, 1)
+        outer_grid = gridspec.GridSpec(14, 1)
 
         # plot whole-period metrics at the top of the parent figure
-        curr_grid = gridspec.GridSpecFromSubplotSpec(1, 4, subplot_spec=outer_grid[0:4])
+        curr_grid = gridspec.GridSpecFromSubplotSpec(1, 5, subplot_spec=outer_grid[0:2])
 
         curr_ax = fig.add_subplot(curr_grid[0])
-        curr_plot = curr_ax.imshow(self.da_obj.returnHeightChange(t0, t1, cropped=True), vmin=-1, vmax=1)
-        curr_ax.set_title('Whole Period Depth Change (cm)')
+        height_change = self.da_obj.returnHeightChange(t0, t1, cropped=True)
+        v = np.nanquantile(np.abs(height_change), 0.99)
+        curr_ax.imshow(height_change, vmin=-v, vmax=v)
+        curr_ax.set_title('Depth Change')
+        cbar = fig.colorbar(cm.ScalarMappable(norm=colors.Normalize(vmin=-v, vmax=v), cmap=cm.get_cmap('viridis', 30)),
+                            ax=curr_ax, use_gridspec=False, shrink=0.7, location='bottom')
+        cbar.set_label('depth change (cm)')
+        cbar.set_ticks([-v, 0, v])
+        cbar.set_ticklabels(['{0:.2f}'.format(-v), '0', '{0:.2f}'.format(v)])
         curr_ax.tick_params(colors=[0, 0, 0, 0])
-        plt.colorbar(curr_plot, ax=curr_ax)
 
         curr_ax = fig.add_subplot(curr_grid[1])
-        curr_plot = curr_ax.imshow(self.da_obj.returnHeightChange(t0, t1, cropped=True, masked=True, vmin=-1, vamx=1))
-        curr_ax.set_title('Whole Period In-Bower Depth Change (cm)')
+        depth_bowers = self.da_obj.returnBowerLocations(t0, t1, cropped=True)
+        curr_ax.imshow(depth_bowers, vmin=-1, vmax=1)
+        curr_ax.set_title('Depth Bowers')
+        cbar = fig.colorbar(cm.ScalarMappable(norm=colors.Normalize(vmin=-1, vmax=1), cmap=cm.get_cmap('viridis', 3)),
+                            ax=curr_ax, use_gridspec=False, shrink=0.7, location='bottom')
+        cbar.set_label('bower region')
+        cbar.set_ticks([-1, 0, 1])
+        cbar.set_ticklabels(['-', '0', '+'])
         curr_ax.tick_params(colors=[0, 0, 0, 0])
-        plt.colorbar(curr_plot, ax=curr_ax)
+
+        curr_ax = fig.add_subplot(curr_grid[2])
+        scoops = self.ca_obj.returnClusterKDE(t0, t1, 'c', cropped=True)
+        spits = self.ca_obj.returnClusterKDE(t0, t1, 'p', cropped=True)
+        z = spits - scoops
+        v = 0.75*np.max(np.abs(z))
+        curr_ax.imshow(z, vmin=-v, vmax=v)
+        cbar = fig.colorbar(cm.ScalarMappable(norm=colors.Normalize(vmin=-v, vmax=v), cmap=cm.get_cmap('viridis', 30)),
+                            ax=curr_ax, use_gridspec=False, shrink=0.7, location='bottom')
+        cbar.set_label('spit-scoop difference\n'+r'$events/cm^2$')
+        cbar.set_ticks([-v, 0, v])
+        cbar.set_ticklabels(['{0:.2f}'.format(-v), '0', '{0:.2f}'.format(v)])
+        curr_ax.set_title('Spit-scoop KDE')
+        curr_ax.tick_params(colors=[0, 0, 0, 0])
+
+        curr_ax = fig.add_subplot(curr_grid[3])
+        cluster_bowers = self.ca_obj.returnBowerLocations(t0, t1, cropped=True)
+        curr_ax.imshow(cluster_bowers, vmin=-1, vmax=1)
+        curr_ax.set_title('Spit-Scoop Bowers')
+        curr_ax.tick_params(colors=[0, 0, 0, 0])
+        cbar = fig.colorbar(cm.ScalarMappable(norm=colors.Normalize(vmin=-1, vmax=1), cmap=cm.get_cmap('viridis', 3)),
+                            ax=curr_ax, use_gridspec=False, shrink=0.7, location='bottom')
+        cbar.set_label('bower region')
+        cbar.set_ticks([-1, 0, 1])
+        cbar.set_ticklabels(['-', '0', '+'])
+
+        curr_ax = fig.add_subplot(curr_grid[4])
+        bower_intersection = np.where((depth_bowers == cluster_bowers) & (depth_bowers != 0), True, False)
+        bower_intersection_area = np.count_nonzero(bower_intersection)
+        bower_union = np.where((depth_bowers != 0) | (cluster_bowers != 0), True, False)
+        bower_union_area = np.count_nonzero(bower_union)
+        if bower_intersection_area == bower_union_area == 0:
+            similarity = 1.0
+        elif (bower_intersection_area == 0) | (bower_union_area == 0):
+            similarity = 0.0
+        else:
+            similarity = bower_intersection_area / bower_union_area
+        curr_ax.imshow(-1 *((2 * bower_intersection) - bower_union), cmap='bwr', vmin=-1, vmax=1)
+        curr_ax.set_title('Overlap')
+        curr_ax.tick_params(colors=[0, 0, 0, 0])
+        cbar = fig.colorbar(cm.ScalarMappable(norm=colors.Normalize(vmin=-1, vmax=1), cmap=cm.get_cmap('bwr', 3)),
+                            ax=curr_ax, use_gridspec=False, shrink=0.7, location='bottom')
+        cbar.set_label('J = {0:.3f}'.format(similarity))
+        cbar.set_ticks([-1, 1])
+        cbar.set_ticklabels(['N', 'Y'])
+        curr_ax.set_title('Overlap')
+
+        # plot detailed depth change over the pre-euthanization period
+        curr_grid = gridspec.GridSpecFromSubplotSpec(1, 13, subplot_spec=outer_grid[3])
+        dt = (t1 - t0)/12
+        t0_curr = t0
+        v_max = 0
+        axes = [fig.add_subplot(curr_grid[i]) for i in range(13)]
+        for i in range(12):
+            curr_ax = axes[i]
+            height_change = self.da_obj.returnHeightChange(t0_curr, t0_curr+dt, cropped=True)
+            v = np.nanquantile(np.abs(height_change), 0.99)
+            v_max = v if v > v_max else v_max
+            curr_ax.imshow(height_change, vmin=-1, vmax=1)
+            curr_ax.tick_params(colors=[0, 0, 0, 0])
+            mins_to_euth = ((self.euth_data.dissection_time - t0_curr) - (dt/2)).seconds/60
+            curr_ax.set_title(r'$t_{euth} - $' + '{0:.0f} m'.format(mins_to_euth), fontdict={'fontsize': 7})
+            t0_curr = t0_curr + dt
+        v_max = np.round(v_max, 2)
+        for i in range(12):
+            axes[i].get_images()[0].set_clim(-v_max, v_max)
+
+        axes[-1].axis('off')
+        cax = inset_axes(axes[-1], height='100%', width='20%', loc='center')
+        cbar = fig.colorbar(cm.ScalarMappable(norm=colors.Normalize(vmin=-v_max, vmax=v_max),
+                                              cmap=cm.get_cmap('viridis', 30)), cax=cax, shrink=0.7)
+        cbar.set_label('depth change\n(cm)', size=9)
+        cbar.set_ticks([-v_max, 0, v_max])
+        cbar.set_ticklabels(['{0:.2f}'.format(-v_max), '0', '{0:.2f}'.format(v_max)])
 
 
+        # plot detailed spit-scoop kde's over the pre-euthanization period
+        curr_grid = gridspec.GridSpecFromSubplotSpec(1, 13, subplot_spec=outer_grid[4])
+        dt = (t1 - t0)/12
+        t0_curr = t0
+        v_max = 0
+        axes = [fig.add_subplot(curr_grid[i]) for i in range(13)]
+        for i in range(12):
+            curr_ax = axes[i]
+            scoops = self.ca_obj.returnClusterKDE(t0_curr, t0_curr+dt, 'c', cropped=True)
+            spits = self.ca_obj.returnClusterKDE(t0_curr, t0_curr+dt, 'p', cropped=True)
+            z = spits - scoops
+            v = 0.75*np.max(np.abs(z))
+            v_max = v if v > v_max else v_max
+            curr_ax.imshow(z, vmin=-1, vmax=1)
+            curr_ax.tick_params(colors=[0, 0, 0, 0])
+            t0_curr = t0_curr + dt
+        v_max = np.round(v_max, 2)
+        for i in range(12):
+            axes[i].get_images()[0].set_clim(-v_max, v_max)
+        axes[-1].axis('off')
+        cax = inset_axes(axes[-1], height='100%', width='20%', loc='center')
+        cbar = fig.colorbar(cm.ScalarMappable(norm=colors.Normalize(vmin=-v_max, vmax=v_max),
+                                              cmap=cm.get_cmap('viridis', 30)), cax=cax, shrink=0.7)
+        cbar.set_label('spit-scoop\ndifference\n' +r'$(events/cm^2)$', size=9)
+        cbar.set_ticks([-v_max, 0, v_max])
+        cbar.set_ticklabels(['{0:.2f}'.format(-v_max), '0', '{0:.2f}'.format(v_max)])
 
 
+        # plot detailed kde's for individual behaviors of interest
+        bids = ['c', 'p', 'b', 'f', 't', 'm', 's', ['c', 'p', 'b'], ['f', 't', 'm']]
+        for row, bid in enumerate(bids):
+            curr_grid = gridspec.GridSpecFromSubplotSpec(1, 13, subplot_spec=outer_grid[5+row])
+            dt = (t1 - t0)/12
+            t0_curr = t0
+            v_max = 0
+            axes = [fig.add_subplot(curr_grid[i]) for i in range(13)]
+            for i in range(12):
+                curr_ax = axes[i]
+                kde = self.ca_obj.returnClusterKDE(t0_curr, t0_curr+dt, bid, cropped=True)
+                v = 0.75*np.max(kde)
+                v_max = v if v > v_max else v_max
+                curr_ax.imshow(kde, vmin=0, vmax=1)
+                curr_ax.tick_params(colors=[0, 0, 0, 0])
+                t0_curr = t0_curr + dt
+            v_max = np.round(v_max, 2)
+            for i in range(12):
+                axes[i].get_images()[0].set_clim(-v_max, v_max)
+            axes[-1].axis('off')
+            cax = inset_axes(axes[-1], height='100%', width='20%', loc='center')
+            cmap = colors.LinearSegmentedColormap.from_list('name', cm.viridis(np.linspace(0.5, 1)))
+            cbar = fig.colorbar(cm.ScalarMappable(norm=colors.Normalize(vmin=0, vmax=v_max),
+                                                  cmap=cmap), cax=cax, shrink=0.7)
+            if type(bid) is str:
+                cbar.set_label('{}\n'.format(self.ca_obj.bid_labels[bid]) + r'$(events/cm^2)$', size=9)
+            elif type(bid) is list:
+                if bid == ['c', 'p', 'b']:
+                    cbar.set_label('bower all\n' + r'$(events/cm^2)$', size=9)
+                elif bid == ['f', 't', 'm']:
+                    cbar.set_label('feed all\n' + r'$(events/cm^2)$', size=9)
+            cbar.set_ticks([0, v_max])
+            cbar.set_ticklabels(['0', '{0:.2f}'.format(v_max)])
+
+        fig.savefig(self.fm.localSummaryDir + 'SingleNucFigures.pdf')
+        plt.close(fig=fig)
 
     def createFullSummary(self, clusterHourlyDelta=1, depthHourlyDelta=2):
         # Attempt to create all possible figures and summary files. If files required for a particular figure are
@@ -779,6 +929,9 @@ class ClusterAnalyzer:
     def __init__(self, fileManager):
         self.fileManager = fileManager
         self.bids = ['c', 'p', 'b', 'f', 't', 'm', 's', 'd', 'o', 'x']
+        self.bid_labels = {'c':'bower scoop', 'p': 'bower spit', 'b': 'bower multiple',
+                           'f': 'feed scoop', 't': 'feed spit', 'm': 'feed multiple',
+                           's': 'spawn', 'd': 'drop sand', 'o': 'fish other', 'x': 'no fish other'}
         self.lp = self.fileManager.lp
         self._loadData()
 

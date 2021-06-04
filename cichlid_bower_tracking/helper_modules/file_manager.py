@@ -195,8 +195,7 @@ class FileManager():
 		self.localDepthSummaryFigure = self.localSummaryDir + 'DailyDepthSummary.pdf'
 
 		# miscellaneous files
-		# TODO: confirm file name
-		self.localEuthData = self.localMasterDir + 'euthanization_data.csv'
+		self.localEuthData = self.localMasterDir + '__ProjectData/euthanization_data.csv'
 
 
 	def createMLData(self, modelID):
