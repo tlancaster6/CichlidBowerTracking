@@ -13,6 +13,7 @@ group.add_argument('--ProjectIDs', type = str, nargs = '+', help = 'Name of proj
 group.add_argument('--SummaryFile', type = str, help = 'Name of csv file that specifies projects to analyze')
 parser.add_argument('--Workers', type = int, help = 'Number of workers')
 parser.add_argument('--ModelID', type = str, help = 'ModelID to use to classify clusters with')
+parser.add_argument('--Force', type = bool, default=False, help='if True, run the analysis even if the summary file indicates is has already been run. Default False')
 
 args = parser.parse_args()
 
@@ -25,7 +26,10 @@ else:
 	fm_obj.downloadData(summary_file)
 	dt = pd.read_csv(summary_file, index_col = False)
 
-	projectIDs = list(dt[dt[args.AnalysisType] == False].projectID) # Only run analysis on projects that need it
+	if args.Force:
+		projectIDs = list(dt.projectID)
+	else:
+		projectIDs = list(dt[dt[args.AnalysisType] == False].projectID) # Only run analysis on projects that need it
 
 if args.Workers is None:
 	workers = os.cpu_count()
