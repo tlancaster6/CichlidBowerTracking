@@ -650,12 +650,13 @@ class SummaryPreparer:
         curr_ax.set_title('Overlap')
 
         # plot detailed depth change over the pre-euthanization period
-        curr_grid = gridspec.GridSpecFromSubplotSpec(1, 13, subplot_spec=outer_grid[3])
-        dt = (t1 - t0)/12
+        n_plots = 6
+        curr_grid = gridspec.GridSpecFromSubplotSpec(1, n_plots+1, subplot_spec=outer_grid[3])
+        dt = (t1 - t0)/n_plots
         t0_curr = t0
         v_max = 0
-        axes = [fig.add_subplot(curr_grid[i]) for i in range(13)]
-        for i in range(12):
+        axes = [fig.add_subplot(curr_grid[i]) for i in range(n_plots+1)]
+        for i in range(n_plots):
             curr_ax = axes[i]
             height_change = self.da_obj.returnHeightChange(t0_curr, t0_curr+dt, cropped=True)
             v = np.nanquantile(np.abs(height_change), 0.99)
@@ -666,7 +667,7 @@ class SummaryPreparer:
             curr_ax.set_title(r'$t_{euth} - $' + '{0:.0f} m'.format(mins_to_euth), fontdict={'fontsize': 7})
             t0_curr = t0_curr + dt
         v_max = np.round(v_max, 2)
-        for i in range(12):
+        for i in range(n_plots):
             axes[i].get_images()[0].set_clim(-v_max, v_max)
 
         axes[-1].axis('off')
@@ -679,12 +680,12 @@ class SummaryPreparer:
 
 
         # plot detailed spit-scoop kde's over the pre-euthanization period
-        curr_grid = gridspec.GridSpecFromSubplotSpec(1, 13, subplot_spec=outer_grid[4])
-        dt = (t1 - t0)/12
+        curr_grid = gridspec.GridSpecFromSubplotSpec(1, n_plots+1, subplot_spec=outer_grid[4])
+        dt = (t1 - t0)/n_plots
         t0_curr = t0
         v_max = 0
-        axes = [fig.add_subplot(curr_grid[i]) for i in range(13)]
-        for i in range(12):
+        axes = [fig.add_subplot(curr_grid[i]) for i in range(n_plots+1)]
+        for i in range(n_plots):
             curr_ax = axes[i]
             scoops = self.ca_obj.returnClusterKDE(t0_curr, t0_curr+dt, 'c', cropped=True)
             spits = self.ca_obj.returnClusterKDE(t0_curr, t0_curr+dt, 'p', cropped=True)
@@ -695,7 +696,7 @@ class SummaryPreparer:
             curr_ax.tick_params(colors=[0, 0, 0, 0])
             t0_curr = t0_curr + dt
         v_max = np.round(v_max, 2)
-        for i in range(12):
+        for i in range(n_plots):
             axes[i].get_images()[0].set_clim(-v_max, v_max)
         axes[-1].axis('off')
         cax = inset_axes(axes[-1], height='100%', width='20%', loc='center')
@@ -709,12 +710,12 @@ class SummaryPreparer:
         # plot detailed kde's for individual behaviors of interest
         bids = ['c', 'p', 'b', 'f', 't', 'm', 's', ['c', 'p', 'b'], ['f', 't', 'm']]
         for row, bid in enumerate(bids):
-            curr_grid = gridspec.GridSpecFromSubplotSpec(1, 13, subplot_spec=outer_grid[5+row])
-            dt = (t1 - t0)/12
+            curr_grid = gridspec.GridSpecFromSubplotSpec(1, n_plots+1, subplot_spec=outer_grid[5+row])
+            dt = (t1 - t0)/n_plots
             t0_curr = t0
             v_max = 0
-            axes = [fig.add_subplot(curr_grid[i]) for i in range(13)]
-            for i in range(12):
+            axes = [fig.add_subplot(curr_grid[i]) for i in range(n_plots+1)]
+            for i in range(n_plots):
                 curr_ax = axes[i]
                 kde = self.ca_obj.returnClusterKDE(t0_curr, t0_curr+dt, bid, cropped=True)
                 v = 0.75*np.max(kde)
@@ -723,7 +724,7 @@ class SummaryPreparer:
                 curr_ax.tick_params(colors=[0, 0, 0, 0])
                 t0_curr = t0_curr + dt
             v_max = np.round(v_max, 2)
-            for i in range(12):
+            for i in range(n_plots):
                 axes[i].get_images()[0].set_clim(-v_max, v_max)
             axes[-1].axis('off')
             cax = inset_axes(axes[-1], height='100%', width='20%', loc='center')
