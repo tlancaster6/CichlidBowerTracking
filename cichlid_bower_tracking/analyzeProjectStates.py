@@ -27,7 +27,6 @@ for c in columns:
 	if c not in dt.columns:
 		dt[c] = False
 
-
 for projectID in projectIDs:
 	fm_obj.createProjectData(projectID)
 	
@@ -40,7 +39,6 @@ for projectID in projectIDs:
 
 	subprocess.run(['rm', '-rf', fm_obj.localProjectDir])
 
-pdb.set_trace()
 dt.to_csv(summary_file, index = False)
 fm_obj.uploadData(summary_file)
 
