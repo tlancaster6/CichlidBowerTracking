@@ -1006,11 +1006,13 @@ class DepthAnalyzer():
 
         change = self.smoothDepthData[first_index] - self.smoothDepthData[last_index]
 
-        if masked:
-            change[self.returnBowerLocations(t0, t1) == 0] = 0
-
         if cropped:
             change = change[self.tray_r[0]:self.tray_r[2], self.tray_r[1]:self.tray_r[3]]
+
+        if masked:
+            change[self.returnBowerLocations(t0, t1, cropped=cropped) == 0] = 0
+
+
 
         return change
 
