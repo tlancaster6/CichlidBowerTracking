@@ -1262,11 +1262,12 @@ class ClusterAnalyzer:
                     raise Exception('Timepoints to must be datetime.datetime objects')
             return
         # Make sure times are appropriate datetime objects
-        try:
-            t0 = t0.to_pydatetime()
-            t1 = t1.to_pydatetime()
-        except AttributeError:
-            raise Exception('Timepoints to must be datetime.datetime objects')
+        if type(t0) != datetime.datetime or type(t1) != datetime.datetime:
+            try:
+                t0 = t0.to_pydatetime()
+                t1 = t1.to_pydatetime()
+            except AttributeError:
+                raise Exception('Timepoints to must be datetime.datetime objects')
         if t0 > t1:
             print('Warning: Second timepoint ' + str(t1) + ' is earlier than first timepoint ' + str(t0),
                   file=sys.stderr)
