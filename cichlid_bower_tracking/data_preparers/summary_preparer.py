@@ -833,7 +833,6 @@ class MultiSummaryPreparer:
             self.load_data()
         self.bid_labels = self.cas[list(self.cas)[0]].bid_labels
         self.data = self.collate_data()
-        self.plot_scoop_spit_histograms()
 
     def load_data(self):
         for pid in self.pids:
@@ -871,7 +870,7 @@ class MultiSummaryPreparer:
         fig, axes = plt.subplots(2, 2, sharex='all', sharey='all', figsize=(8, 8))
         axes = axes.flatten()
         for i, bid in enumerate(['c', 'p', 'f', 't']):
-            sns.histplot(self.data, x=self.bid_labels[bid], hue='behave_or_control', ax=axes[i], binwidth=50)
+            sns.histplot(self.data, x=self.bid_labels[bid], hue='behave_or_control', ax=axes[i], binwidth=50, kde=True)
             axes[i].set(title=self.bid_labels[bid], xlabel='')
         fig.tight_layout()
         fig.savefig(self.fm.localAnalysisStatesDir + 'behavioral_histograms.pdf')
