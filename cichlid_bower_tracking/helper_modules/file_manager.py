@@ -2,7 +2,7 @@ import os, subprocess, pdb, platform, shutil
 from cichlid_bower_tracking.helper_modules.log_parser import LogParser as LP
 
 class FileManager():
-	def __init__(self, projectID = None, modelID = None, rcloneRemote = 'cichlidVideo:', masterDir = 'McGrath/Apps/CichlidPiData/'):
+	def __init__(self, projectID = None, modelID = None, summaryFile=None, rcloneRemote = 'cichlidVideo:', masterDir = 'McGrath/Apps/CichlidPiData/'):
 
 		# Identify directory for temporary local files
 		if platform.node() == 'raspberrypi' or 'Pi' in platform.node() or platform.node() == 'realsense':
@@ -39,7 +39,13 @@ class FileManager():
 			print(modelID)
 			self.createMLData(modelID)
 
-		self.localAnalysisStatesDir = self.localMasterDir + '__AnalysisStates/'
+		if summaryFile is not None:
+			self.localAnalysisStatesDir = self.localMasterDir + '__AnalysisStates/' + summaryFile.split('.')[0] + '/'
+			self.localSummaryFile = self.localAnalysisStatesDir + summaryFile
+			self.localEuthData = self.localAnalysisStatesDir + 'euthanization_data.csv'
+		else:
+			self.localEuthData = None
+
 		# Create file names and parameters
 		self.createPiData()
 		self.createAnnotationData()
@@ -195,7 +201,7 @@ class FileManager():
 		self.localDepthSummaryFigure = self.localSummaryDir + 'DailyDepthSummary.pdf'
 
 		# miscellaneous files
-		self.localEuthData = self.localMasterDir + '__ProjectData/euthanization_data.csv'
+
 
 
 	def createMLData(self, modelID):
@@ -515,7 +521,8 @@ class FileManager():
 
 
 	def downloadData(self, local_data, tarred = False, tarred_subdirs = False, allow_errors=False):
-
+		if local_data is None:
+			return
 		relative_name = local_data.rstrip('/').split('/')[-1] + '.tar' if tarred else local_data.rstrip('/').split('/')[-1]
 		local_path = local_data.split(local_data.rstrip('/').split('/')[-1])[0]
 		cloud_path = local_path.replace(self.localMasterDir, self.cloudMasterDir)

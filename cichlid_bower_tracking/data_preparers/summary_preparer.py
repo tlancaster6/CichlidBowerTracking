@@ -13,6 +13,8 @@ from skimage import morphology
 from math import sqrt
 import glob
 import re
+from cichlid_bower_tracking.helper_modules.file_manager import FileManager as FM
+import pickle
 
 class SummaryPreparer:
 
@@ -85,10 +87,6 @@ class SummaryPreparer:
 
         except:
             return False
-
-
-
-
 
     def createDepthFigures(self, hourlyDelta=2):
         # Create all figures based on depth data. Adjust hourlyDelta to influence the resolution of the
@@ -773,6 +771,34 @@ class SummaryPreparer:
         fig.savefig(self.fm.localSummaryDir + 'SingleNucFigures.pdf')
         plt.close(fig=fig)
 
+        # generate a summary csv
+
+        def get_row(t0, t1):
+            ca_data = vars(self.ca_obj.returnClusterSummary(t0, t1))
+            da_data = vars(self.da_obj.returnVolumeSummary(t0, t1))
+            row = {'t0': t0, 't1': t1,
+                   't_euth-t0': self.euth_data.dissection_time - t0,
+                   't_euth-t1': self.euth_data.dissection_time - t1}
+            row.update(ca_data)
+            row.update(da_data)
+            return row
+
+        total_df = pd.DataFrame([get_row(t0, t1)])
+        detail_df = []
+        t0_curr = t0
+        dt = (t1 - t0) / n_plots
+        t1_curr = t0 + dt
+        while t1_curr <= t1:
+            detail_df.append(get_row(t0_curr, t1_curr))
+            t0_curr = t0_curr + dt
+            t1_curr = t1_curr + dt
+        detail_df = pd.DataFrame(detail_df)
+
+        writer = pd.ExcelWriter(self.fm.localSummaryDir + 'SingleNucDataSummary.xlsx')
+        total_df.to_excel(writer, 'Total')
+        detail_df.to_excel(writer, 'Detail')
+        writer.save()
+
     def createFullSummary(self, clusterHourlyDelta=1, depthHourlyDelta=2):
         # Attempt to create all possible figures and summary files. If files required for a particular figure are
         # missing, it will be skipped without throwing an error. Adjust clusterHourlyDelta and depthHourlyDelta to
@@ -782,6 +808,75 @@ class SummaryPreparer:
         self.createCombinedFigures()
         self.createPaceSummary()
         self.createSinglenucFigures()
+
+class MultiSummaryPreparer:
+    # class for creating figures that summarize/compare data from multiple projects. Built for the single-nuc projects,
+    # but could be adapted more generally with some modification
+    def __init__(self, fileManager, use_pickle=True):
+        self.fm = fileManager
+        self.fm.downloadData(self.fm.localSummaryFile)
+        self.fm.downloadData(self.fm.localEuthData)
+        self.analysis_states = pd.read_csv(self.fm.localSummaryFile, index_col='projectID')
+        self.euth_data = pd.read_csv(self.fm.localEuthData, index_col='pid', parse_dates=['dissection_time'],
+                                     infer_datetime_format=True)
+        self.pids = list(self.analysis_states.index)
+        self.das_pickle = self.fm.localAnalysisStatesDir + 'das.pkl'
+        self.cas_pickle = self.fm.localAnalysisStatesDir + 'cas.pkl'
+        if use_pickle and os.path.exists(self.cas_pickle) and os.path.exists(self.das_pickle):
+            with open(self.cas_pickle, 'rb') as f:
+                self.cas = pickle.load(f)
+            with open(self.das_pickle, 'rb') as f:
+                self.das = pickle.load(f)
+        else:
+            self.cas = {}
+            self.das = {}
+            self.load_data()
+        self.bid_labels = self.cas[list(self.cas)[0]].bid_labels
+        self.data = self.collate_data()
+        self.plot_scoop_spit_histograms()
+
+    def load_data(self):
+        for pid in self.pids:
+            print(pid)
+            t_max = self.euth_data.loc[pid, 'dissection_time'] - datetime.timedelta(minutes=10)
+            t_min = t_max - datetime.timedelta(hours=2)
+            fm = FM(projectID=pid)
+            # fm.downloadProjectData('Summary')
+            self.cas.update({pid: ClusterAnalyzer(fm)})
+            self.das.update({pid: DepthAnalyzer(fm)})
+            self.das[pid].clip_data(t_min, t_max)
+
+    def save_pickle(self):
+        with open(self.cas_pickle) as f:
+            pickle.dump(self.cas, f)
+        with open(self.das_pickle) as f:
+            pickle.dump(self.das, f)
+
+    def collate_data(self):
+        df = []
+        for pid in self.pids:
+            row = {'pid': pid, 'behave_or_control': self.euth_data.loc[pid, 'behave_or_control']}
+            ca = self.cas[pid]
+            da = self.das[pid]
+            t_max = self.euth_data.loc[pid, 'dissection_time'] - datetime.timedelta(minutes=10)
+            t_min = t_max - datetime.timedelta(hours=2)
+            bids = ['c', 'p', 'f', 't']
+            for bid in bids:
+                row.update({ca.bid_labels[bid]: ca.returnClusterCounts(t_min, t_max, bid)})
+            df.append(row)
+        df = pd.DataFrame(df)
+        return df
+
+    def plot_scoop_spit_histograms(self):
+        fig, axes = plt.subplots(2, 2, sharex='all', sharey='all', figsize=(8, 8))
+        axes = axes.flatten()
+        for i, bid in enumerate(['c', 'p', 'f', 't']):
+            sns.histplot(self.data, x=self.bid_labels[bid], hue='behave_or_control', ax=axes[i], binwidth=50)
+            axes[i].set(title=self.bid_labels[bid], xlabel='')
+        fig.tight_layout()
+        fig.savefig(self.fm.localAnalysisStatesDir + 'behavioral_histograms.pdf')
+        plt.close(fig)
+
 
 class DepthAnalyzer():
     # Contains code process depth data for figure creation
@@ -813,7 +908,25 @@ class DepthAnalyzer():
             self.smoothDepthData[:, :, :self.tray_r[1]] = np.nan
             self.smoothDepthData[:, :, self.tray_r[3]:] = np.nan
 
-    def returnBowerLocations(self, t0, t1, cropped=False):
+    def t_to_index(self, t):
+        try:
+            index = max([False if x.time <= t else True for x in self.lp.frames].index(True) - 1, 0)
+        except ValueError:
+            if t > self.lp.frames[-1].time:
+                index = -1
+            else:
+                index = 0
+        return index
+
+    def clip_data(self, t0, t1):
+        # clips the data and log parser to a particular time range. Useful for reducing the size of
+        # the DepthAnalyzer when generating multiple DepthAnalyzer objects
+        self._checkTimes(t0, t1)
+        i0, i1 = (self.t_to_index(t) for t in [t0, t1])
+        self.smoothDepthData = self.smoothDepthData[i0:i1+1]
+        self.lp.frames = self.lp.frames[i0:i1+1]
+
+    def returnBowerLocations(self, t0, t1, cropped=True):
         # Returns 2D numpy array using thresholding and minimum size data to identify bowers
         # Pits = -1, Castle = 1, No bower = 0
 
@@ -821,7 +934,7 @@ class DepthAnalyzer():
         self._checkTimes(t0, t1)
 
         # Identify total height change and time change
-        totalHeightChange = self.returnHeightChange(t0, t1, masked=False, cropped=False)
+        totalHeightChange = self.returnHeightChange(t0, t1, masked=False, cropped=cropped)
         timeChange = t1 - t0
 
         # Determine threshold and minimum size of bower to use based upon timeChange
@@ -842,12 +955,10 @@ class DepthAnalyzer():
         tPit = morphology.remove_small_objects(tPit, minPixels).astype(int)
 
         bowers = tCastle - tPit
-        if cropped:
-            bowers = bowers[self.tray_r[0]:self.tray_r[2], self.tray_r[1]:self.tray_r[3]]
 
         return bowers
 
-    def returnHeight(self, t, cropped=False):
+    def returnHeight(self, t, cropped=True):
         # return the frame from the smoothedDepthData numpy closest to time t. If cropped is True, crop the frame
         # to include only the area defined by tray_r
 
@@ -871,7 +982,7 @@ class DepthAnalyzer():
 
         return change
 
-    def returnHeightChange(self, t0, t1, masked=False, cropped=False):
+    def returnHeightChange(self, t0, t1, masked=False, cropped=True):
         # return the height change, based on the smoothedDepthData numpy, from the frame closest to t0 to the frame
         # closest to t1. If cropped is True, crop the frame to include only the area defined by tray_r. If masked is
         # True, set the pixel value in all non-bower regions (see returnBowerLocations) to 0
@@ -921,13 +1032,13 @@ class DepthAnalyzer():
         outData = SimpleNamespace()
         # Get data
         outData.projectID = self.lp.projectID
-        outData.absoluteVolume = np.nansum(heightChangeAbs) * pixelLength ** 2
-        outData.summedVolume = np.nansum(heightChange) * pixelLength ** 2
-        outData.castleArea = np.count_nonzero(bowerLocations == 1) * pixelLength ** 2
-        outData.pitArea = np.count_nonzero(bowerLocations == -1) * pixelLength ** 2
-        outData.castleVolume = np.nansum(heightChange[bowerLocations == 1]) * pixelLength ** 2
-        outData.pitVolume = np.nansum(heightChange[bowerLocations == -1]) * -1 * pixelLength ** 2
-        outData.bowerVolume = outData.castleVolume + outData.pitVolume
+        outData.depthAbsoluteVolume = np.nansum(heightChangeAbs) * pixelLength ** 2
+        outData.depthSummedVolume = np.nansum(heightChange) * pixelLength ** 2
+        outData.depthCastleArea = np.count_nonzero(bowerLocations == 1) * pixelLength ** 2
+        outData.depthPitArea = np.count_nonzero(bowerLocations == -1) * pixelLength ** 2
+        outData.depthCastleVolume = np.nansum(heightChange[bowerLocations == 1]) * pixelLength ** 2
+        outData.depthPitVolume = np.nansum(heightChange[bowerLocations == -1]) * -1 * pixelLength ** 2
+        outData.depthBowerVolume = outData.depthCastleVolume + outData.depthPitVolume
 
         flattenedData = heightChangeAbs.flatten()
         sortedData = np.sort(flattenedData[~np.isnan(flattenedData)])
@@ -935,7 +1046,7 @@ class DepthAnalyzer():
         thresholdCastleVolume = np.nansum(heightChangeAbs[(bowerLocations == 1) & (heightChangeAbs > threshold)])
         thresholdPitVolume = np.nansum(heightChangeAbs[(bowerLocations == -1) & (heightChangeAbs > threshold)])
 
-        outData.bowerIndex = (thresholdCastleVolume - thresholdPitVolume) / (thresholdCastleVolume + thresholdPitVolume)
+        outData.depthBowerIndex = (thresholdCastleVolume - thresholdPitVolume) / (thresholdCastleVolume + thresholdPitVolume)
 
         return outData
 
@@ -943,11 +1054,18 @@ class DepthAnalyzer():
         # validate the given times
         if t1 is None:
             if type(t0) != datetime.datetime:
-                raise Exception('Timepoints to must be datetime.datetime objects')
+                try:
+                    t0 = t0.to_pydatetime()
+                except AttributeError:
+                    raise Exception('Timepoints to must be datetime.datetime objects')
             return
         # Make sure times are appropriate datetime objects
         if type(t0) != datetime.datetime or type(t1) != datetime.datetime:
-            raise Exception('Timepoints to must be datetime.datetime objects')
+            try:
+                t0 = t0.to_pydatetime()
+                t1 = t1.to_pydatetime()
+            except AttributeError:
+                raise Exception('Timepoints to must be datetime.datetime objects')
         if t0 > t1:
             print('Warning: Second timepoint ' + str(t1) + ' is earlier than first timepoint ' + str(t0),
                   file=sys.stderr)
@@ -993,7 +1111,7 @@ class ClusterAnalyzer:
 
         self.clusterData.to_csv(self.fileManager.localAllLabeledClustersFile)
 
-    def sliceDataframe(self, t0=None, t1=None, bid=None, columns=None, input_frame=None, cropped=False):
+    def sliceDataframe(self, t0=None, t1=None, bid=None, columns=None, input_frame=None, cropped=True):
         # utility function to access specific slices of the Dataframe based on the AllClusterData csv.
         #
         # t0: return only rows with timestamps after t0
@@ -1020,7 +1138,7 @@ class ClusterAnalyzer:
             df_slice = df_slice[columns]
         return df_slice
 
-    def returnClusterCounts(self, t0, t1, bid='all', cropped=False):
+    def returnClusterCounts(self, t0, t1, bid='all', cropped=True):
         # return the number of behavioral events for a given behavior id (bid), or all bids, between t0 and t1
         #
         # t0: beginning of desired time frame
@@ -1029,17 +1147,16 @@ class ClusterAnalyzer:
         #      bid only. If 'all' (default behavior) return a dict of counts for all bids, keyed by bid.
         # cropped: If True, count only events occuring within the area defined by tray_r
         self._checkTimes(t0, t1)
-        df_slice = self.sliceDataframe(cropped=cropped)
         if bid == 'all':
-            df_slice = self.sliceDataframe(t0=t0, t1=t1, input_frame=df_slice)
+            df_slice = self.sliceDataframe(t0=t0, t1=t1, cropped=cropped)
             row = df_slice.Prediction.value_counts().to_dict
             return row
         else:
-            df_slice = self.sliceDataframe(t0=t0, t1=t1, bid=bid, input_frame=df_slice)
+            df_slice = self.sliceDataframe(t0=t0, t1=t1, bid=bid, cropped=cropped)
             cell = df_slice.Prediction.count()
             return cell
 
-    def returnClusterKDE(self, t0, t1, bid, cropped=False, bandwidth=None):
+    def returnClusterKDE(self, t0, t1, bid, cropped=True, bandwidth=None):
         # Geneate a kernel density estimate corresponding to the number events per cm^2 over a given timeframe for
         # a particular behavior id (bid)
         #
@@ -1066,7 +1183,7 @@ class ClusterAnalyzer:
             z = (z * n_events) / (z.sum() * (self.fileManager.pixelLength ** 2))
         return z
 
-    def returnBowerLocations(self, t0, t1, cropped=False, bandwidth=None):
+    def returnBowerLocations(self, t0, t1, cropped=True, bandwidth=None):
         # Returns 2D numpy array using thresholding and minimum size data to identify bowers based on KDEs of spit and
         # scoop densities. Pits = -1, Castle = 1, No bower = 0
         #
@@ -1113,13 +1230,13 @@ class ClusterAnalyzer:
         outData = SimpleNamespace()
         # Get data
         outData.projectID = self.lp.projectID
-        outData.absoluteKdeVolume = np.nansum(clusterKdeAbs) * pixelLength ** 2
-        outData.summedKdeVolume = np.nansum(clusterKde) * pixelLength ** 2
-        outData.castleArea = np.count_nonzero(bowerLocations == 1) * pixelLength ** 2
-        outData.pitArea = np.count_nonzero(bowerLocations == -1) * pixelLength ** 2
-        outData.castleKdeVolume = np.nansum(clusterKde[bowerLocations == 1]) * pixelLength ** 2
-        outData.pitKdeVolume = np.nansum(clusterKde[bowerLocations == -1]) * -1 * pixelLength ** 2
-        outData.bowerKdeVolume = outData.castleKdeVolume + outData.pitKdeVolume
+        outData.kdeAbsoluteVolume = np.nansum(clusterKdeAbs) * pixelLength ** 2
+        outData.kdeSummedVolume = np.nansum(clusterKde) * pixelLength ** 2
+        outData.kdeCastleArea = np.count_nonzero(bowerLocations == 1) * pixelLength ** 2
+        outData.kdePitArea = np.count_nonzero(bowerLocations == -1) * pixelLength ** 2
+        outData.kdeCastleVolume = np.nansum(clusterKde[bowerLocations == 1]) * pixelLength ** 2
+        outData.kdePitVolume = np.nansum(clusterKde[bowerLocations == -1]) * -1 * pixelLength ** 2
+        outData.kdeBowerVolume = outData.kdeCastleVolume + outData.kdePitVolume
 
         flattenedData = clusterKdeAbs.flatten()
         sortedData = np.sort(flattenedData[~np.isnan(flattenedData)])
@@ -1130,7 +1247,7 @@ class ClusterAnalyzer:
         thresholdCastleKdeVolume = np.nansum(clusterKdeAbs[(bowerLocations == 1) & (clusterKdeAbs > threshold)])
         thresholdPitKdeVolume = np.nansum(clusterKdeAbs[(bowerLocations == -1) & (clusterKdeAbs > threshold)])
 
-        outData.bowerIndex = (thresholdCastleKdeVolume - thresholdPitKdeVolume) / (thresholdCastleKdeVolume + thresholdPitKdeVolume)
+        outData.kdeBowerIndex = (thresholdCastleKdeVolume - thresholdPitKdeVolume) / (thresholdCastleKdeVolume + thresholdPitKdeVolume)
 
         return outData
 
@@ -1138,10 +1255,16 @@ class ClusterAnalyzer:
         # validate the given times
         if t1 is None:
             if type(t0) != datetime.datetime:
-                raise Exception('Timepoints to must be datetime.datetime objects')
+                try:
+                    t0 = t0.to_pydatetime()
+                except AttributeError:
+                    raise Exception('Timepoints to must be datetime.datetime objects')
             return
         # Make sure times are appropriate datetime objects
-        if type(t0) != datetime.datetime or type(t1) != datetime.datetime:
+        try:
+            t0 = t0.to_pydatetime()
+            t1 = t1.to_pydatetime()
+        except AttributeError:
             raise Exception('Timepoints to must be datetime.datetime objects')
         if t0 > t1:
             print('Warning: Second timepoint ' + str(t1) + ' is earlier than first timepoint ' + str(t0),

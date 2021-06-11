@@ -21,10 +21,10 @@ args = parser.parse_args()
 if args.ProjectIDs is not None:
 	projectIDs = args.ProjectIDs # Specified at the command line
 else:
-	fm_obj = FM() 
-	summary_file = fm_obj.localAnalysisStatesDir + args.SummaryFile
-	fm_obj.downloadData(summary_file)
-	dt = pd.read_csv(summary_file, index_col = False)
+	fm_obj = FM(summaryFile=args.SummaryFile)
+
+	fm_obj.downloadData(fm_obj.localSummaryFile)
+	dt = pd.read_csv(fm_obj.localSummaryFile)
 
 	if args.Force:
 		projectIDs = list(dt.projectID)
@@ -71,8 +71,8 @@ for i, projectID in enumerate(projectIDs):
 	#Modify summary file if necessary
 	if args.SummaryFile:
 		dt.loc[dt.projectID == projectID,args.AnalysisType] = True
-		dt.to_csv(summary_file)
-		fm_obj.uploadData(summary_file)
+		dt.to_csv(fm_obj.localSummaryFile, index=False)
+		fm_obj.uploadData(fm_obj.localSummaryFile)
 
 
 	#Upload data and keep track of it
