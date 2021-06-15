@@ -876,6 +876,13 @@ class MultiSummaryPreparer:
         fig.savefig(self.fm.localAnalysisStatesDir + 'behavioral_histograms.pdf')
         plt.close(fig)
 
+    # def generate_summary_spreadsheet(self):
+    #     writer = pd.ExcelWriter(self.fm.localSummaryDir + 'SingleNucDataSummary.xlsx')
+    #     total_df.to_excel(writer, 'Total')
+    #     detail_df.to_excel(writer, 'Detail')
+    #     writer.save()
+
+
 
 class DepthAnalyzer():
     # Contains code process depth data for figure creation
