@@ -55,7 +55,11 @@ for i, projectID in enumerate(projectIDs):
 	elif args.AnalysisType == 'ClusterClassification':
 		p1 = subprocess.Popen(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.classify_clusters', projectID, args.ModelID])
 	elif args.AnalysisType == 'Summary':
-		p1 = subprocess.Popen(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.summarize', projectID])
+		if args.SummaryFile is None:
+			p1 = subprocess.Popen(['python3', '-m', 'cichlid_bower_tracking.unit_scripts.summarize', projectID])
+		else:
+			p1 = subprocess.Popen(
+				['python3', '-m', 'cichlid_bower_tracking.unit_scripts.summarize', projectID, '--SummaryFile', args.SummaryFile])
 
 	# In the meantime, download data for next project in the background
 	if i+1 < len(projectIDs):

@@ -13,9 +13,9 @@ from cichlid_bower_tracking.data_preparers.summary_preparer import SummaryPrepar
 class ProjectPreparer():
 	# This class takes in a projectID and runs all the appropriate analysis
 
-	def __init__(self, projectID = None, modelID = None, workers = None):
+	def __init__(self, projectID = None, modelID = None, workers = None, summaryFile=None):
 		self.projectID = projectID
-		self.fileManager = FM(projectID = projectID, modelID = modelID)
+		self.fileManager = FM(projectID = projectID, modelID = modelID, summaryFile=summaryFile)
 		self.modelID = modelID
 		if not self._checkProjectID():
 			raise Exception(projectID + ' is not valid.')
